@@ -1,0 +1,101 @@
+/*style roots
+Note: the box is set for you, try not to get to wild
+unless you are a css ninja
+body{}
+#head_area{}
+#head_area .wrap{}
+#foot_area{}
+#foot_area .wrap{}
+
+//the hooks to the content sections
+#catpdf_content{}
+#catpdf_cover{}
+#catpdf_index{}
+#catpdf_appendix{}
+#catpdf_%sectionName%{}
+
+//predefined shortcode html structure
+#page_numbers{}
+#page_numbers #pn_text{}
+#page_numbers #pn_number{}
+*/
+
+#head_area .wrap{border-bottom:2px solid #6A6A6A;}
+#foot_area .wrap{border-top:2px solid #6A6A6A;}
+/*fun note on the head/foot warp is that doing height=100% goes the whole page 
+ there is room to play just note that there are defaults*/
+
+
+
+/* DEFAULTS */
+html, body{ margin: 0; padding: 0; border: 0; font-family: sans-serif; text-align: justify;}
+table { border-collapse: collapse; border-spacing: 0; }
+strong{ font-weight:bold;}
+h1{font-size:20pt;}
+h2{font-size:16pt;}
+h3{font-size:14pt;}
+h4{font-size:12pt;}
+p{font-size:12pt;}
+
+
+.content-wrapper {
+	padding: 20px;
+	background: #FFF;
+	/*border: 1px solid #c5c5c5;
+	margin: 15px;*/
+}
+.pdf-header {
+	padding: 20px;
+	text-align: center;
+	border-bottom: 1px solid #c5c5c5;
+	margin-bottom: 10px;
+}
+.post {
+	padding: 15px 0px;
+	border-bottom: 1px solid #c5c5c5;
+	display: block !important;
+	clear: both !important;
+}
+.content-wrapper .meta, .content-wrapper .taxonomy {
+	font-size: 12px !important;
+	color: #666666;
+	font-style: italic;
+}
+
+h1.CoverTitle {
+	left: 0;
+	line-height: 200px;
+	margin: auto;
+	margin-top: -100px;
+	position: absolute;
+	top: 50%;
+	width: 100%;
+	text-align: center;
+}
+
+#catpdf_index{padding:0px 75px;}
+
+#catpdf_index .indexed_chapter{width:100%;}
+#catpdf_index .indexed_chapter tr{}
+#catpdf_index .indexed_chapter td{}
+
+#catpdf_index .indexed_chapter .chapter{width:5%; text-align:right;}
+#catpdf_index .indexed_chapter .text{}
+#catpdf_index .indexed_chapter .segment{border-bottom:1px dotted #494949;}
+#catpdf_index .indexed_chapter .pagenumber{width:3%; text-align:left;}
+
+#catpdf_index h2{font-size:20px !important;font-weight:bold !important; border-bottom:1px solid #585755;}
+
+
+#page_numbers{position:absolute; width:75px; height:35px; top:2.5px; right:0px; text-align:left;}
+#page_numbers #pn_text{display:block;position:absolute; width:100%; top:0px; right:0px; text-align: left;border-bottom:1px solid #e2e2e2;}
+#page_numbers #pn_number{display:block;position:absolute; width:100%; top:20px; right:0px; text-align: left;}
+
+#head_area .wrap{padding:5px;}
+#site_info_block{height:50px; width:250px;}
+#site_info{margin-left:5px;display:inline-block;}
+#site_info_name{font-size:20px; font-weight:bold;}
+#site_info_tag{font-size:12px; font-style:italic;}
+#logo{float:left;height:50px;}
+#site_tag{position:absolute; top:12.5px; right:12.5px;text-align: right;width:auto;font-size:12px;}
+
