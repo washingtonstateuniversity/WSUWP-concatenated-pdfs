@@ -21,32 +21,32 @@ class shortcode {
     * Return array
 	* @attr
 	*/
-	public static function build_shortcodes(){
+	public static function build_shortcodes(){ //this is a temp way
 		$shortcodes = array(
-			'loop'=> array('dis'=>__('Loop'),'function'=>'loop_func'),
-			'site_title'=> array('dis'=>__('Site Title'),'function'=>'site_title_func'),
-			'site_tagline'=>array('dis'=> __('Site Tagline'),'function'=>'site_tagline_func'),
-			'site_url'=> array('dis'=>__('Site URL'),'function'=>'site_url_func'),
-			'date_today'=> array('dis'=>__('Date Today'),'function'=>'date_today_func'),
-			'from_date'=> array('dis'=>__('Date(From)'),'function'=>'from_date_func'),
-			'to_date'=> array('dis'=>__('Date(To)'),'function'=>'to_date_func'),
-			'categories'=> array('dis'=>__('Categories'),'function'=>'categories_func'),
-			'post_count'=>array('dis'=> __('Post Count'),'function'=>'post_count_func'),
-			'title'=> array('dis'=>__('Title'),'function'=>'title_func'),
-			'excerpt'=> array('dis'=>__('Excerpt'),'function'=>'excerpt_func'),
-			'content'=> array('dis'=>__('Content'),'function'=>'content_func'),
-			'permalink'=> array('dis'=>__('Permalink'),'function'=>'permalink_func'),
-			'date'=> array('dis'=>__('Date'),'function'=>'date_func'),
-			'author'=> array('dis'=>__('Author'),'function'=>'author_func'),
-			'author_photo'=> array('dis'=>__('Author Photo'),'function'=>'author_photo_func'),
-			'author_description'=> array('dis'=>__('Author Description'),'function'=>'author_description_func'),
-			'status'=> array('dis'=>__('Status'),'function'=>'status_func'),
-			'featured_image'=> array('dis'=>__('Featured Image'),'function'=>'featured_image_func'),
-			'category'=> array('dis'=>__('Category'),'function'=>'category_func'),
-			'tags'=> array('dis'=>__('Tags'),'function'=>'tags_func'),
-			'comments_count'=> array('dis'=>__('Comments Count'),'function'=>'comments_count_func'),
-			'version_count'=> array('dis'=>__('Number of versions'),'function'=>'version_count_func'),
-			'page_numbers'=> array('dis'=>__('Page Numbering block'),'function'=>'page_numbers_func')
+			'loop'=> array('dis'=>__('Loop')),
+			'site_title'=> array('dis'=>__('Site Title')),
+			'site_tagline'=>array('dis'=> __('Site Tagline')),
+			'site_url'=> array('dis'=>__('Site URL')),
+			'date_today'=> array('dis'=>__('Date Today')),
+			'from_date'=> array('dis'=>__('Date(From)')),
+			'to_date'=> array('dis'=>__('Date(To)')),
+			'categories'=> array('dis'=>__('Categories')),
+			'post_count'=>array('dis'=> __('Post Count')),
+			'title'=> array('dis'=>__('Title')),
+			'excerpt'=> array('dis'=>__('Excerpt')),
+			'content'=> array('dis'=>__('Content')),
+			'permalink'=> array('dis'=>__('Permalink')),
+			'date'=> array('dis'=>__('Date')),
+			'author'=> array('dis'=>__('Author')),
+			'author_photo'=> array('dis'=>__('Author Photo')),
+			'author_description'=> array('dis'=>__('Author Description')),
+			'status'=> array('dis'=>__('Status')),
+			'featured_image'=> array('dis'=>__('Featured Image')),
+			'category'=> array('dis'=>__('Category')),
+			'tags'=> array('dis'=>__('Tags')),
+			'comments_count'=> array('dis'=>__('Comments Count')),
+			'version_count'=> array('dis'=>__('Number of versions')),
+			'page_numbers'=> array('dis'=>__('Page Numbering block'))
 		);
 		return $shortcodes;
 	}
@@ -60,42 +60,41 @@ class shortcode {
     public function register_template_shortcodes() {
         $shortcodes = shortcode::build_shortcodes();
 		foreach($shortcodes as $code=>$props){
-			add_shortcode($code, array( $this, $props['function'] ));
+			$_func = $code.'_func';
+			if( function_exists($this, $_func) ){
+				add_shortcode($code, array( $this, $_func ));
+			}
 		}
     }
 	
-	public static function get_template_shortcodes($template='body'){
-		switch($template){
-			case 'body':
-				$shortcodes = shortcode::build_shortcodes();
-				$usingCodes = array(
+	public static function get_template_section_shortcodes($template='body'){
+		//would be pulled from a reg
+		$registered_codes = array(
+			'body' => array(
 					'loop','site_title','site_tagline','site_url','date_today',
 					'from_date','to_date','categories','post_count','page_numbers'
-				);
-				$returning = array();
-				foreach($shortcodes as $code=>$props){
-					if(in_array($code,$usingCodes)){
-						$returning[$code]= $props['dis'];
-					}
-				}
-				return $returning;
-				break;
-			case 'loop':
-				$shortcodes = shortcode::build_shortcodes();
-				$usingCodes = array(
+				),
+			'loop' => array(
 					'title','excerpt','content','permalink',
 					'date','author','author_photo','author_description',
 					'status','featured_image','category','tags','comments_count','version_count'
-				);
-				$returning = array();
-				foreach($shortcodes as $code=>$props){
-					if(in_array($code,$usingCodes)){
-						$returning[$code]= $props['dis'];
-					}
-				}
-				return $returning;
-				break;
+				),
+				
+		);
+		if (isset( $registered_codes[$template] ) ) return $registered_codes[$template];
+		return array();
+	}
+
+	public static function get_template_shortcodes($template='body'){
+		$shortcodes = shortcode::build_shortcodes();
+		$usingCodes = shortcode::get_template_section_shortcodes($template);
+		$returning = array();
+		foreach($shortcodes as $code=>$props){
+			if(in_array($code,$usingCodes)){
+				$returning[$code]= $props['dis'];
+			}
 		}
+		return $returning;
 	}
 	
 	
