@@ -61,7 +61,7 @@ class shortcode {
         $shortcodes = shortcode::build_shortcodes();
 		foreach($shortcodes as $code=>$props){
 			$_func = $code.'_func';
-			if( function_exists($this, $_func) ){
+			if( method_exists($this,$_func) ){
 				add_shortcode($code, array( $this, $_func ));
 			}
 		}

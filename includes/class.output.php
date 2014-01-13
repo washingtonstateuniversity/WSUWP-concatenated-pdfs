@@ -236,14 +236,11 @@ $script="";
      */
     public function filter_shortcodes($tmp_type=NULL) {
 		if($tmp_type==NULL) return false;
-        $items         = array(
-			'body' => array_keys(shortcode::get_template_shortcodes('body')),
-			'loop' => array_keys(shortcode::get_template_shortcodes('loop')),
-		);
+
         $template      = $this->template;
         $pattern       = get_shortcode_regex();
 
-		$arr = isset($items[$tmp_type])?$items[$tmp_type]:$items['body'];
+		$arr = array_keys(shortcode::get_template_shortcodes(isset($items[$tmp_type])?$items[$tmp_type]:$items['body']));
 		$tmp_sec = "template_{$tmp_type}";
 		$tmp = $template->$tmp_sec;
 
