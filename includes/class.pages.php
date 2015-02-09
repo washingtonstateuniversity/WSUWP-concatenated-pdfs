@@ -123,11 +123,7 @@ class catpdf_pages {
             'hide_empty' => '0'
         );
         $options               = get_option('catpdf_options');
-        // Construct category dropdown
-        $select_cats           = wp_dropdown_categories(array(
-            'echo' => 0,
-            'hierarchical' => 1
-        ));
+
 		
 		$post_types      = get_post_types(array(
             'public'   => true,
@@ -155,6 +151,26 @@ class catpdf_pages {
 		
         $select_cats           = str_replace("name='cat' id=", "name='cat[]' multiple='multiple' id=", $select_cats);
         $select_cats           = str_replace("<option", '<option ', $select_cats);
+		
+		$args = array();
+		$cats = get_categories( $args );
+		if(!empty($cats)){
+			$select_cats= '<select name="cat[]" multiple="multiple" class="catform" >';
+			
+			foreach ( $cats  as $cat ) {
+				$select_cats.='<option value="'. $cat->term_id.'" title="'. $cat->name. '" class="level-0" >'. $cat->name. '</option>';
+			}
+			$select_cats.='</select><input class="all-btn sept-mar" type="button" value="Select All" />';
+		}else{
+			$select_cats="<h5>Currently there are no categorized posts.</h5>";
+		}/* past, look to remove if no match needed       // Construct category dropdown
+        $select_cats           = wp_dropdown_categories(array(
+            'echo' => 0,
+            'hierarchical' => 1
+        ));*/		
+		
+		
+		
         // Construct user dropdown
         $select_author         = wp_dropdown_users(array(
             'id' => 'author',
