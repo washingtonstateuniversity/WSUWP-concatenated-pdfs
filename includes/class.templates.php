@@ -53,6 +53,7 @@ class catpdf_templates {
 		$catpdf_output->_html_structure();
 		$content 		= $catpdf_output->filter_shortcodes('body');
 		$contentHtml	= "<div id='catpdf_content'>{$content}</div>";	
+		//var_dump($contentHtml);die();
 		return $contentHtml;
 	}	
 	public function get_section_cover(){

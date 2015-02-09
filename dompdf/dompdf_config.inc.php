@@ -36,7 +36,7 @@ def("DOMPDF_FONT_HEIGHT_RATIO", 1.1);
 def("DOMPDF_ENABLE_CSS_FLOAT", false);
 def("DOMPDF_ENABLE_AUTOLOAD", true);
 def("DOMPDF_AUTOLOAD_PREPEND", false);
-def("DOMPDF_ENABLE_HTML5PARSER", false);
+def("DOMPDF_ENABLE_HTML5PARSER", true);
 require_once(DOMPDF_LIB_DIR . "/html5lib/Parser.php");
 if (DOMPDF_ENABLE_AUTOLOAD) {
     require_once(DOMPDF_INC_DIR . "/autoload.inc.php");

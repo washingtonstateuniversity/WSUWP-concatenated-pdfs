@@ -140,13 +140,18 @@ class catpdf_pages {
 		$select_types.='</select>';
 
 
-		$select_tags= '<select name="tags[]" multiple="multiple" class="postform" >';
-		foreach ($post_types  as $post_type ) {
-			$select_tags.='<option value="'. $post_type.'"  class="level-0" >'. $post_type. '</option>';
+		$args = array();
+		$tags = get_tags( $args );
+		if(!empty($tags)){
+			$select_tags= '<select name="tags[]" multiple="multiple" class="tagform" >';
+			
+			foreach ( $tags  as $tag ) {
+				$select_tags.='<option value="'. $tag->term_id.'"  class="level-0" >'. $tag->name. '</option>';
+			}
+			$select_tags.='</select><input class="all-btn sept-mar" type="button" value="Select All" />';
+		}else{
+			$select_tags="<h5>Currently there are no taged posts.</h5>";
 		}
-		$select_tags.='</select>';
-
-		
 		
         $select_cats           = str_replace("name='cat' id=", "name='cat[]' multiple='multiple' id=", $select_cats);
         $select_cats           = str_replace("<option", '<option ', $select_cats);
@@ -215,12 +220,10 @@ class catpdf_pages {
 			$content     = $catpdf_output->custruct_template();
 			
 			$dompdf->load_html($content);
-			
-			var_dump( $_dompdf_warnings ); die();	
-			
 			if( isset($_dompdf_warnings) ){
-				
+				var_dump( $_dompdf_warnings ); die();
 			}
+			
 			$dompdf->render();
 			$pdf = $dompdf->output();//store it for output
 			//$dompdf->stream();
