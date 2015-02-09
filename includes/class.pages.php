@@ -213,11 +213,20 @@ class catpdf_pages {
         if(!$cached){
 			$dompdf->set_paper($_params['papersize'], $_params['orientation']);
 			$content     = $catpdf_output->custruct_template();
+			
 			$dompdf->load_html($content);
+			
+			var_dump( $_dompdf_warnings ); die();	
+			
+			if( isset($_dompdf_warnings) ){
+				
+			}
 			$dompdf->render();
 			$pdf = $dompdf->output();//store it for output
 			//$dompdf->stream();
+			
 			$prettyname = trim($catpdf_output->title) . ".pdf";
+			
 			if( $catpdf_output->cachePdf($file,$pdf) ){
 				$catpdf_output->sendPdf($file,$prettyname);
 			}else{

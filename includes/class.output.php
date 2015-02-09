@@ -40,12 +40,12 @@ class catpdf_output {
 
 
 
-//temp remove asap
-public function getTitle($post){
-	setup_postdata($post);
-	$item = get_the_title();
-	return $item;
-}
+	//temp remove asap
+	public function getTitle($post){
+		setup_postdata($post);
+		$item = get_the_title();
+		return $item;
+	}
 
 
 
@@ -63,8 +63,10 @@ public function getTitle($post){
 		$id		= isset($_GET['catpdf_dl'])?$_GET['catpdf_dl']:NULL;
 		$posts 	= $catpdf_data->query_posts($id);
 
-        $this->template = $catpdf_templates->get_current_tempate($type);		
+        $this->template = $catpdf_templates->get_current_tempate($type);
+		//var_dump($this->template);
 		$template_sections = $catpdf_templates->get_template_sections();
+		//var_dump($template_sections);
 		$html = "";
 		$i=1;
 		$c=count($template_sections);
@@ -78,6 +80,7 @@ public function getTitle($post){
 
         $html = $this->head . $html .$this->foot;
 		$this->logHtmlOutput($html);
+		
         return $html;
     }
 	
@@ -240,10 +243,11 @@ $script="";
         $template      = $this->template;
         $pattern       = get_shortcode_regex();
 
-		$arr = array_keys(shortcode::get_template_shortcodes(isset($items[$tmp_type])?$items[$tmp_type]:$items['body']));
+		$arr = array_keys(shortcode::get_template_shortcodes(!empty($tmp_type)?$tmp_type:'body')); //? was ? isset($items[$tmp_type])?$items[$tmp_type]:$items['body'] into get_template_shortcodes
 		$tmp_sec = "template_{$tmp_type}";
 		$tmp = $template->$tmp_sec;
-
+		//var_dump($items);
+//var_dump($arr);die();
         preg_match_all('/' . $pattern . '/s', $tmp, $matches);
         $html = $tmp;
         foreach ($arr as $code) {
@@ -253,6 +257,7 @@ $script="";
                 }
             }
         }
+		
         return $html;
     }
 
