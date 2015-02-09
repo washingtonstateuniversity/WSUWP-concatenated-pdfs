@@ -50,7 +50,8 @@ class catpdf_core {
 
 		
 
-		add_action( 'add_meta_boxes', array( $this, 'add_pdf_meta_boxes' ) );	
+
+		
         if (!is_admin()) {
 			
             if ($catpdf_data->get_options() == 'on') {
@@ -59,7 +60,8 @@ class catpdf_core {
                 add_filter('the_content', array( $this, 'apply_post_download_button' ));
             }
         }else{
-			
+			add_action( 'add_meta_boxes', array( $this, 'add_pdf_meta_boxes' ) );	
+			add_action( 'save_post', array( $this, 'save' ) );
 		}
        
     }
@@ -184,16 +186,66 @@ class catpdf_core {
 	 * @param WP_Post $post The full post object being edited.
 	 */
 	public function display_pdf_config_map_meta_box( $post ) {
+		// Use get_post_meta to retrieve an existing value from the database.
+		$value = get_post_meta( $post->ID, CATPDF_KEY.'_post_pdf_config', true );
 		?>
 		<p>Auto generate pdf's?</p>
 		<div class="html radio_buttons">
 			<select name="<?=CATPDF_KEY.'_pdf_config'?>"/>
-				<option value="yes">Yes</option>
-				<option value="no">No</option>
+				<option value="yes" <?=selected("yes", ($value!=""?$value:"yes"))?>>Yes</option>
+				<option value="no" <?=selected("no", ($value!=""?$value:"yes"))?>>No</option>
 			</select>
 		</div>
 		<p class="description">Should there be pdf generated for this post?</p>
 		<?php
+	}
+	/**
+	 * Save the meta when the post is saved.
+	 *
+	 * @param int $post_id The ID of the post being saved.
+	 */
+	public function save( $post_id ) {
+		
+		/*
+		 * We need to verify this came from the our screen and with proper authorization,
+		 * because save_post can be triggered at other times.
+		add this in later
+		
+		// Check if our nonce is set.
+		if ( ! isset( $_POST['myplugin_inner_custom_box_nonce'] ) ){
+			return $post_id;
+		}
+
+		$nonce = $_POST['myplugin_inner_custom_box_nonce'];
+
+		// Verify that the nonce is valid.
+		if ( ! wp_verify_nonce( $nonce, 'myplugin_inner_custom_box' ) )
+			return $post_id;
+
+		// If this is an autosave, our form has not been submitted,
+                //     so we don't want to do anything.
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+			return $post_id;
+
+		// Check the user's permissions.
+		if ( 'page' == $_POST['post_type'] ) {
+
+			if ( ! current_user_can( 'edit_page', $post_id ) )
+				return $post_id;
+	
+		} else {
+
+			if ( ! current_user_can( 'edit_post', $post_id ) )
+				return $post_id;
+		}
+ 		*/
+		/* OK, its safe for us to save the data now. */
+
+		// Sanitize the user input.
+		$pdfConfig = sanitize_text_field( $_POST[CATPDF_KEY.'_pdf_config'] );
+
+		// Update the meta field.
+		update_post_meta( $post_id, CATPDF_KEY.'_post_pdf_config', json_encode($pdfConfig) );
 	}
 		
 				
