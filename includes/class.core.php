@@ -187,13 +187,13 @@ class catpdf_core {
 	 */
 	public function display_pdf_config_map_meta_box( $post ) {
 		// Use get_post_meta to retrieve an existing value from the database.
-		$value = get_post_meta( $post->ID, CATPDF_KEY.'_post_pdf_config', true );
+		$value = json_decode(get_post_meta( $post->ID, CATPDF_KEY.'_post_pdf_config', true ));
 		?>
 		<p>Auto generate pdf's?</p>
 		<div class="html radio_buttons">
-			<select name="<?=CATPDF_KEY.'_pdf_config'?>"/>
-				<option value="yes" <?=selected("yes", ($value!=""?$value:"yes"))?>>Yes</option>
-				<option value="no" <?=selected("no", ($value!=""?$value:"yes"))?>>No</option>
+			<select name="<?=CATPDF_KEY.'_pdf_config[auto_generate]'?>"/>
+				<option value="yes" <?=selected("yes", (isset($value["auto_generate"])&&!empty($value["auto_generate"])?$value["auto_generate"]:"yes"))?>>Yes</option>
+				<option value="no" <?=selected("no", (isset($value["auto_generate"])&&!empty($value["auto_generate"])?$value["auto_generate"]:"yes"))?>>No</option>
 			</select>
 		</div>
 		<p class="description">Should there be pdf generated for this post?</p>
