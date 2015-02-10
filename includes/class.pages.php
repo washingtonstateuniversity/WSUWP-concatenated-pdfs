@@ -281,19 +281,41 @@ class catpdf_pages {
      * Download single post pdf
      */
     public function download_post() {
-        global $dompdf, $catpdf_output,$post;
+        global $dompdf, $PDFMerger, $catpdf_output,$post,$catpdf_data;
+		//die('here');
         $id          = $_GET['catpdf_dl'];
-        $post        = $catpdf_output->query_posts($id);
+        $post        = $catpdf_data->query_posts($id);
 
         $single      = $post[0];
-        $filenmae    = preg_replace('/[^a-z0-9]/i', '_', $single->post_title);
+        $filename    = preg_replace('/[^a-z0-9]/i', '_', $single->post_title);
         $content     = $catpdf_output->custruct_template('single');
+		//var_dump($content);die();
+		$dompdf = new DOMPDF();
 		$dompdf->set_paper('letter', 'portrait');
-        $dompdf->load_html($content);
-        
-        $dompdf->render();
-        $dompdf->stream(trim($filenmae) . ".pdf");
+		$dompdf->load_html($content);
+		if( isset($_dompdf_warnings) ){
+			var_dump( $_dompdf_warnings ); die();
+		}
+		$dompdf->render();
+		$pdf = $dompdf->output();//store it for output	
+		$file = date("Now") . "--" . $id . ".pdf";	
+		
+		if($catpdf_output->cachePdf('merging_stage/'.$file,$pdf)){
+			$mergeList[]=$file;				
+			$i++;
+		}
+		if(count($mergeList)>0){
+			$output_file = date("Now") . "--" . $id .'.pdf';
+			$catpdf_output->merge_pdfs($mergeList,$output_file);
+			$catpdf_output->sendPdf($output_file);
+		}else{
+			echo "failed";	
+		}
     }
+
+
+
+
 
 
 

@@ -148,7 +148,7 @@ class shortcode {
         $item = get_the_content();
 		$title = get_the_title();
 			$indexerscript='
-<script type="text/php"> $i=$GLOBALS["i"]; if(!isset($GLOBALS["chapters"][$i])){ $GLOBALS["chapters"][$i]["page"] = $pdf->get_page_number();  $GLOBALS["chapters"][$i]["text"] = "'.$title.'"; $GLOBALS["i"]=$i+1; } </script>
+<script type="text/php"> if(isset($GLOBALS["i"])){ $i=$GLOBALS["i"]; if(!isset($GLOBALS["chapters"][$i])){ $GLOBALS["chapters"][$i]["page"] = $pdf->get_page_number();  $GLOBALS["chapters"][$i]["text"] = "'.$title.'"; $GLOBALS["i"]=$i+1;} } </script>
 ';
 			$indexedcontent=$indexerscript.$item;
 			$item=$indexedcontent;

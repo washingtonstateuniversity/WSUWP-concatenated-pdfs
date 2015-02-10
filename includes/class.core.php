@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class catpdf_core {
     public $dompdf = NULL;
+	public $PDFMerger = NULL;
 	public $shortcode = NULL;
 	public $catpdf_pages = NULL;
 	public $catpdf_templates = NULL;
@@ -21,8 +22,12 @@ class catpdf_core {
 		global $dompdf,$shortcode,$catpdf_pages,$catpdf_templates,$catpdf_output,$catpdf_data,$_params;
 		$_params = $_POST;
 		// Include dompdf //make sure to get back to pulling this in to the settings
-		include(CATPDF_PATH . '/dompdf/dompdf_config.inc.php');
+		include(CATPDF_PATH . '/includes/dompdf/dompdf_config.inc.php');
 		$dompdf = new DOMPDF();
+
+		include(CATPDF_PATH . '/includes/PDFMerger/PDFMerger.php');
+		$PDFMerger = new PDFMerger;
+		
 		
 		// Include shortcode class
 		include(CATPDF_PATH . '/includes/class.shortcode.php');
@@ -186,6 +191,7 @@ class catpdf_core {
 	 * @param WP_Post $post The full post object being edited.
 	 */
 	public function display_pdf_config_map_meta_box( $post ) {
+		global $shortcode;
 		// Use get_post_meta to retrieve an existing value from the database.
 		$value = (array)json_decode(get_post_meta( $post->ID, CATPDF_KEY.'_post_pdf_config', true ));
 		$selected = isset($value["generation_allowed"])&&!empty($value["generation_allowed"])?$value["generation_allowed"]:"yes";
@@ -208,8 +214,10 @@ class catpdf_core {
 			</select>
 		</div>
 		<p class="description">Should there be PDF generated for this post?</p>
-		
-
+		<hr/>
+		<p> Pre view the PDF</p>
+		<p class="description"><b>NOTE:</b> The preview is for this page only, meaning that there will be no cover, index, or anything of that nature.  Only the content as if it was in the middle of the docment.</p>
+		<?=$shortcode->apply_download_button(array('text'=>'Preview Download Link','catpdf_dl'=>$post->ID))?>
 		<?php
 	}
 	/**

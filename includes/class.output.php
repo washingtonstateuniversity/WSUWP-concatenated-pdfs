@@ -61,26 +61,44 @@ class catpdf_output {
     public function custruct_template($type = NULL) {
         global $catpdf_templates,$_params,$catpdf_data,$posts;
 		$id		= isset($_GET['catpdf_dl'])?$_GET['catpdf_dl']:NULL;
-		$posts 	= $catpdf_data->query_posts($id);
+		/*if($id>0){
+			get_post( $id, $output, $filter );
+		}else{
+			
+		}
+		
 
+		$posts_array = get_posts( $args );
+		*/
+		$posts 	= $catpdf_data->query_posts($id);
+		//var_dump(get_post($id));
+		//var_dump($posts_array);
+		$posts 	= $posts_array;
+		$posts 	= array(get_post($id));
+		
         $this->template = $catpdf_templates->get_current_tempate($type);
 		//var_dump($this->template);
-		$template_sections = $catpdf_templates->get_template_sections();
+		$template_sections = $catpdf_templates->get_default_render_order();
 		//var_dump($template_sections);
 		$html = "";
 		$i=1;
 		$c=count($template_sections);
 		foreach($template_sections as $code=>$section){
-			$sectionhtml=call_user_func(array($catpdf_templates, 'get_section_'.$code));
-			//var_dump($sectionhtml);
-			$html.= ($sectionhtml?$sectionhtml:"").($i<$c?"<i class='page-break'></i>":"");
-			$i++;
+			if($code=="content"){
+				$sectionhtml=call_user_func(array($catpdf_templates, 'get_section_'.$code));
+				//var_dump($sectionhtml);
+				$html.= ($sectionhtml?$sectionhtml:"").($i<$c?"<i class='page-break'></i>":"");
+				$i++;
+			}
 		}
 		//"<i class='page-break'></i>"
 
         $html = $this->head . $html .$this->foot;
-		$this->logHtmlOutput($html);
 		
+		//$html = '<!DOCTYPE html><html><body>'. $html. '</body></html>';
+		
+		$this->logHtmlOutput($html);
+		//var_dump($html);die();
         return $html;
     }
 	
@@ -130,15 +148,18 @@ class catpdf_output {
 
 		
 		/* there should be a base html template? */
-		$head_html = '<!DOCTYPE html>';
-        $head_html .= '<html>';
-        $head_html .= '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />';
-        $head_html .= '<title>' . $this->title . '</title>';
+		$head_html = "<!DOCTYPE html>\n";
+        $head_html .= "<html>\n";
+        $head_html .= "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />\n";
+        $head_html .= '<title>' . $this->title . "</title>\n";
+		
+		$head_html_style_sheets = "";
+		
         if (isset($options['enablecss']) && $options['enablecss'] == 'on') {
-            $head_html .= '<link type="text/css" rel="stylesheet" href="' . get_stylesheet_uri() . '">';
+            $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . get_stylesheet_uri() . "'/>\n";
         }
-        $head_html .= '<link type="text/css" rel="stylesheet" href="' . PDF_STYLE . '">';
-        $head_html_tag = '</head>';
+        $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . PDF_STYLE . "'/>\n";
+        $head_html_closing_tag = '</head>';
 		
 		//calculated values needed for the pdf
 		$footSkip=($footHeight+$footSep);//equal to bottom:{VAL}px
@@ -154,31 +175,27 @@ class catpdf_output {
 		$footer_section = '<div id="foot_area"><div class="wrap">'.$pagefooter.'</div></div>';
 		
 		//sets up the globals for the rendered inline php 
-		$indexscriptglobals='<script type="text/php">
-			$GLOBALS["i"]=1;
-			$GLOBALS["indexpage"]=0;
-			$GLOBALS["chapters"] = array();
-		</script>';
-$script="";
+		$indexscriptglobals='<script type="text/php"> $GLOBALS["i"]=1; $GLOBALS["indexpage"]=0; $GLOBALS["chapters"] = array(); </script>';
+		$script="";
 		
 		//set up the base style that make it easy to fomate it.
-        $head_style = '<!-- built from the php and are important to 
-							try not to write over if possiable -->
-		<style>
-			html,body { background-color:'.$bodycolor.'; position: relative; }
-			@page{}
-			#head_area{ position:fixed;left:'.$pageleftMargin.$unit.';top:'.$topMargin.$unit.';height:'.$headHeight.$unit.'; width:'.$textBoxingWidth.$unit.'; }
-			#head_area .wrap{position:relative; width:100%; height:'.$headHeight.$unit.';}
-			#foot_area{ position:fixed;left:'.$pageleftMargin.$unit.';bottom:'.$bottomMargin.$unit.';height:'.$footHeight.$unit.';width:'.$textBoxingWidth.$unit.';}
-			#foot_area .wrap{position:relative; width:100%; height:'.$footHeight.$unit.';}
-			body {padding:'.$page_padding.';}/*note that the body is used as our sudo "page" it is our saffal base*/
-			i.page-break {page-break-after: always;border: 0;}
-			' . strip_tags($options['customcss']) . '
-		</style>';
+        $head_style = '<!-- built from the php and are important to try not to write over if possible -->
+	<style>
+		html,body { background-color:'.$bodycolor.'; position: relative; }
+		/*@page{}*/
+		#head_area{ left:'.$pageleftMargin.$unit.'; top:'.$topMargin.$unit.'; height:'.$headHeight.$unit.'; /*width:'.$textBoxingWidth.$unit.';*/ }
+		#head_area .wrap{ height:'.$headHeight.$unit.';}
+		#foot_area{ left:'.$pageleftMargin.$unit.'; bottom:'.$bottomMargin.$unit.'; height:'.$footHeight.$unit.'; width:'.$textBoxingWidth.$unit.'; }
+		#foot_area .wrap{ height:'.$footHeight.$unit.'; }
+		body {padding:'.$page_padding.';}/*note that the body is used as our sudo "page" it is our saffal base*/
+		
+		' . strip_tags($options['customcss']) . '
+	</style>';
 
         $this->head  = $head_html
+						.$head_html_style_sheets
 						.$head_style
-						.$head_html_tag
+						.$head_html_closing_tag
 						.$bodyOpenTag
 						.$header_section
 						.$footer_section
@@ -290,10 +307,21 @@ $script="";
 		} //out put error message
 	}
 	public function cachePdf($file,$contents){
-		$file = CATPDF_CACHE_PATH.$file;
+		$file = CATPDF_CACHE_PATH.trim(trim($file,'/'));
 		return file_put_contents($file, $contents);
 	}	
-
+	public function merge_pdfs($mergeList,$output_file){
+		if(count($mergeList)>1){
+			$PDFMerger = new PDFMerger;
+			foreach($mergeList as $file){
+				$PDFMerger->addPDF(CATPDF_CACHE_PATH.'merging_stage/'.$file, 'all');//'1, 3, 4'//'1-2'
+			}
+			$PDFMerger->merge('file', CATPDF_CACHE_PATH.trim(trim($output_file,'/')));
+		}else{
+			$this->cachePdf($output_file,file_get_contents(CATPDF_CACHE_PATH.'merging_stage/'.$mergeList[0]))	;
+		}
+		
+	}
 
 
 

@@ -30,7 +30,16 @@ class catpdf_templates {
 		}  
     }
 
-
+	public function get_default_render_order(){
+		$sections = array(
+			'content'=>"",
+			'cover'=>"",
+			'appendix'=>"",
+			'index'=>"",
+		);
+		return $sections;
+	}
+	
 	public function get_default_template_sections(){
 		$sections = array(
 			'cover'=>"",
@@ -85,6 +94,7 @@ class catpdf_templates {
 		$index.= "";
 		$index.="</div>";
 		$index.='<script type="text/php"> $pdf->close_object(); </script>';
+//$index="";
 		$indexHtml="<div id='catpdf_index'>{$index}</div>";
 		return $indexHtml;
 	}	

@@ -23,31 +23,60 @@ class catpdf_data {
      * @id - int
 	 * It's worth noting that any out put here will print into the pdf.  If the PDF can't be 
 	 * read then look at it in a text editor like Notepad, where you will see the php errors
+	 * 
      */
     public function query_posts($id = NULL) {
 		global $_params;
 		$type = isset($_params['type'])?$_params['type']:"post";
-        $args = array(
-            'post_type' => $type,
-            'posts_per_page' => -1,
-            'order' => 'DESC'
-        );
+
+		$args = array(
+			'posts_per_page'   => 5,
+			'offset'           => 0,
+			//'category'         => '',
+			//'category_name'    => '',
+			'orderby'          => 'post_date',
+			'order'            => 'DESC',
+			'include'          => '',
+			//'exclude'          => '',
+			//'meta_key'         => '',
+			//'meta_value'       => '',
+			//'post_type'        => 'post',
+			//'post_mime_type'   => '',
+			//'post_parent'      => '',
+			//'suppress_filters' => true 
+		);
+				
+		// $args['post_type']=$type;
+		 $args['posts_per_page']=-1;
+		 $args['order']='DESC';
+		 
+		
         if ($id !== NULL) {
-            $args['p'] = $id;
+            $args['include'] = $id;
         }
         if (isset($_params['user']) && count($_params['user']) > 0) {
-            $args['author'] = implode(',',$_params['user']);
+            //$args['author'] = implode(',',$_params['user']);
         }
         if (isset($_params['status']) && count($_params['status']) > 0) {
 			$args['post_status'] = implode(',',$_params['status']);
-        }
+        }else{
+			$args['post_status']= implode(',',array_keys(get_post_statuses()));	
+		}
         if (isset($_params['cat']) && count($_params['cat']) > 0) {
-            $args['cat'] = implode(',',$_params['cat']);
+            //$args['cat'] = implode(',',$_params['cat']);
         }
-        add_filter('posts_where', array( $this, 'filter_where' ));
-        $result = new WP_Query($args);
+
+		//var_dump($args);
+		//var_dump(get_posts( array('include'=>array($id))));
+
+		$posts_array = get_posts( $args );
 		
-        return $result->posts;
+		
+		
+		
+        //$result = new WP_Query($args);
+		
+        return $posts_array;//$result->posts;
     }
     /*
      * Return query filter
