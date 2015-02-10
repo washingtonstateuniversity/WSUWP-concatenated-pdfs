@@ -58,7 +58,7 @@ class catpdf_output {
      * @type - string
 	 * @TODO move out to template class
      */
-    public function custruct_template($type = NULL) {
+    public function construct_template($type = NULL) {
         global $catpdf_templates,$_params,$catpdf_data,$posts;
 		$id		= isset($_GET['catpdf_dl'])?$_GET['catpdf_dl']:NULL;
 		/*if($id>0){

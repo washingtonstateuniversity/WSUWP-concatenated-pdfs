@@ -129,7 +129,7 @@ class catpdf_core {
 					// Check if default template exist
 					if (!$this->_is_exist('template_name', 'Sample Template')) {
 						// Get default template
-						$default_template = $catpdf_templates->custruct_default_template();
+						$default_template = $catpdf_templates->construct_default_template();
 						// Set up data
 						$data             = array(
 							'template_name' => 'Sample Template',

@@ -134,7 +134,7 @@ class catpdf_templates {
     /*
      * Return default template structure
      */
-    public function custruct_default_template($type = 'all') {
+    public function construct_default_template($type = 'all') {
         $temp         = array();
         $temp['name'] = 'Default';
 		
@@ -193,9 +193,9 @@ class catpdf_templates {
      */
     public function get_default_template() {
         if (isset($_GET['catpdf_dl'])) {
-            $default_template = $this->custruct_default_template('single');
+            $default_template = $this->construct_default_template('single');
         } else {
-            $default_template = $this->custruct_default_template();
+            $default_template = $this->construct_default_template();
         }
         $arr = array();
         $arr = array(

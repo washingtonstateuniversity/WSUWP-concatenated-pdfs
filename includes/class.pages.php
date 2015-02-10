@@ -233,7 +233,7 @@ class catpdf_pages {
 		$cached=false;//add check
         if(!$cached){
 			$dompdf->set_paper($_params['papersize'], $_params['orientation']);
-			$content     = $catpdf_output->custruct_template();
+			$content     = $catpdf_output->construct_template();
 			
 			$dompdf->load_html($content);
 			if( isset($_dompdf_warnings) ){
@@ -270,7 +270,7 @@ class catpdf_pages {
         $post  = $param_arr;
         
 		$dompdf->set_paper((isset($_GET['paper_size'])) ? urldecode($_GET['paper_size']) : 'letter', (isset($_GET['paper_orientation'])) ? urldecode($_GET['paper_orientation']) : 'portrait');
-		$content     = $catpdf_output->custruct_template();
+		$content     = $catpdf_output->construct_template();
 		
         $dompdf->load_html($content);
         
@@ -288,7 +288,7 @@ class catpdf_pages {
 
         $single      = $post[0];
         $filename    = preg_replace('/[^a-z0-9]/i', '_', $single->post_title);
-        $content     = $catpdf_output->custruct_template('single');
+        $content     = $catpdf_output->construct_template('single');
 		//var_dump($content);die();
 		$dompdf = new DOMPDF();
 		$dompdf->set_paper('letter', 'portrait');
