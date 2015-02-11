@@ -142,7 +142,7 @@ class catpdf_templates {
 		
 		// Construct template loop
 		$pageheadertemplate = '<div id="site_info_block">
-<img src="http://images.wsu.edu/index-images/bg-header.jpg" id="logo" />
+<img src="https://repo.wsu.edu/spine/develop/marks/wsu-signature-horizontal.png" id="logo" /><!--http://repo.wsu.edu/spine/develop/marks/wsu-signature-horizontal.svg--><!--http://images.wsu.edu/index-images/bg-header.jpg-->
 <div id="site_info"><span id="site_info_name">[site_title]</span><br/><span id="site_info_tag">[site_tagline]</span></div>
 </div>
 <div id="site_tag">[date_today]<br/>[site_url link=true]</div>';

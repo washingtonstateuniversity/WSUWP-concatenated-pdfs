@@ -79,6 +79,15 @@ class shortcode {
 					'date','author','author_photo','author_description',
 					'status','featured_image','category','tags','comments_count','version_count'
 				),
+			'pageheader' => array(
+				'site_title','site_tagline','site_url','date_today','title',
+				'from_date','to_date','categories','post_count','page_numbers'
+			),
+			'pagefooter' => array(
+				'site_title','site_tagline','site_url','date_today','title',
+				'from_date','to_date','categories','post_count','page_numbers'
+			),
+			
 				
 		);
 		if (isset( $registered_codes[$template] ) ) return $registered_codes[$template];
@@ -108,6 +117,7 @@ class shortcode {
     public function apply_download_button($atts) {
         $link                  = '';
         $text                  = (isset($atts['text'])) ? $atts['text'] : 'Download';
+		$target                = (isset($atts['target'])) ? $atts['target'] : '_blank';
         $atts['catpdf_post_dl'] = 'true';
         if (count($atts) > 0) {
             foreach ($atts as $key => $att) {
@@ -117,8 +127,12 @@ class shortcode {
         if (isset($atts['text'])) {
             unset($atts['text']);
         }
+        if (isset($atts['target'])) {
+            unset($atts['target']);
+        }		
+
         $dllink = add_query_arg($atts);
-        $link   = sprintf('<a href="%1$s">%2$s</a>', $dllink, $text);
+        $link   = sprintf('<a href="%1$s" target="%3$s" title="%2$s">%2$s</a>', $dllink, $text, $target);
         return $link;
     }
 	

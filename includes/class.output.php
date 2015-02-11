@@ -84,12 +84,12 @@ class catpdf_output {
 		$i=1;
 		$c=count($template_sections);
 		foreach($template_sections as $code=>$section){
-			if($code=="content"){
+			
 				$sectionhtml=call_user_func(array($catpdf_templates, 'get_section_'.$code));
 				//var_dump($sectionhtml);
 				$html.= ($sectionhtml?$sectionhtml:"").($i<$c?"<i class='page-break'></i>":"");
 				$i++;
-			}
+
 		}
 		//"<i class='page-break'></i>"
 
@@ -185,7 +185,7 @@ class catpdf_output {
 		/*@page{}*/
 		#head_area{ left:'.$pageleftMargin.$unit.'; top:'.$topMargin.$unit.'; height:'.$headHeight.$unit.'; /*width:'.$textBoxingWidth.$unit.';*/ }
 		#head_area .wrap{ height:'.$headHeight.$unit.';}
-		#foot_area{ left:'.$pageleftMargin.$unit.'; bottom:'.$bottomMargin.$unit.'; height:'.$footHeight.$unit.'; width:'.$textBoxingWidth.$unit.'; }
+		#foot_area{ left:'.$pageleftMargin.$unit.'; bottom:'.$bottomMargin.$unit.'; height:'.$footHeight.$unit.'; /*width:'.$textBoxingWidth.$unit.';*/ }
 		#foot_area .wrap{ height:'.$footHeight.$unit.'; }
 		body {padding:'.$page_padding.';}/*note that the body is used as our sudo "page" it is our saffal base*/
 		
@@ -263,8 +263,8 @@ class catpdf_output {
 		$arr = array_keys(shortcode::get_template_shortcodes(!empty($tmp_type)?$tmp_type:'body')); //? was ? isset($items[$tmp_type])?$items[$tmp_type]:$items['body'] into get_template_shortcodes
 		$tmp_sec = "template_{$tmp_type}";
 		$tmp = $template->$tmp_sec;
-		//var_dump($items);
-//var_dump($arr);die();
+		//var_dump($tmp_type);
+		//var_dump($arr);
         preg_match_all('/' . $pattern . '/s', $tmp, $matches);
         $html = $tmp;
         foreach ($arr as $code) {
@@ -274,7 +274,8 @@ class catpdf_output {
                 }
             }
         }
-		
+		//var_dump($html);
+		//if(!in_array($tmp_type,array('pageheader','pagefooter')))die();
         return $html;
     }
 

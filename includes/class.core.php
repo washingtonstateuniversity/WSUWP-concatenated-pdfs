@@ -217,7 +217,7 @@ class catpdf_core {
 		<hr/>
 		<p> Pre view the PDF</p>
 		<p class="description"><b>NOTE:</b> The preview is for this page only, meaning that there will be no cover, index, or anything of that nature.  Only the content as if it was in the middle of the docment.</p>
-		<?=$shortcode->apply_download_button(array('text'=>'Preview Download Link','catpdf_dl'=>$post->ID))?>
+		<?=$shortcode->apply_download_button(array('text'=>'Preview Download Link','catpdf_dl'=>$post->ID,'target'=>'_blank'))?>
 		<?php
 	}
 	/**

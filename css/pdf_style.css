@@ -19,14 +19,14 @@ body{}
 #page_numbers #pn_text{}
 #page_numbers #pn_number{}
 */
-#head_area{position:fixed;}
+#head_area{position:fixed; overflow:hidden;}
 #head_area .wrap{position:relative; width:100%; border-bottom:2px solid #6A6A6A;}
 
 			/*#head_area{ left:15px;top:15px;height:50px; width:-30px; }
 			#head_area .wrap{ height:50px;}*/
 
 
-#foot_area{position:fixed;}
+#foot_area{position:fixed;overflow:hidden;}
 #foot_area .wrap{position:relative; width:100%;border-top:2px solid #6A6A6A;}
 /*fun note on the head/foot warp is that doing height=100% goes the whole page 
  there is room to play just note that there are defaults*/
@@ -47,7 +47,7 @@ i.page-break {page-break-after: always;border: 0;}
 
 .content-wrapper {
 	padding: 20px;
-	background: #FFF;
+	background: #FFF;overflow:hidden;
 	/*border: 1px solid #c5c5c5;
 	margin: 15px;*/
 }
@@ -103,6 +103,6 @@ h1.CoverTitle {
 #site_info{margin-left:5px;display:inline-block;}
 #site_info_name{font-size:20px; font-weight:bold;}
 #site_info_tag{font-size:12px; font-style:italic;}
-#logo{float:left;height:50px;}
+#logo{float:left;max-height:50px;max-width:25%;height:auto;}
 #site_tag{position:absolute; top:12.5px; right:12.5px;text-align: right;width:auto;font-size:12px;}
 
