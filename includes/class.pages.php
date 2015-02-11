@@ -214,6 +214,7 @@ class catpdf_pages {
 		global $catpdf_templates,$catpdf_data;
         // Set options
         $data['options']   = $catpdf_data->get_options();
+		$data['dompdf_options'] = $catpdf_data->get_dompdf_options();
         // Get templates
         $data['templates'] = $catpdf_templates->get_template();
         // Display option form
