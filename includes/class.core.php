@@ -21,12 +21,19 @@ class catpdf_core {
     function __construct() {
 		global $dompdf,$shortcode,$catpdf_pages,$catpdf_templates,$catpdf_output,$catpdf_data,$_params;
 		$_params = $_POST;
-		// Include dompdf //make sure to get back to pulling this in to the settings
-		include(CATPDF_PATH . '/includes/dompdf_config.php');
-		$dompdf = new DOMPDF();
 
-		include(CATPDF_PATH . '/includes/PDFMerger/PDFMerger.php');
-		$PDFMerger = new PDFMerger;
+		// Include data
+		include(CATPDF_PATH . '/includes/class.data.php');
+		$catpdf_data = new catpdf_data();
+				
+		if ( (!is_admin() && $catpdf_data->get_options() == 'on') || is_admin() ) {
+			// Include dompdf //make sure to get back to pulling this in to the settings
+			include(CATPDF_PATH . '/includes/dompdf_config.php');
+			$dompdf = new DOMPDF();
+	
+			include(CATPDF_PATH . '/includes/PDFMerger/PDFMerger.php');
+			$PDFMerger = new PDFMerger;
+		}
 		
 		
 		// Include shortcode class
@@ -48,23 +55,11 @@ class catpdf_core {
 		include(CATPDF_PATH . '/includes/class.output.php');
 		$catpdf_output = new catpdf_output();
 
-		// Include data
-		include(CATPDF_PATH . '/includes/class.data.php');
-		$catpdf_data = new catpdf_data();
 
-
-		
-
-
-		
-        if (!is_admin()) {
-			
-            if ($catpdf_data->get_options() == 'on') {
-				
-                // Initialize public functions
-                add_filter('the_content', array( $this, 'apply_post_download_button' ));
-            }
-        }else{
+        if (!is_admin() && $catpdf_data->get_options() == 'on') {
+             // Initialize public functions
+             add_filter('the_content', array( $this, 'apply_post_download_button' ));
+        }elseif(is_admin()){
 			add_action( 'add_meta_boxes', array( $this, 'add_pdf_meta_boxes' ) );	
 			add_action( 'save_post', array( $this, 'save' ) );
 		}

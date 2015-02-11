@@ -1,4 +1,8 @@
 <?php
+
+$options = $catpdf_data->get_dompdf_options();
+//var_dump($options);die();
+
 PHP_VERSION >= 5.0 or die("DOMPDF requires PHP 5.0+");
 define("DOMPDF_DIR", str_replace(DIRECTORY_SEPARATOR, '/', realpath(dirname(__FILE__))).'/dompdf/');
 define("DOMPDF_INC_DIR", DOMPDF_DIR . "/include");
@@ -21,22 +25,24 @@ def("DOMPDF_FONT_DIR", DOMPDF_DIR . "/lib/fonts/");
 def("DOMPDF_FONT_CACHE", DOMPDF_FONT_DIR);
 def("DOMPDF_TEMP_DIR", DOMPDF_DIR.'/tmp/');
 def("DOMPDF_CHROOT", realpath(DOMPDF_DIR));
-def("DOMPDF_UNICODE_ENABLED", true);
-def("DOMPDF_ENABLE_FONTSUBSETTING", false);
-def("DOMPDF_PDF_BACKEND", "CPDF");
-def("DOMPDF_DEFAULT_MEDIA_TYPE", "screen");
-def("DOMPDF_DEFAULT_PAPER_SIZE", "letter");
-def("DOMPDF_DEFAULT_FONT", "serif");
-def("DOMPDF_DPI", 96);
-def("DOMPDF_ENABLE_PHP", true);
-def("DOMPDF_ENABLE_JAVASCRIPT", true);
-def("DOMPDF_ENABLE_REMOTE", true);
 def("DOMPDF_LOG_OUTPUT_FILE", DOMPDF_DIR. "/logs/log.htm");
-def("DOMPDF_FONT_HEIGHT_RATIO", 1.1);
-def("DOMPDF_ENABLE_CSS_FLOAT", false);
-def("DOMPDF_ENABLE_AUTOLOAD", true);
-def("DOMPDF_AUTOLOAD_PREPEND", false);
-def("DOMPDF_ENABLE_HTML5PARSER", true);
+
+def("DOMPDF_UNICODE_ENABLED", $options["DOMPDF_UNICODE_ENABLED"]);
+def("DOMPDF_ENABLE_FONTSUBSETTING", $options["DOMPDF_ENABLE_FONTSUBSETTING"]);
+def("DOMPDF_PDF_BACKEND", $options["DOMPDF_PDF_BACKEND"]);
+def("DOMPDF_DEFAULT_MEDIA_TYPE", $options["DOMPDF_DEFAULT_MEDIA_TYPE"]);
+def("DOMPDF_DEFAULT_PAPER_SIZE", $options["DOMPDF_DEFAULT_PAPER_SIZE"]);
+def("DOMPDF_DEFAULT_FONT", $options["DOMPDF_DEFAULT_FONT"]);
+def("DOMPDF_DPI", $options["DOMPDF_DPI"]);
+def("DOMPDF_ENABLE_PHP", $options["DOMPDF_ENABLE_PHP"]);
+def("DOMPDF_ENABLE_JAVASCRIPT", $options["DOMPDF_ENABLE_JAVASCRIPT"]);
+def("DOMPDF_ENABLE_REMOTE", $options["DOMPDF_ENABLE_REMOTE"]);
+def("DOMPDF_FONT_HEIGHT_RATIO", $options["DOMPDF_FONT_HEIGHT_RATIO"]);
+def("DOMPDF_ENABLE_CSS_FLOAT", $options["DOMPDF_ENABLE_CSS_FLOAT"]);
+def("DOMPDF_ENABLE_AUTOLOAD", $options["DOMPDF_ENABLE_AUTOLOAD"]);
+def("DOMPDF_AUTOLOAD_PREPEND", $options["DOMPDF_AUTOLOAD_PREPEND"]);
+def("DOMPDF_ENABLE_HTML5PARSER", $options["DOMPDF_ENABLE_HTML5PARSER"]);
+
 require_once(DOMPDF_LIB_DIR . "/html5lib/Parser.php");
 if (DOMPDF_ENABLE_AUTOLOAD) {
     require_once(DOMPDF_INC_DIR . "/autoload.inc.php");
@@ -45,17 +51,20 @@ if (DOMPDF_ENABLE_AUTOLOAD) {
 mb_internal_encoding('UTF-8');
 global $_dompdf_warnings;
 $_dompdf_warnings = array();
+
 global $_dompdf_show_warnings;
-$_dompdf_show_warnings = true;
+$_dompdf_show_warnings = $options["_dompdf_show_warnings"];
+
 global $_dompdf_debug;
-$_dompdf_debug = true;
+$_dompdf_debug = $options["_dompdf_debug"];
+
 global $_DOMPDF_DEBUG_TYPES;
 $_DOMPDF_DEBUG_TYPES = array();
-def('DEBUGPNG', true);
-def('DEBUGKEEPTEMP', true);
-def('DEBUGCSS', true);
-def('DEBUG_LAYOUT', false);
-def('DEBUG_LAYOUT_LINES', true);
-def('DEBUG_LAYOUT_BLOCKS', true);
-def('DEBUG_LAYOUT_INLINE', true);
-def('DEBUG_LAYOUT_PADDINGBOX', true);
+def('DEBUGPNG', $options["DEBUGPNG"]);
+def('DEBUGKEEPTEMP', $options["DEBUGKEEPTEMP"]);
+def('DEBUGCSS', $options["DEBUGCSS"]);
+def('DEBUG_LAYOUT', $options["DEBUG_LAYOUT"]);
+def('DEBUG_LAYOUT_LINES', $options["DEBUG_LAYOUT_LINES"]);
+def('DEBUG_LAYOUT_BLOCKS', $options["DEBUG_LAYOUT_BLOCKS"]);
+def('DEBUG_LAYOUT_INLINE', $options["DEBUG_LAYOUT_INLINE"]);
+def('DEBUG_LAYOUT_PADDINGBOX', $options["DEBUG_LAYOUT_PADDINGBOX"]);
