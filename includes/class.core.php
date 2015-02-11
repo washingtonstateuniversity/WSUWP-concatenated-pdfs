@@ -22,7 +22,7 @@ class catpdf_core {
 		global $dompdf,$shortcode,$catpdf_pages,$catpdf_templates,$catpdf_output,$catpdf_data,$_params;
 		$_params = $_POST;
 		// Include dompdf //make sure to get back to pulling this in to the settings
-		include(CATPDF_PATH . '/includes/dompdf/dompdf_config.inc.php');
+		include(CATPDF_PATH . '/includes/dompdf_config.php');
 		$dompdf = new DOMPDF();
 
 		include(CATPDF_PATH . '/includes/PDFMerger/PDFMerger.php');

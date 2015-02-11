@@ -1,6 +1,6 @@
 <?php
 PHP_VERSION >= 5.0 or die("DOMPDF requires PHP 5.0+");
-define("DOMPDF_DIR", str_replace(DIRECTORY_SEPARATOR, '/', realpath(dirname(__FILE__))));
+define("DOMPDF_DIR", str_replace(DIRECTORY_SEPARATOR, '/', realpath(dirname(__FILE__))).'/dompdf/');
 define("DOMPDF_INC_DIR", DOMPDF_DIR . "/include");
 define("DOMPDF_LIB_DIR", DOMPDF_DIR . "/lib");
 if (!isset($_SERVER['DOCUMENT_ROOT'])) {
