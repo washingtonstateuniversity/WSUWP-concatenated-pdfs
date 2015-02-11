@@ -103,6 +103,6 @@ h1.CoverTitle {
 #site_info{margin-left:5px;display:inline-block;}
 #site_info_name{font-size:20px; font-weight:bold;}
 #site_info_tag{font-size:12px; font-style:italic;}
-#logo{float:left;max-height:50px;max-width:25%;height:auto;}
+#logo{float:left;height:50px;width:180px;}
 #site_tag{position:absolute; top:12.5px; right:12.5px;text-align: right;width:auto;font-size:12px;}
 
