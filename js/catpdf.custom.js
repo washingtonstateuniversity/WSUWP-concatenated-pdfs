@@ -58,6 +58,15 @@ jQuery(document).ready(function() {
 		}
 	});
 	
+	jQuery("#postdl").on("click",function(){
+		var self = jQuery(this);
+		var block = jQuery("#single_post_generation");
+		if( self.is(":checked") ){
+			block.slideDown(500,"easeOutQuint",function(){ block.addClass("active"); });
+		}else{
+			block.slideUp(250,"easeOutQuint",function(){ block.removeClass("active"); });
+		}
+	});
 	
 	
 	

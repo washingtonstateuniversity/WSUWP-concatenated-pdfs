@@ -11,7 +11,7 @@
           <label>
             <?php _e( "Enable single post download"); ?>
           </label>
-          <input type="checkbox" name="postdl" id="postdl" <?php echo ( ( isset( $options['postdl'] ) && $options['postdl'] == 'on' ) ? 'checked="checked"' : '' );?> >
+          <input type="checkbox" name="postdl" id="postdl" value="1" <?=checked($options['postdl'],1)?>/>
         </div>
         <div class="note block">
 				<div class="note_block">
@@ -27,7 +27,7 @@
 		  <label>
 			<?php _e( "Export PDF Title" ); ?>
 		  </label>
-		  <input type="text" name="title" id="title" value="<?php echo ( ( isset( $options['title'] ) ) ? $options['title'] : '' );?>">
+		  <input type="text" name="title" id="title" value="<?=( ( isset( $options['title'] ) ) ? $options['title'] : '' )?>">
 		</div>
 		<div class="note block">
 				<div class="note_block">
@@ -43,9 +43,9 @@
 			  <select name="dltemplate">
 				<option <?php selected('def', $options['dltemplate']); ?> value="def"> <?php _e('Default');?> </option>
 				<?php if( count( $templates ) ) : ?>
-				<?php foreach( $templates as $template ) :?>
-				<option <?php selected($template->template_id, $options['dltemplate']); ?> value="<?php echo $template->template_id;?>"><?php echo $template->template_name;?></option>
-				<?php endforeach; ?>
+					<?php foreach( $templates as $template ) :?>
+					<option <?php selected($template->template_id, $options['dltemplate']); ?> value="<?=$template->template_id?>"><?=$template->template_name?></option>
+					<?php endforeach; ?>
 				<?php endif; ?>
 			  </select>
 			</div>
@@ -59,7 +59,7 @@
 		  <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 <div class="field">
 			  <label><?php echo _e( "Use theme's CSS?" ); ?> </label>
-			  <input type="checkbox" name="enablecss" id="enablecss" <?php echo ( ( isset( $options['enablecss'] ) && $options['enablecss'] == 'on' ) ? 'checked="checked"' : '' );?> >
+			  <input type="checkbox" name="enablecss" id="enablecss"  value="1" <?=checked($options['enablecss'],1)?>/>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -84,7 +84,7 @@
 		</div>  
 	  
 	  
-	  
+	  <div id="single_post_generation" class="<?=($options['postdl']==1?"active":"")?>">
 		<h3>Single post generation defaults</h3>
 				<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 <div class="field">
@@ -146,7 +146,7 @@
 				</div>
 			</div>
 		</div>  
-
+	</div>
 	  
 	  
 	  

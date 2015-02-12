@@ -173,8 +173,8 @@
 
 .catform{}
 
-
-
+#single_post_generation{display:none;}
+#single_post_generation.active{display:block;}
 
 .note.block{}
 .field-wrap .dashicons.dashicons-editor-help{ float:right;}

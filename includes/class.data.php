@@ -42,10 +42,10 @@ class catpdf_data {
 
 	public function get_options(){
 		$plugin_option = get_option('catpdf_options',array(
-            'enablecss' => 'off',
+            'enablecss' => 1,
             'title' => 'Report %mm-%yyyy',
-            'dltemplate' => 'def',
-            'postdl' => 'on'
+            'dltemplate' => 'default',
+            'postdl' => 1
         ));	
 		return $plugin_option;
 	}

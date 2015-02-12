@@ -55,13 +55,15 @@ class catpdf_core {
 		include(CATPDF_PATH . '/includes/class.output.php');
 		$catpdf_output = new catpdf_output();
 
-
-        if (!is_admin() && $catpdf_data->get_options() == 'on') {
-             // Initialize public functions
-             add_filter('the_content', array( $this, 'apply_post_download_button' ));
-        }elseif(is_admin()){
-			add_action( 'add_meta_boxes', array( $this, 'add_pdf_meta_boxes' ) );	
-			add_action( 'save_post', array( $this, 'save' ) );
+		$options = $catpdf_data->get_options();
+		if($options["postdl"] == 1){
+			if (!is_admin()) {
+				 // Initialize public functions
+				 add_filter('the_content', array( $this, 'apply_post_download_button' ));
+			}else{
+				add_action( 'add_meta_boxes', array( $this, 'add_pdf_meta_boxes' ) );	
+				add_action( 'save_post', array( $this, 'save' ) );
+			}
 		}
        
     }
