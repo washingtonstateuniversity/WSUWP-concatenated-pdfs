@@ -51,13 +51,15 @@ class catpdf_data {
 								'enablecss' => 1,
 								'title' => 'Report %mm-%yyyy',
 								'dltemplate' => 'default',
-								'postdl' => 1
+								'postdl' => 1,
+								'customcss' => ''
 							),
 				'single' => array(
 								'enablecss' => 1,
 								'title' => 'Report %mm-%yyyy',
 								'dltemplate' => 'default',
-								'postdl' => 1
+								'postdl' => 1,
+								'customcss' => ''
 							),
 			);
 		}

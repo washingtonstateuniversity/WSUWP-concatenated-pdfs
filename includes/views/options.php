@@ -41,7 +41,7 @@
 				<?php _e( "Post download template" ); ?>
 			  </label>
 			  <select name="concat[dltemplate]">
-				<option <?php selected('def', $options['concat']['dltemplate']); ?> value="def"> <?php _e('Default');?> </option>
+				<option <?php selected('default', $options['concat']['dltemplate']); ?> value="default"> <?php _e('Default');?> </option>
 				<?php if( count( $templates ) ) : ?>
 					<?php foreach( $templates as $template ) :?>
 					<option <?php selected($template->template_id, $options['concat']['dltemplate']); ?> value="<?=$template->template_id?>"><?=$template->template_name?></option>
@@ -104,8 +104,8 @@
 			  <label>
 				<?php _e( "Post download template" ); ?>
 			  </label>
-			  <select name="single[dltemplate]]">
-				<option <?php selected('def', $options['dltemplate']); ?> value="def"> <?php _e('Default');?> </option>
+			  <select name="single[dltemplate]">
+				<option <?php selected('default', $options['single']['dltemplate']); ?> value="default"> <?php _e('Default');?> </option>
 				<?php if( count( $templates ) ) : ?>
 				<?php foreach( $templates as $template ) :?>
 				<option <?php selected($template->template_id, $options['single']['dltemplate']); ?> value="<?php echo $template->template_id;?>"><?php echo $template->template_name;?></option>
