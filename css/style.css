@@ -176,4 +176,6 @@
 
 
 
-#DOMPDF_DEFAULT_PAPER_SIZE span{ font-size:.75em; }
+.note.block{}
+.field-wrap .dashicons.dashicons-editor-help{ float:right;}
+.note.block .note_block{clear:right;display:none;}

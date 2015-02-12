@@ -47,6 +47,16 @@ jQuery(document).ready(function() {
 		trigger_usage(tar);
 	});
 	
+	jQuery(".field-wrap .help").on('click',function(e){
+		e.preventDefault();
+		var self = jQuery(this);
+		var block = self.closest('.field-wrap').find('.note_block');
+		if(block.is(".active")){
+			block.slideUp(250,"easeOutQuint",function(){ block.removeClass("active"); });	
+		}else{
+			block.slideDown(500,"easeOutQuint",function(){ block.addClass("active"); });	
+		}
+	});
 	
 	
 	

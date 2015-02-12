@@ -39,11 +39,9 @@ class catpdf_pages {
 		global $wp_scripts;
         // Enque style and script		
         wp_enqueue_script('jquery-ui-core');
-        wp_enqueue_script('jquery-ui-datepicker', CATPDF_URL.'js/ui/jquery.ui.datepicker.js', array('jquery'), '1.9.0', 'all');
-		wp_enqueue_style('jquery-ui-datepicker', CATPDF_URL.'css/ui/jquery.ui.all.css', false, '1.9.0', 'all');
-		
-        wp_enqueue_script('jquery-ui-tabs', CATPDF_URL.'js/ui/jquery.ui.tabs.js', array('jquery'), '1.9.0', 'all');		
-		wp_enqueue_style('jquery-ui-tabs', CATPDF_URL.'css/ui/jquery.ui.all.css', false, '1.9.0', 'all');
+		wp_enqueue_script('jquery-effects-core'); 
+        wp_enqueue_script('jquery-ui-datepicker');
+        wp_enqueue_script('jquery-ui-tabs');
 		// get registered script object for jquery-ui
 		$ui = $wp_scripts->query('jquery-ui-core');
 	 

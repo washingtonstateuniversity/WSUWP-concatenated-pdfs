@@ -78,7 +78,7 @@
 	  
 	  <h3>PDF generation defaults</h3>
 	  
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Use Unicode fonts" )?></label>
 				<input type="checkbox" name="DOMPDF_UNICODE_ENABLED" id="DOMPDF_UNICODE_ENABLED" <?=checked($dompdf_options['DOMPDF_UNICODE_ENABLED'],true)?>>
@@ -89,7 +89,7 @@
 				</div>
 			</div>
 		</div>  
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable font subsetting" )?></label>
 				<input type="checkbox" name="DOMPDF_ENABLE_FONTSUBSETTING" id="DOMPDF_ENABLE_FONTSUBSETTING" <?=checked($dompdf_options['DOMPDF_ENABLE_FONTSUBSETTING'],true)?>>
@@ -100,7 +100,7 @@
 				</div>
 			</div>
 		</div>  
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Media view rendered into pdf" )?> </label>
 				<select name="DOMPDF_DEFAULT_MEDIA_TYPE" id="DOMPDF_DEFAULT_MEDIA_TYPE" >
@@ -111,7 +111,7 @@
 			</div>
 			<div class="note block"><div class="note_block"><?=_e("Note, even though the generated pdf file is intended for print output, the desired content might be different (e.g. screen or projection view of html file).  Therefore allow specification of content here.")?>)</div></div>
 		</div>
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Default paper size." )?> </label>
 				<select name="DOMPDF_DEFAULT_PAPER_SIZE" id="DOMPDF_DEFAULT_PAPER_SIZE" >
@@ -123,14 +123,14 @@
 			</div>
 			<div class="note block"><div class="note_block"><?=_e("Dimensions of paper sizes in points.  The format is top left point coordinate to bottom right point coordinate (TLy,TLx,BRy,BRx). North America standard is 'letter'; other countries generally 'a4'")?></div></div>
 		</div>	  
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Default font family" )?> </label>
 				<input type="text" name="DOMPDF_DEFAULT_FONT" id="DOMPDF_DEFAULT_FONT" value="<?=$dompdf_options['DOMPDF_DEFAULT_FONT']?>">
 			</div>
 			<div class="note block"><div class="note_block"><?=_e("The default font family")?></div></div>
 		</div>	  	  
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Image DPI settingv" )?> </label>
 				<input type="text" name="DOMPDF_DPI" id="DOMPDF_DPI" value="<?=$dompdf_options['DOMPDF_DPI']?>">
@@ -155,7 +155,7 @@ Linux Firefox:
 				</div>
 			</div>
 		</div>
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Font Height Ratio" )?> </label>
 				<input type="text" name="DOMPDF_FONT_HEIGHT_RATIO" id="DOMPDF_FONT_HEIGHT_RATIO" value="<?=$dompdf_options['DOMPDF_FONT_HEIGHT_RATIO']?>">
@@ -167,7 +167,7 @@ Linux Firefox:
 			</div>
 		</div>
 				
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable inline PHP" )?></label>
 				<input type="checkbox" name="DOMPDF_ENABLE_PHP" id="DOMPDF_ENABLE_PHP" <?=checked($dompdf_options['DOMPDF_ENABLE_PHP'],true)?>>
@@ -178,7 +178,7 @@ Linux Firefox:
 				</div>
 			</div>
 		</div> 
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable inline Javascript" )?></label>
 				<input type="checkbox" name="DOMPDF_ENABLE_JAVASCRIPT" id="DOMPDF_ENABLE_JAVASCRIPT" <?=checked($dompdf_options['DOMPDF_ENABLE_JAVASCRIPT'],true)?>>
@@ -189,7 +189,7 @@ Linux Firefox:
 				</div>
 			</div>
 		</div> 
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable remote file access" )?></label>
 				<input type="checkbox" name="DOMPDF_ENABLE_REMOTE" id="DOMPDF_ENABLE_REMOTE" <?=checked($dompdf_options['DOMPDF_ENABLE_REMOTE'],true)?>>
@@ -203,7 +203,7 @@ Linux Firefox:
 		</div> 
 
 
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable CSS float" )?></label>
 				<input type="checkbox" name="DOMPDF_ENABLE_CSS_FLOAT" id="DOMPDF_ENABLE_CSS_FLOAT" <?=checked($dompdf_options['DOMPDF_ENABLE_CSS_FLOAT'],true)?>>
@@ -215,7 +215,7 @@ Linux Firefox:
 			</div>
 		</div> 
 
-		<div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Use HTML5 Lib parser" )?></label>
 				<input type="checkbox" name="DOMPDF_ENABLE_HTML5PARSER" id="DOMPDF_ENABLE_HTML5PARSER" <?=checked($dompdf_options['DOMPDF_ENABLE_HTML5PARSER'],true)?>>
