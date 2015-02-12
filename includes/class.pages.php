@@ -215,6 +215,8 @@ class catpdf_pages {
         // Set options
         $data['options']   = $catpdf_data->get_options();
 		$data['dompdf_options'] = $catpdf_data->get_dompdf_options();
+		$data['sizes']   = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
+		$data['media_types'] = array("screen","tty","tv","projection","handheld","print","braille","aural","speech","all");
         // Get templates
         $data['templates'] = $catpdf_templates->get_template();
         // Display option form
