@@ -5,71 +5,148 @@
   <?php if( isset($message) && $message!='' ) echo $message; ?>
   <div id="form-wrap">
     <form id="catpdf_form" method="post">
-      <div class="field-wrap">
-        <div class="field">
-          <label><?php echo _e( "Use theme's CSS?" ); ?> </label>
-          <input type="checkbox" name="enablecss" id="enablecss" <?php echo ( ( isset( $options['enablecss'] ) && $options['enablecss'] == 'on' ) ? 'checked="checked"' : '' );?> >
-        </div>
-        <div class="note"> <span>(
-          <?php _e("Tick this checkbox if you want to enable your theme's main CSS in the PDF."); ?>
-          )</span> </div>
-      </div>
-      <div class="field-wrap">
-        <div class="field">
-          <label>
-            <?php _e( "Export PDF Title" ); ?>
-          </label>
-          <input type="text" name="title" id="title" value="<?php echo ( ( isset( $options['title'] ) ) ? $options['title'] : '' );?>">
-        </div>
-        <div class="note"> <span>(
-          <?php _e("Put % plus date format(dd,mm,yyyy) to display export date. Ex: Report %dd-%mm-%yyyy.Put keyword '%template' to display the template name. EX: Repost %template."); ?>
-          )</span> </div>
-      </div>
-      <div class="field-wrap">
-        <div class="field">
+
+      <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+<div class="field">
           <label>
             <?php _e( "Enable single post download"); ?>
           </label>
           <input type="checkbox" name="postdl" id="postdl" <?php echo ( ( isset( $options['postdl'] ) && $options['postdl'] == 'on' ) ? 'checked="checked"' : '' );?> >
         </div>
-        <div class="note"> <span>(
-          <?php _e("Tick this checkbox if you want to enable PDF download on each post."); ?>
-          )</span> </div>
-      </div>
-      <div class="field-wrap">
-        <div class="field">
-          <label>
-            <?php _e( "Post download template" ); ?>
-          </label>
-          <select name="dltemplate">
-            <option <?php selected('def', $options['dltemplate']); ?> value="def"> <?php _e('Default');?> </option>
-            <?php if( count( $templates ) ) : ?>
-            <?php foreach( $templates as $template ) :?>
-            <option <?php selected($template->template_id, $options['dltemplate']); ?> value="<?php echo $template->template_id;?>"><?php echo $template->template_name;?></option>
-            <?php endforeach; ?>
-            <?php endif; ?>
-          </select>
-        </div>
-        <div class="note"> <span>(
-          <?php _e("Select template for single post download. The download will only take the loop part from the selected template."); ?>
-          )</span> </div>
-      </div>
-      <div class="field-wrap">
-        <div class="field">
-          <label>
-            <?php _e( "Custom style" ); ?>
-          </label>
-          <textarea name="customcss" id="customcss"><?php echo ( ( isset( $options['customcss'] ) ) ? $options['customcss'] : '' );?></textarea>
-        </div>
-        <div class="note"> <span>(
-          <?php _e("Apply your custom styles here. Do not include style tag( &lt;style&gt; , &lt;/style&gt; )."); ?>
-          )</span> </div>
-      </div>
+        <div class="note block">
+				<div class="note_block">
+					<p><?php _e("Tick this checkbox if you want to enable PDF download on each post.")?></p>
+				</div>
+			</div>
+		</div>  
+	  
+	  
+		<h3>Post concatenation generation defaults</h3>
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+<div class="field">
+		  <label>
+			<?php _e( "Export PDF Title" ); ?>
+		  </label>
+		  <input type="text" name="title" id="title" value="<?php echo ( ( isset( $options['title'] ) ) ? $options['title'] : '' );?>">
+		</div>
+		<div class="note block">
+				<div class="note_block">
+					<p><?php _e("Put % plus date format(dd,mm,yyyy) to display export date. Ex: Report %dd-%mm-%yyyy.Put keyword '%template' to display the template name. EX: Repost %template.")?></p>
+				</div>
+			</div>
+		</div>  
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+<div class="field">
+			  <label>
+				<?php _e( "Post download template" ); ?>
+			  </label>
+			  <select name="dltemplate">
+				<option <?php selected('def', $options['dltemplate']); ?> value="def"> <?php _e('Default');?> </option>
+				<?php if( count( $templates ) ) : ?>
+				<?php foreach( $templates as $template ) :?>
+				<option <?php selected($template->template_id, $options['dltemplate']); ?> value="<?php echo $template->template_id;?>"><?php echo $template->template_name;?></option>
+				<?php endforeach; ?>
+				<?php endif; ?>
+			  </select>
+			</div>
+			<div class="note block">
+				<div class="note_block">
+					<p><?php _e("Select template for single post download. The download will only take the loop part from the selected template.")?></p>
+				</div>
+			</div>
+		</div>  
+		
+		  <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+<div class="field">
+			  <label><?php echo _e( "Use theme's CSS?" ); ?> </label>
+			  <input type="checkbox" name="enablecss" id="enablecss" <?php echo ( ( isset( $options['enablecss'] ) && $options['enablecss'] == 'on' ) ? 'checked="checked"' : '' );?> >
+			</div>
+			<div class="note block">
+				<div class="note_block">
+					<p><?php _e("Tick this checkbox if you want to enable your theme's main CSS in the PDF.")?></p>
+				</div>
+			</div>
+		</div>  
+		
+		
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+<div class="field">
+			  <label>
+				<?php _e( "Custom style" ); ?>
+			  </label>
+			  <textarea name="customcss" id="customcss"><?php echo ( ( isset( $options['customcss'] ) ) ? $options['customcss'] : '' );?></textarea>
+			</div>
+			<div class="note block">
+				<div class="note_block">
+					<p><?php _e("Apply your custom styles here. Do not include style tag( &lt;style&gt; , &lt;/style&gt; ).")?></p>
+				</div>
+			</div>
+		</div>  
 	  
 	  
 	  
-	  
-	  
+		<h3>Single post generation defaults</h3>
+				<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+<div class="field">
+		  <label>
+			<?php _e( "Export PDF Title" ); ?>
+		  </label>
+		  <input type="text" name="title" id="title" value="<?php echo ( ( isset( $options['title'] ) ) ? $options['title'] : '' );?>">
+		</div>
+		<div class="note block">
+				<div class="note_block">
+					<p><?php _e("Put % plus date format(dd,mm,yyyy) to display export date. Ex: Report %dd-%mm-%yyyy.Put keyword '%template' to display the template name. EX: Repost %template.")?></p>
+				</div>
+			</div>
+		</div>  
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+<div class="field">
+			  <label>
+				<?php _e( "Post download template" ); ?>
+			  </label>
+			  <select name="dltemplate">
+				<option <?php selected('def', $options['dltemplate']); ?> value="def"> <?php _e('Default');?> </option>
+				<?php if( count( $templates ) ) : ?>
+				<?php foreach( $templates as $template ) :?>
+				<option <?php selected($template->template_id, $options['dltemplate']); ?> value="<?php echo $template->template_id;?>"><?php echo $template->template_name;?></option>
+				<?php endforeach; ?>
+				<?php endif; ?>
+			  </select>
+			</div>
+			<div class="note block">
+				<div class="note_block">
+					<p><?php _e("Select template for single post download. The download will only take the loop part from the selected template.")?></p>
+				</div>
+			</div>
+		</div>  
+		
+		  <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+<div class="field">
+			  <label><?php echo _e( "Use theme's CSS?" ); ?> </label>
+			  <input type="checkbox" name="enablecss" id="enablecss" <?php echo ( ( isset( $options['enablecss'] ) && $options['enablecss'] == 'on' ) ? 'checked="checked"' : '' );?> >
+			</div>
+			<div class="note block">
+				<div class="note_block">
+					<p><?php _e("Tick this checkbox if you want to enable your theme's main CSS in the PDF.")?></p>
+				</div>
+			</div>
+		</div>  
+		
+		
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+<div class="field">
+			  <label>
+				<?php _e( "Custom style" ); ?>
+			  </label>
+			  <textarea name="customcss" id="customcss"><?php echo ( ( isset( $options['customcss'] ) ) ? $options['customcss'] : '' );?></textarea>
+			</div>
+			<div class="note block">
+				<div class="note_block">
+					<p><?php _e("Apply your custom styles here. Do not include style tag( &lt;style&gt; , &lt;/style&gt; ).")?></p>
+				</div>
+			</div>
+		</div>  
+
 	  
 	  
 	  
@@ -226,8 +303,12 @@ Linux Firefox:
 				</div>
 			</div>
 		</div>
+		
+		
+		
+		
+		<h3>Debugging</h3>
 		<div class="field-wrap">
-			<h3>Debugging</h3>
 			<div class="field">
 				<label><?=_e( "_dompdf_show_warnings" )?></label>
 				<input type="checkbox" name="_dompdf_show_warnings" id="_dompdf_show_warnings" <?=checked($dompdf_options['_dompdf_show_warnings'],true)?>>
