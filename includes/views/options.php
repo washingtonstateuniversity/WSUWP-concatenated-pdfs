@@ -1,3 +1,8 @@
+<?php 
+//var_dump($options);
+
+?>
+
 <div id="catpdf-wrap" class="wrap">
   <div class="icon32" id="icon-options-general"><br>
   </div>
@@ -158,7 +163,7 @@
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Use Unicode fonts" )?></label>
-				<input type="checkbox" name="DOMPDF_UNICODE_ENABLED" id="DOMPDF_UNICODE_ENABLED" <?=checked($dompdf_options['DOMPDF_UNICODE_ENABLED'],true)?>>
+				<input type="checkbox" name="DOMPDF_UNICODE_ENABLED" id="DOMPDF_UNICODE_ENABLED" value="true" <?=checked($options['DOMPDF_UNICODE_ENABLED'],"true")?>>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -169,7 +174,7 @@
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable font subsetting" )?></label>
-				<input type="checkbox" name="DOMPDF_ENABLE_FONTSUBSETTING" id="DOMPDF_ENABLE_FONTSUBSETTING" <?=checked($dompdf_options['DOMPDF_ENABLE_FONTSUBSETTING'],true)?>>
+				<input type="checkbox" name="DOMPDF_ENABLE_FONTSUBSETTING" id="DOMPDF_ENABLE_FONTSUBSETTING" value="true" <?=checked($options['DOMPDF_ENABLE_FONTSUBSETTING'],"true")?>>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -182,7 +187,7 @@
 				<label><?=_e( "Media view rendered into pdf" )?> </label>
 				<select name="DOMPDF_DEFAULT_MEDIA_TYPE" id="DOMPDF_DEFAULT_MEDIA_TYPE" >
 					<?php foreach($media_types as $name): ?>
-					<option <?=selected($dompdf_options['DOMPDF_DEFAULT_MEDIA_TYPE'],$name)?>><?=$name?></option>
+					<option <?=selected($options['DOMPDF_DEFAULT_MEDIA_TYPE'],$name)?>><?=$name?></option>
 					<?php endforeach;?>
 				</select>
 			</div>
@@ -193,7 +198,7 @@
 				<label><?=_e( "Default paper size." )?> </label>
 				<select name="DOMPDF_DEFAULT_PAPER_SIZE" id="DOMPDF_DEFAULT_PAPER_SIZE" >
 					<?php foreach($sizes as $name=>$spec): ?>
-					<option <?=selected($dompdf_options['DOMPDF_DEFAULT_PAPER_SIZE'],$name)?> value="<?=$name?>"><?=( $name."   - <span>( ".implode(", ",$spec)." )</span>" )?></option>
+					<option <?=selected($options['DOMPDF_DEFAULT_PAPER_SIZE'],$name)?> value="<?=$name?>"><?=( $name."   - <span>( ".implode(", ",$spec)." )</span>" )?></option>
 					<?php endforeach;?>
 				</select>
 
@@ -203,14 +208,14 @@
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Default font family" )?> </label>
-				<input type="text" name="DOMPDF_DEFAULT_FONT" id="DOMPDF_DEFAULT_FONT" value="<?=$dompdf_options['DOMPDF_DEFAULT_FONT']?>">
+				<input type="text" name="DOMPDF_DEFAULT_FONT" id="DOMPDF_DEFAULT_FONT" value="<?=$options['DOMPDF_DEFAULT_FONT']?>">
 			</div>
 			<div class="note block"><div class="note_block"><?=_e("The default font family")?></div></div>
 		</div>	  	  
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Image DPI settingv" )?> </label>
-				<input type="text" name="DOMPDF_DPI" id="DOMPDF_DPI" value="<?=$dompdf_options['DOMPDF_DPI']?>">
+				<input type="text" name="DOMPDF_DPI" id="DOMPDF_DPI" value="<?=$options['DOMPDF_DPI']?>">
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -235,7 +240,7 @@ Linux Firefox:
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Font Height Ratio" )?> </label>
-				<input type="text" name="DOMPDF_FONT_HEIGHT_RATIO" id="DOMPDF_FONT_HEIGHT_RATIO" value="<?=$dompdf_options['DOMPDF_FONT_HEIGHT_RATIO']?>">
+				<input type="text" name="DOMPDF_FONT_HEIGHT_RATIO" id="DOMPDF_FONT_HEIGHT_RATIO" value="<?=$options['DOMPDF_FONT_HEIGHT_RATIO']?>">
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -247,7 +252,7 @@ Linux Firefox:
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable inline PHP" )?></label>
-				<input type="checkbox" name="DOMPDF_ENABLE_PHP" id="DOMPDF_ENABLE_PHP" <?=checked($dompdf_options['DOMPDF_ENABLE_PHP'],true)?>>
+				<input type="checkbox" name="DOMPDF_ENABLE_PHP" id="DOMPDF_ENABLE_PHP" value="true" <?=checked($options['DOMPDF_ENABLE_PHP'],"true")?>>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -258,7 +263,7 @@ Linux Firefox:
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable inline Javascript" )?></label>
-				<input type="checkbox" name="DOMPDF_ENABLE_JAVASCRIPT" id="DOMPDF_ENABLE_JAVASCRIPT" <?=checked($dompdf_options['DOMPDF_ENABLE_JAVASCRIPT'],true)?>>
+				<input type="checkbox" name="DOMPDF_ENABLE_JAVASCRIPT" id="DOMPDF_ENABLE_JAVASCRIPT" value="true" <?=checked($options['DOMPDF_ENABLE_JAVASCRIPT'],"true")?>>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -269,7 +274,7 @@ Linux Firefox:
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable remote file access" )?></label>
-				<input type="checkbox" name="DOMPDF_ENABLE_REMOTE" id="DOMPDF_ENABLE_REMOTE" <?=checked($dompdf_options['DOMPDF_ENABLE_REMOTE'],true)?>>
+				<input type="checkbox" name="DOMPDF_ENABLE_REMOTE" id="DOMPDF_ENABLE_REMOTE" value="true" <?=checked($options['DOMPDF_ENABLE_REMOTE'],"true")?>>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -283,7 +288,7 @@ Linux Firefox:
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Enable CSS float" )?></label>
-				<input type="checkbox" name="DOMPDF_ENABLE_CSS_FLOAT" id="DOMPDF_ENABLE_CSS_FLOAT" <?=checked($dompdf_options['DOMPDF_ENABLE_CSS_FLOAT'],true)?>>
+				<input type="checkbox" name="DOMPDF_ENABLE_CSS_FLOAT" id="DOMPDF_ENABLE_CSS_FLOAT" value="true" <?=checked($options['DOMPDF_ENABLE_CSS_FLOAT'],"true")?>>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -295,7 +300,7 @@ Linux Firefox:
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 			<div class="field">
 				<label><?=_e( "Use HTML5 Lib parser" )?></label>
-				<input type="checkbox" name="DOMPDF_ENABLE_HTML5PARSER" id="DOMPDF_ENABLE_HTML5PARSER" <?=checked($dompdf_options['DOMPDF_ENABLE_HTML5PARSER'],true)?>>
+				<input type="checkbox" name="DOMPDF_ENABLE_HTML5PARSER" id="DOMPDF_ENABLE_HTML5PARSER" value="true" <?=checked($options['DOMPDF_ENABLE_HTML5PARSER'],"true")?>>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -311,43 +316,43 @@ Linux Firefox:
 		<div class="field-wrap">
 			<div class="field">
 				<label><?=_e( "_dompdf_show_warnings" )?></label>
-				<input type="checkbox" name="_dompdf_show_warnings" id="_dompdf_show_warnings" <?=checked($dompdf_options['_dompdf_show_warnings'],true)?>>
+				<input type="checkbox" name="_dompdf_show_warnings" id="_dompdf_show_warnings" value="true" <?=checked($options['_dompdf_show_warnings'],"true")?>>
 			</div>
 			<div class="field">
 				<label><?=_e( "_dompdf_debug" )?></label>
-				<input type="checkbox" name="_dompdf_debug" id="_dompdf_debug" <?=checked($dompdf_options['_dompdf_debug'],true)?>>
+				<input type="checkbox" name="_dompdf_debug" id="_dompdf_debug" value="true" <?=checked($options['_dompdf_debug'],"true")?>>
 			</div>
 			<div class="field">
 				<label><?=_e( "DEBUGPNG" )?></label>
-				<input type="checkbox" name="DEBUGPNG" id="DEBUGPNG" <?=checked($dompdf_options['DEBUGPNG'],true)?>>
+				<input type="checkbox" name="DEBUGPNG" id="DEBUGPNG" value="true" <?=checked($options['DEBUGPNG'],"true")?>>
 			</div>
 			<div class="field">
 				<label><?=_e( "DEBUGKEEPTEMP" )?></label>
-				<input type="checkbox" name="DEBUGKEEPTEMP" id="DEBUGKEEPTEMP" <?=checked($dompdf_options['DEBUGKEEPTEMP'],true)?>>
+				<input type="checkbox" name="DEBUGKEEPTEMP" id="DEBUGKEEPTEMP" value="true" <?=checked($options['DEBUGKEEPTEMP'],"true")?>>
 			</div>
 			<div class="field">
 				<label><?=_e( "DEBUGCSS" )?></label>
-				<input type="checkbox" name="DEBUGCSS" id="DEBUGCSS" <?=checked($dompdf_options['DEBUGCSS'],true)?>>
+				<input type="checkbox" name="DEBUGCSS" id="DEBUGCSS" value="true" <?=checked($options['DEBUGCSS'],"true")?>>
 			</div>
 			<div class="field">
 				<label><?=_e( "DEBUG_LAYOUT" )?></label>
-				<input type="checkbox" name="DEBUG_LAYOUT" id="DEBUG_LAYOUT" <?=checked($dompdf_options['DEBUG_LAYOUT'],true)?>>
+				<input type="checkbox" name="DEBUG_LAYOUT" id="DEBUG_LAYOUT" value="true" <?=checked($options['DEBUG_LAYOUT'],"true")?>>
 			</div>
 			<div class="field">
 				<label><?=_e( "DEBUG_LAYOUT_LINES" )?></label>
-				<input type="checkbox" name="DEBUG_LAYOUT_LINES" id="DEBUG_LAYOUT_LINES" <?=checked($dompdf_options['DEBUG_LAYOUT_LINES'],true)?>>
+				<input type="checkbox" name="DEBUG_LAYOUT_LINES" id="DEBUG_LAYOUT_LINES" value="true" <?=checked($options['DEBUG_LAYOUT_LINES'],"true")?>>
 			</div>
 			<div class="field">
 				<label><?=_e( "DEBUG_LAYOUT_BLOCKS" )?></label>
-				<input type="checkbox" name="DEBUG_LAYOUT_BLOCKS" id="DEBUG_LAYOUT_BLOCKS" <?=checked($dompdf_options['DEBUG_LAYOUT_BLOCKS'],true)?>>
+				<input type="checkbox" name="DEBUG_LAYOUT_BLOCKS" id="DEBUG_LAYOUT_BLOCKS" value="true" <?=checked($options['DEBUG_LAYOUT_BLOCKS'],"true")?>>
 			</div>
 			<div class="field">
 				<label><?=_e( "DEBUG_LAYOUT_INLINE" )?></label>
-				<input type="checkbox" name="DEBUG_LAYOUT_INLINE" id="DEBUG_LAYOUT_INLINE" <?=checked($dompdf_options['DEBUG_LAYOUT_INLINE'],true)?>>
+				<input type="checkbox" name="DEBUG_LAYOUT_INLINE" id="DEBUG_LAYOUT_INLINE" value="true" <?=checked($options['DEBUG_LAYOUT_INLINE'],"true")?>>
 			</div>
 			<div class="field">
 				<label><?=_e( "DEBUG_LAYOUT_PADDINGBOX" )?></label>
-				<input type="checkbox" name="DEBUG_LAYOUT_PADDINGBOX" id="DEBUG_LAYOUT_PADDINGBOX" <?=checked($dompdf_options['DEBUG_LAYOUT_PADDINGBOX'],true)?>>
+				<input type="checkbox" name="DEBUG_LAYOUT_PADDINGBOX" id="DEBUG_LAYOUT_PADDINGBOX" value="true" <?=checked($options['DEBUG_LAYOUT_PADDINGBOX'],"true")?>>
 			</div>
 			<div class="note block">
 				<div class="note_block">

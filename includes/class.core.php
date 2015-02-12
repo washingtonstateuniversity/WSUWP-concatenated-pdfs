@@ -20,13 +20,14 @@ class catpdf_core {
 	public $_params;
     function __construct() {
 		global $dompdf,$shortcode,$catpdf_pages,$catpdf_templates,$catpdf_output,$catpdf_data,$_params;
-		$_params = $_POST;
+		$_params = $_REQUEST;
 
 		// Include data
 		include(CATPDF_PATH . '/includes/class.data.php');
 		$catpdf_data = new catpdf_data();
-				
-		if ( (!is_admin() && $catpdf_data->get_options() == 'on') || is_admin() ) {
+		$options = $catpdf_data->get_options();
+		
+		if($options["postdl"] == 1){
 			// Include dompdf //make sure to get back to pulling this in to the settings
 			include(CATPDF_PATH . '/includes/dompdf_config.php');
 			$dompdf = new DOMPDF();
@@ -55,7 +56,7 @@ class catpdf_core {
 		include(CATPDF_PATH . '/includes/class.output.php');
 		$catpdf_output = new catpdf_output();
 
-		$options = $catpdf_data->get_options();
+		
 		if($options["postdl"] == 1){
 			if (!is_admin()) {
 				 // Initialize public functions
@@ -213,7 +214,7 @@ class catpdf_core {
 		<hr/>
 		<p> Pre view the PDF</p>
 		<p class="description"><b>NOTE:</b> The preview is for this page only, meaning that there will be no cover, index, or anything of that nature.  Only the content as if it was in the middle of the docment.</p>
-		<?=$shortcode->apply_download_button(array('text'=>'Preview Download Link','catpdf_dl'=>$post->ID,'target'=>'_blank'))?>
+		<?=$shortcode->apply_download_button(array('text'=>'Preview Download Link','catpdf_dl'=>$post->ID,'target'=>'_blank','catpdf_post_dl'=>'false'))?>
 		<?php
 	}
 	/**

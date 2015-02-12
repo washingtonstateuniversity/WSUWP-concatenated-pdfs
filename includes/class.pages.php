@@ -25,10 +25,11 @@ class catpdf_pages {
 			add_action('admin_init', array( $this, 'admin_init' ));
 			add_action('admin_menu', array( $this, 'admin_menu' ));
 		}
-        if (isset($_GET['catpdf_dl'])) {// Check if post download is performed
+		
+        if (isset($_params['catpdf_dl'])) {// Check if post download is performed
             add_action('init', array( $this, 'download_post' ));// Add download action hook
         }
-        if (isset($_GET['catpdf_post_dl'])) {// Check if single post download is performed
+        if (isset($_params['catpdf_post_dl']) && $_params['catpdf_post_dl']=="true") {// Check if single post download is performed
             add_action('init', array( $this, 'download_posts' ));// Add download action hook
         }
     }
@@ -214,7 +215,7 @@ class catpdf_pages {
 		$options = $catpdf_data->get_options();
 
         $data['options']   = $options;
-		$data['dompdf_options'] = $catpdf_data->get_dompdf_options();
+		$data['dompdf_options'] = $catpdf_data->get_options();
 		$data['sizes']   = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
 		$data['media_types'] = array("screen","tty","tv","projection","handheld","print","braille","aural","speech","all");
         // Get templates
@@ -292,7 +293,7 @@ class catpdf_pages {
         $single      = $post[0];
         $filename    = preg_replace('/[^a-z0-9]/i', '_', $single->post_title);
         $content     = $catpdf_output->construct_template('single');
-		//var_dump($content);die();
+		var_dump($content);die();
 		$dompdf = new DOMPDF();
 		$dompdf->set_paper('letter', 'portrait');
 		$dompdf->load_html($content);

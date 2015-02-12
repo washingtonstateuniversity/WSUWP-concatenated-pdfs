@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class shortcode {
     public $single;
+	public $current_index_row=array();
+	
+	
     function __construct() {
         if (is_admin() || isset($_GET['catpdf_dl']) || isset($_GET['catpdf_post_dl'])) {
             $this->register_template_shortcodes();
@@ -46,7 +49,13 @@ class shortcode {
 			'tags'=> array('dis'=>__('Tags')),
 			'comments_count'=> array('dis'=>__('Comments Count')),
 			'version_count'=> array('dis'=>__('Number of versions')),
-			'page_numbers'=> array('dis'=>__('Page Numbering block'))
+			'page_numbers'=> array('dis'=>__('Page Numbering block')),
+			'index_loop'=>array('dis'=>__('The loop of the index items')),
+			'index_row'=>array('dis'=>__('An index item')),
+			'index_row_chapter'=>array('dis'=>__('chapter of an index item')),
+			'index_row_text'=>array('dis'=>__('text of an index item')),
+			'index_row_segment'=>array('dis'=>__('segment of an index item')),
+			'index_row_page'=>array('dis'=>__('page # of an index item')),
 		);
 		return $shortcodes;
 	}
@@ -87,8 +96,15 @@ class shortcode {
 				'site_title','site_tagline','site_url','date_today','title',
 				'from_date','to_date','categories','post_count','page_numbers'
 			),
-			
-				
+			'index' => array(
+				'index_loop',
+			),
+			'index_loop' => array(
+				'index_row',
+			),
+			'index_row' => array(
+				'index_row_chapter','index_row_text','index_row_segment','index_row_page',
+			),
 		);
 		if (isset( $registered_codes[$template] ) ) return $registered_codes[$template];
 		return array();
@@ -118,7 +134,7 @@ class shortcode {
         $link                  = '';
         $text                  = (isset($atts['text'])) ? $atts['text'] : 'Download';
 		$target                = (isset($atts['target'])) ? $atts['target'] : '_blank';
-        $atts['catpdf_post_dl'] = 'true';
+        $atts['catpdf_post_dl']= (isset($atts['catpdf_post_dl'])) ? $atts['catpdf_post_dl'] : 'true';
         if (count($atts) > 0) {
             foreach ($atts as $key => $att) {
                 $atts[$key] = urlencode($att);
@@ -132,7 +148,7 @@ class shortcode {
         }		
 
         $dllink = add_query_arg($atts);
-        $link   = sprintf('<a href="%1$s" target="%3$s" title="%2$s">%2$s</a>', $dllink, $text, $target);
+        $link   = sprintf('<a href="%1$s" target="%3$s" title="%2$s">%2$s</a>\n', $dllink, $text, $target);
         return $link;
     }
 	
@@ -147,10 +163,92 @@ class shortcode {
 			'label' => '{PTx}',
 			'separator' => '{P#S}'
 		), $atts));
-		$block='<div id="page_numbers"><span id="pn_text">'.$label.'</span><span id="pn_number">{P#}'.$separator.'{PT#}</span></div>';
+		$block='<div id="page_numbers"><span id="pn_text">'.$label.'</span><span id="pn_number">{P#}'.$separator.'{PT#}</span></div>'."\n";
         return $block;
     }	
 	
+	
+    /*
+    * Return page numbering block
+    */
+    public function index_func($atts) {
+		$block='[index_row]';
+	/*	
+						'index_loop'=>array('dis'=>__('The loop of the index items')),
+			'index_row'=>array('dis'=>__('An index item')),
+			'index_row_chapter'=>array('dis'=>__('chapter of an index item')),
+			'index_row_text'=>array('dis'=>__('text of an index item')),
+			'index_row_segment'=>array('dis'=>__('segment of an index item')),
+			'index_row_page'=>array('dis'=>__('page # of an index item')),		
+		
+<?php
+$index.= "";
+$c=1;
+foreach($posts as $post){
+?>
+<table class='indexed_chapter'>
+  <tbody>
+    <tr>
+      <td class='chapter' width='15%' align='right' cellspacing='0' cellpadding='0' >{chapter{$c}}</td>
+      <td class='text' width='25%' align='left' cellspacing='0' cellpadding='0' >{text{$c}}</td>
+      <td class='segment' align='right' cellspacing='0' cellpadding='0' ></td>
+      <td class='pagenumber' width='5%' align='left' cellspacing='0' cellpadding='0' >{page{$c}}</td>
+    </tr>
+  </tbody>
+</table>
+<?php
+	
+}
+?>
+		
+		*/
+		
+		
+        return $block;
+    }	
+	public function index_loop_func($atts) {
+		global $posts,$catpdf_output,$catpdf_templates,$current_index_row;
+		$c=1;
+		foreach($posts as $post){
+			$current_index_row=array(
+				"chapter"=>"chapter ${c}",
+				"text"=>"text ${c}",
+				"segment"=>"segment ${c}",
+				"page"=>"page ${c}",
+			);
+			$block.=$catpdf_output->filter_shortcodes("index_row",$catpdf_templates->resolve_template("index-table-row.php"));
+			$c++;
+		}
+		//var_dump($block);
+		return $block;
+	}
+	
+
+
+	public function index_row_chapter_func($atts) {
+		global $current_index_row;
+		$block = $current_index_row["chapter"];
+		return $block;
+	}
+
+	public function index_row_text_func($atts) {
+		global $current_index_row;
+		$block = $current_index_row["text"];
+		return $block;
+	}
+
+	public function index_row_segment_func($atts) {
+		global $current_index_row;
+		$block = $current_index_row["segment"];
+		return $block;
+	}
+
+	public function index_row_page_func($atts) {
+		global $current_index_row;
+		$block = $current_index_row["page"];
+		return $block;
+	}
+
     /*
     * Return post content
     */
@@ -163,7 +261,7 @@ class shortcode {
 		$title = get_the_title();
 			$indexerscript='
 <script type="text/php"> if(isset($GLOBALS["i"])){ $i=$GLOBALS["i"]; if(!isset($GLOBALS["chapters"][$i])){ $GLOBALS["chapters"][$i]["page"] = $pdf->get_page_number();  $GLOBALS["chapters"][$i]["text"] = "'.$title.'"; $GLOBALS["i"]=$i+1;} } </script>
-';
+'."\n";
 			$indexedcontent=$indexerscript.$item;
 			$item=$indexedcontent;
         return $item;

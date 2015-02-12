@@ -6,45 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class catpdf_data {
     function __construct() { }
 
-	public function get_dompdf_options(){
-		$plugin_option = get_option('catpdf_dompdf_options',array(
-			"DOMPDF_UNICODE_ENABLED"=>true,
-			"DOMPDF_ENABLE_FONTSUBSETTING"=>false,
-			"DOMPDF_PDF_BACKEND"=>"CPDF",
-			"DOMPDF_DEFAULT_MEDIA_TYPE"=>"screen",
-			"DOMPDF_DEFAULT_PAPER_SIZE"=>"letter",
-			"DOMPDF_DEFAULT_FONT"=>"serif",
-			"DOMPDF_DPI"=>96,
-			"DOMPDF_ENABLE_PHP"=>true,
-			"DOMPDF_ENABLE_JAVASCRIPT"=>true,
-			"DOMPDF_ENABLE_REMOTE"=> true,
-			"DOMPDF_FONT_HEIGHT_RATIO"=>1.1,
-			"DOMPDF_ENABLE_CSS_FLOAT"=>false,
-			"DOMPDF_ENABLE_AUTOLOAD"=>true,
-			"DOMPDF_AUTOLOAD_PREPEND"=>false,
-			"DOMPDF_ENABLE_HTML5PARSER"=>true,
-			"_dompdf_show_warnings" => false,
-			"_dompdf_debug" => false,
-			'DEBUGPNG'=>false,
-			'DEBUGKEEPTEMP'=>false,
-			'DEBUGCSS'=>false,
-			'DEBUG_LAYOUT'=>false,
-			'DEBUG_LAYOUT_LINES'=>false,
-			'DEBUG_LAYOUT_BLOCKS'=>false,
-			'DEBUG_LAYOUT_INLINE'=>false,
-			'DEBUG_LAYOUT_PADDINGBOX'=>false
-        ));	
-		return $plugin_option;
-	}
-
-
-
 
 	public function get_options(){
 		$plugin_option = (array)json_decode(get_option('catpdf_options',null));	
 		if($plugin_option!=null){
+			
 			$plugin_option['concat']=(array)$plugin_option['concat'];
 			$plugin_option['single']=(array)$plugin_option['single'];
+			//var_dump($plugin_option);
 		}else{
 			$plugin_option=array(
 				'concat' => array(
@@ -52,15 +21,39 @@ class catpdf_data {
 								'title' => 'Report %mm-%yyyy',
 								'dltemplate' => 'default',
 								'postdl' => 1,
-								'customcss' => ''
+								'customcss' => ' '
 							),
 				'single' => array(
 								'enablecss' => 1,
 								'title' => 'Report %mm-%yyyy',
 								'dltemplate' => 'default',
 								'postdl' => 1,
-								'customcss' => ''
+								'customcss' => ' '
 							),
+				"DOMPDF_UNICODE_ENABLED"=>true,
+				"DOMPDF_ENABLE_FONTSUBSETTING"=>false,
+				"DOMPDF_PDF_BACKEND"=>"CPDF",
+				"DOMPDF_DEFAULT_MEDIA_TYPE"=>"screen",
+				"DOMPDF_DEFAULT_PAPER_SIZE"=>"letter",
+				"DOMPDF_DEFAULT_FONT"=>"serif",
+				"DOMPDF_DPI"=>96,
+				"DOMPDF_ENABLE_PHP"=>true,
+				"DOMPDF_ENABLE_JAVASCRIPT"=>true,
+				"DOMPDF_ENABLE_REMOTE"=> true,
+				"DOMPDF_FONT_HEIGHT_RATIO"=>1.1,
+				"DOMPDF_ENABLE_CSS_FLOAT"=>false,
+
+				"DOMPDF_ENABLE_HTML5PARSER"=>true,
+				"_dompdf_show_warnings" => false,
+				"_dompdf_debug" => false,
+				'DEBUGPNG'=>false,
+				'DEBUGKEEPTEMP'=>false,
+				'DEBUGCSS'=>false,
+				'DEBUG_LAYOUT'=>false,
+				'DEBUG_LAYOUT_LINES'=>false,
+				'DEBUG_LAYOUT_BLOCKS'=>false,
+				'DEBUG_LAYOUT_INLINE'=>false,
+				'DEBUG_LAYOUT_PADDINGBOX'=>false
 			);
 		}
 		return $plugin_option;

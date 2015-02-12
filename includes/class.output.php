@@ -60,45 +60,31 @@ class catpdf_output {
      */
     public function construct_template($type = NULL) {
         global $catpdf_templates,$_params,$catpdf_data,$posts;
-		$id		= isset($_GET['catpdf_dl'])?$_GET['catpdf_dl']:NULL;
-		/*if($id>0){
-			get_post( $id, $output, $filter );
-		}else{
-			
-		}
-		
+		$id		= isset($_params['catpdf_dl'])?$_params['catpdf_dl']:NULL;
 
-		$posts_array = get_posts( $args );
-		*/
-		$posts 	= $catpdf_data->query_posts($id);
-		//var_dump(get_post($id));
-		//var_dump($posts_array);
-		$posts 	= $posts_array;
 		$posts 	= array(get_post($id));
+		//var_dump($posts);
 		
         $this->template = $catpdf_templates->get_current_tempate($type);
 		//var_dump($this->template);
+		
 		$template_sections = $catpdf_templates->get_default_render_order();
 		//var_dump($template_sections);
+		
 		$html = "";
 		$i=1;
 		$c=count($template_sections);
 		foreach($template_sections as $code=>$section){
-			
-				$sectionhtml=call_user_func(array($catpdf_templates, 'get_section_'.$code));
-				//var_dump($sectionhtml);
-				$html.= ($sectionhtml?$sectionhtml:"").($i<$c?"<i class='page-break'></i>":"");
-				$i++;
-
+			$sectionhtml= call_user_func( array( $catpdf_templates, 'get_section_'.$code ) );
+			//var_dump($sectionhtml);
+			$html.= ($sectionhtml?$sectionhtml:"").($i<$c?"\n\n<i class='page-break'></i>\n\n":"");
+			$i++;
 		}
-		//"<i class='page-break'></i>"
 
         $html = $this->head . $html .$this->foot;
-		
-		//$html = '<!DOCTYPE html><html><body>'. $html. '</body></html>';
-		
-		$this->logHtmlOutput($html);
-		//var_dump($html);die();
+		if($log=true){//@todo
+			$this->logHtmlOutput($html);
+		}
         return $html;
     }
 	
@@ -118,11 +104,11 @@ class catpdf_output {
      * Return html structure
      */
     public function _html_structure() {
-		global $_params, $dompdf;
+		global $_params, $dompdf, $catpdf_data;
 		
 		if (empty($this->template)) return false; 
 		
-        $options   = get_option('catpdf_options');
+        $options   = $catpdf_data->get_options();
 		$unit="px";
 		$bodycolor="#F0F0F0";		//@@!!OPTION REPLACE
 		
@@ -142,7 +128,8 @@ class catpdf_output {
 		$pageh=$this->pointtopixelConvertion(CPDF_Adapter::$PAPER_SIZES[$_params['papersize']][3]);
         
 		$template    = $this->template;
-		$this->title       = $this->buildFileName($template,$options);
+		
+		$this->title = $this->buildFileName($template,$options);
 		$pageheader  = $this->filter_shortcodes('pageheader');
 		$pagefooter  = $this->filter_shortcodes('pagefooter');//$this->filter_shortcodes('pagefooter');
 
@@ -155,11 +142,11 @@ class catpdf_output {
 		
 		$head_html_style_sheets = "";
 		
-        if (isset($options['enablecss']) && $options['enablecss'] == 'on') {
+        if (isset($options['single']['enablecss']) && $options['single']['enablecss'] == 'on') {
             $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . get_stylesheet_uri() . "'/>\n";
         }
         $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . PDF_STYLE . "'/>\n";
-        $head_html_closing_tag = '</head>';
+        $head_html_closing_tag = "</head>\n";
 		
 		//calculated values needed for the pdf
 		$footSkip=($footHeight+$footSep);//equal to bottom:{VAL}px
@@ -170,9 +157,9 @@ class catpdf_output {
 		
 		$page_padding="{$pageHeadMargin}{$unit} {$pagerightMargin}{$unit} {$pageFootMargin}{$unit} {$pageleftMargin}{$unit}";
 		
-		$bodyOpenTag = '<body>';
-		$header_section = '<div id="head_area"><div class="wrap">'.$pageheader.'</div></div>';
-		$footer_section = '<div id="foot_area"><div class="wrap">'.$pagefooter.'</div></div>';
+		$bodyOpenTag = "<body>\n";
+		$header_section = "<div id='head_area'>\n<div class='wrap'>${pageheader}</div>\n</div>\n";
+		$footer_section = "<div id='foot_area'>\n<div class='wrap'>${pagefooter}</div>\n</div>\n";
 		
 		//sets up the globals for the rendered inline php 
 		$indexscriptglobals='<script type="text/php"> $GLOBALS["i"]=1; $GLOBALS["indexpage"]=0; $GLOBALS["chapters"] = array(); </script>';
@@ -187,11 +174,10 @@ class catpdf_output {
 		#head_area .wrap{ height:'.$headHeight.$unit.';}
 		#foot_area{ left:'.$pageleftMargin.$unit.'; bottom:'.$bottomMargin.$unit.'; height:'.$footHeight.$unit.'; /*width:'.$textBoxingWidth.$unit.';*/ }
 		#foot_area .wrap{ height:'.$footHeight.$unit.'; }
-		body {padding:'.$page_padding.';}/*note that the body is used as our sudo "page" it is our saffal base*/
+		body {padding:'.$page_padding.';} /*note that the body is used as our sudo "page" it is our saffal base*/
 		
-		' . strip_tags($options['customcss']) . '
+		' . strip_tags($options['single']['customcss']) . ' 
 	</style>';
-
         $this->head  = $head_html
 						.$head_html_style_sheets
 						.$head_style
@@ -239,9 +225,9 @@ class catpdf_output {
 	}
 	//page_script seems to need to be oneline?
 	$pdf->page_script(\'$indexpage=$GLOBALS["indexpage"]; if ($PAGE_NUM==$indexpage ) { $pdf->add_object($GLOBALS["backside"],"add"); $pdf->stop_object($GLOBALS["backside"]); }\');
-</script>';
-        $bodyCloseTag='</body>';
-		$htmlCloseTag='</html>';
+</script>'."\n";
+        $bodyCloseTag="</body>\n";
+		$htmlCloseTag="</html>\n";
 					
 		$bottomHtml = $indexer
 					.$bodyCloseTag
@@ -254,15 +240,20 @@ class catpdf_output {
 	 * needs to be reworked
 	 * also move to class.shortcuts
      */
-    public function filter_shortcodes($tmp_type=NULL) {
+    public function filter_shortcodes($tmp_type=NULL,$html=null) {
 		if($tmp_type==NULL) return false;
 
         $template      = $this->template;
+		//var_dump($template);
         $pattern       = get_shortcode_regex();
 
 		$arr = array_keys(shortcode::get_template_shortcodes(!empty($tmp_type)?$tmp_type:'body')); //? was ? isset($items[$tmp_type])?$items[$tmp_type]:$items['body'] into get_template_shortcodes
-		$tmp_sec = "template_{$tmp_type}";
-		$tmp = $template->$tmp_sec;
+		if($html==null){
+			$tmp_sec = "template_{$tmp_type}";
+			$tmp = $template->$tmp_sec;
+		}else{
+			$tmp = $html;	
+		}
 		//var_dump($tmp_type);
 		//var_dump($arr);
         preg_match_all('/' . $pattern . '/s', $tmp, $matches);
