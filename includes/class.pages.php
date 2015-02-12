@@ -203,7 +203,7 @@ class catpdf_pages {
     public function update_options() {
 		global $_params;
         $options = $_params;
-        update_option('catpdf_options', $options);
+        update_option('catpdf_options', json_encode($options));
     }
     /*
      * Display "Option" page
@@ -211,7 +211,9 @@ class catpdf_pages {
     public function option_page() {
 		global $catpdf_templates,$catpdf_data;
         // Set options
-        $data['options']   = $catpdf_data->get_options();
+		$options = $catpdf_data->get_options();
+
+        $data['options']   = $options;
 		$data['dompdf_options'] = $catpdf_data->get_dompdf_options();
 		$data['sizes']   = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
 		$data['media_types'] = array("screen","tty","tv","projection","handheld","print","braille","aural","speech","all");

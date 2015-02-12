@@ -65,7 +65,6 @@ class catpdf_core {
 				add_action( 'save_post', array( $this, 'save' ) );
 			}
 		}
-       
     }
 	/*----------------------
 	 NOTICE: this area needs to be redone

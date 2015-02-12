@@ -25,13 +25,13 @@
 		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 <div class="field">
 		  <label>
-			<?php _e( "Export PDF Title" ); ?>
+			<?=_e( "Export PDF Title" ); ?>
 		  </label>
-		  <input type="text" name="title" id="title" value="<?=( ( isset( $options['title'] ) ) ? $options['title'] : '' )?>">
+		  <input type="text" name="concat[title]" id="title" value="<?=( ( isset( $options['concat']['title'] ) ) ? $options['concat']['title'] : '' )?>">
 		</div>
 		<div class="note block">
 				<div class="note_block">
-					<p><?php _e("Put % plus date format(dd,mm,yyyy) to display export date. Ex: Report %dd-%mm-%yyyy.Put keyword '%template' to display the template name. EX: Repost %template.")?></p>
+					<p><?=_e("Put % plus date format(dd,mm,yyyy) to display export date. Ex: Report %dd-%mm-%yyyy.Put keyword '%template' to display the template name. EX: Repost %template.")?></p>
 				</div>
 			</div>
 		</div>  
@@ -40,26 +40,26 @@
 			  <label>
 				<?php _e( "Post download template" ); ?>
 			  </label>
-			  <select name="dltemplate">
-				<option <?php selected('def', $options['dltemplate']); ?> value="def"> <?php _e('Default');?> </option>
+			  <select name="concat[dltemplate]">
+				<option <?php selected('def', $options['concat']['dltemplate']); ?> value="def"> <?php _e('Default');?> </option>
 				<?php if( count( $templates ) ) : ?>
 					<?php foreach( $templates as $template ) :?>
-					<option <?php selected($template->template_id, $options['dltemplate']); ?> value="<?=$template->template_id?>"><?=$template->template_name?></option>
+					<option <?php selected($template->template_id, $options['concat']['dltemplate']); ?> value="<?=$template->template_id?>"><?=$template->template_name?></option>
 					<?php endforeach; ?>
 				<?php endif; ?>
 			  </select>
 			</div>
 			<div class="note block">
 				<div class="note_block">
-					<p><?php _e("Select template for single post download. The download will only take the loop part from the selected template.")?></p>
+					<p><?=_e("Select template for single post download. The download will only take the loop part from the selected template.")?></p>
 				</div>
 			</div>
 		</div>  
 		
 		  <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 <div class="field">
-			  <label><?php echo _e( "Use theme's CSS?" ); ?> </label>
-			  <input type="checkbox" name="enablecss" id="enablecss"  value="1" <?=checked($options['enablecss'],1)?>/>
+			  <label><?= _e( "Use theme's CSS?" ); ?> </label>
+			  <input type="checkbox" name="concat[enablecss]" id="enablecss"  value="1" <?=checked($options['concat']['enablecss'],1)?>/>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -74,7 +74,7 @@
 			  <label>
 				<?php _e( "Custom style" ); ?>
 			  </label>
-			  <textarea name="customcss" id="customcss"><?php echo ( ( isset( $options['customcss'] ) ) ? $options['customcss'] : '' );?></textarea>
+			  <textarea name="concat[customcss]" id="customcss"><?=( ( isset( $options['concat']['customcss'] ) ) ? $options['concat']['customcss'] : '' )?></textarea>
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -91,7 +91,7 @@
 		  <label>
 			<?php _e( "Export PDF Title" ); ?>
 		  </label>
-		  <input type="text" name="title" id="title" value="<?php echo ( ( isset( $options['title'] ) ) ? $options['title'] : '' );?>">
+		  <input type="text" name="single[title]" id="title" value="<?=( ( isset( $options['single']['title'] ) ) ? $options['single']['title'] : '' );?>">
 		</div>
 		<div class="note block">
 				<div class="note_block">
@@ -104,11 +104,11 @@
 			  <label>
 				<?php _e( "Post download template" ); ?>
 			  </label>
-			  <select name="dltemplate">
+			  <select name="single[dltemplate]]">
 				<option <?php selected('def', $options['dltemplate']); ?> value="def"> <?php _e('Default');?> </option>
 				<?php if( count( $templates ) ) : ?>
 				<?php foreach( $templates as $template ) :?>
-				<option <?php selected($template->template_id, $options['dltemplate']); ?> value="<?php echo $template->template_id;?>"><?php echo $template->template_name;?></option>
+				<option <?php selected($template->template_id, $options['single']['dltemplate']); ?> value="<?php echo $template->template_id;?>"><?php echo $template->template_name;?></option>
 				<?php endforeach; ?>
 				<?php endif; ?>
 			  </select>
@@ -123,7 +123,7 @@
 		  <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
 <div class="field">
 			  <label><?php echo _e( "Use theme's CSS?" ); ?> </label>
-			  <input type="checkbox" name="enablecss" id="enablecss" <?php echo ( ( isset( $options['enablecss'] ) && $options['enablecss'] == 'on' ) ? 'checked="checked"' : '' );?> >
+			  <input type="checkbox" name="single[enablecss]" id="enablecss" <?=( ( isset( $options['single']['enablecss'] ) && $options['single']['enablecss'] == 'on' ) ? 'checked="checked"' : '' );?> >
 			</div>
 			<div class="note block">
 				<div class="note_block">
@@ -138,7 +138,7 @@
 			  <label>
 				<?php _e( "Custom style" ); ?>
 			  </label>
-			  <textarea name="customcss" id="customcss"><?php echo ( ( isset( $options['customcss'] ) ) ? $options['customcss'] : '' );?></textarea>
+			  <textarea name="single[customcss]" id="customcss"><?=( ( isset( $options['single']['customcss'] ) ) ? $options['single']['customcss'] : '' );?></textarea>
 			</div>
 			<div class="note block">
 				<div class="note_block">

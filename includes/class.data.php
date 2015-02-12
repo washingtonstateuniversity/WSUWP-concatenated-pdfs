@@ -41,12 +41,26 @@ class catpdf_data {
 
 
 	public function get_options(){
-		$plugin_option = get_option('catpdf_options',array(
-            'enablecss' => 1,
-            'title' => 'Report %mm-%yyyy',
-            'dltemplate' => 'default',
-            'postdl' => 1
-        ));	
+		$plugin_option = (array)json_decode(get_option('catpdf_options',null));	
+		if($plugin_option!=null){
+			$plugin_option['concat']=(array)$plugin_option['concat'];
+			$plugin_option['single']=(array)$plugin_option['single'];
+		}else{
+			$plugin_option=array(
+				'concat' => array(
+								'enablecss' => 1,
+								'title' => 'Report %mm-%yyyy',
+								'dltemplate' => 'default',
+								'postdl' => 1
+							),
+				'single' => array(
+								'enablecss' => 1,
+								'title' => 'Report %mm-%yyyy',
+								'dltemplate' => 'default',
+								'postdl' => 1
+							),
+			);
+		}
 		return $plugin_option;
 	}
 	/**
