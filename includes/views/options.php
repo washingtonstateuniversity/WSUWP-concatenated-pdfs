@@ -256,7 +256,7 @@ Linux Firefox:
 			</div>
 			<div class="note block">
 				<div class="note_block">
-					<p><?=_e("If this setting is set to true then DOMPDF will automatically evaluate inline PHP contained within &gt;script type='text/php''&lt; ... &gt;/script&lt; tags.")?></p>
+					<p><?=_e("If this setting is set to true then DOMPDF will automatically evaluate inline PHP contained within &lt;script type='text/php''&gt; ... &lt;/script&gt; tags.")?></p>
 				</div>
 			</div>
 		</div> 
@@ -267,7 +267,7 @@ Linux Firefox:
 			</div>
 			<div class="note block">
 				<div class="note_block">
-					<p><?=_e("If this setting is set to true then DOMPDF will automatically insert JavaScript code contained within &gt;script type='text/javascript'&lt; ... &gt;/script&lt; tags.")?></p>
+					<p><?=_e("If this setting is set to true then DOMPDF will automatically insert JavaScript code contained within &lt;script type='text/javascript'&gt; ... &lt;/script&gt; tags.")?></p>
 				</div>
 			</div>
 		</div> 
@@ -313,7 +313,7 @@ Linux Firefox:
 		
 		
 		<h3>Debugging</h3>
-		<div class="field-wrap">
+		<div class="field-wrap select_area" id="debug">
 			<div class="field">
 				<label><?=_e( "_dompdf_show_warnings" )?></label>
 				<input type="checkbox" name="_dompdf_show_warnings" id="_dompdf_show_warnings" value="true" <?=checked($options['_dompdf_show_warnings'],"true")?>>
@@ -354,10 +354,10 @@ Linux Firefox:
 				<label><?=_e( "DEBUG_LAYOUT_PADDINGBOX" )?></label>
 				<input type="checkbox" name="DEBUG_LAYOUT_PADDINGBOX" id="DEBUG_LAYOUT_PADDINGBOX" value="true" <?=checked($options['DEBUG_LAYOUT_PADDINGBOX'],"true")?>>
 			</div>
-			<div class="note block">
-				<div class="note_block">
-					<p><?=_e("")?></p>
-				</div>
+			<div class="select block">
+				<label>Click to <b><span>Select</span></b>  All the debug options
+ All:</label>
+				<input type="checkbox" class="alter_all ALL_OFF" value=""/>
 			</div>
 		</div>
 

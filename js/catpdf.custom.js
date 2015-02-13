@@ -69,7 +69,22 @@ jQuery(document).ready(function() {
 	});
 	
 	
-	
+	jQuery(".alter_all").on("click",function(e){
+		var self = jQuery(this);
+		var parent = self.closest('.select_area');
+		var checkboxes = parent.find('[type="checkbox"]');
+		if(self.is('.ALL_ON')){
+			self.removeClass("ALL_ON").addClass('ALL_OFF');
+			checkboxes.removeAttr("checked");
+			self.removeAttr("checked");
+			parent.find('.select.block label span').text("Select");
+		}else{
+			self.addClass("ALL_ON").removeClass('ALL_OFF');
+			checkboxes.attr("checked",true);
+			self.attr("checked",true);
+			parent.find('.select.block label span').text("Deselect");
+		}
+	});
 	
 	
 });
