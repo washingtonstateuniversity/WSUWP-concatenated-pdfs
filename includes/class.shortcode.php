@@ -148,7 +148,7 @@ class shortcode {
         }		
 
         $dllink = add_query_arg($atts);
-        $link   = sprintf('<a href="%1$s" target="%3$s" title="%2$s">%2$s</a>\n', $dllink, $text, $target);
+        $link   = sprintf('<a href="%1$s" target="%3$s" title="%2$s">%2$s</a>'."\n", $dllink, $text, $target);
         return $link;
     }
 	
