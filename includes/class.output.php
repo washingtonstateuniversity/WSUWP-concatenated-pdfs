@@ -301,7 +301,11 @@ class catpdf_output {
 	public function cachePdf($file,$contents){
 		$file = CATPDF_CACHE_PATH.trim(trim($file,'/'));
 		return file_put_contents($file, $contents);
-	}	
+	}
+	public function is_cached($filename){
+		$file = CATPDF_CACHE_PATH.trim(trim($filename,'/'));
+		return file_exists($file);
+	}
 	public function merge_pdfs($mergeList,$output_file){
 		if(count($mergeList)>1){
 			$PDFMerger = new PDFMerger;

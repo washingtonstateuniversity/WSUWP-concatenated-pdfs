@@ -285,35 +285,38 @@ class catpdf_pages {
      * Download single post pdf
      */
     public function download_post() {
-        global $dompdf, $PDFMerger, $catpdf_output,$post,$catpdf_data;
+        global $dompdf, $PDFMerger, $catpdf_output,$post,$catpdf_data,$_params;
 		//die('here');
         $id          = $_GET['catpdf_dl'];
-        $post        = $catpdf_data->query_posts($id);
+       	$posts 	= array(get_post($id));
 
-        $single      = $post[0];
-        $filename    = preg_replace('/[^a-z0-9]/i', '_', $single->post_title);
-        $content     = $catpdf_output->construct_template('single');
-		var_dump($content);die();
-		$dompdf = new DOMPDF();
-		$dompdf->set_paper('letter', 'portrait');
-		$dompdf->load_html($content);
-		if( isset($_dompdf_warnings) ){
-			var_dump( $_dompdf_warnings ); die();
-		}
-		$dompdf->render();
-		$pdf = $dompdf->output();//store it for output	
-		$file = date("Now") . "--" . $id . ".pdf";	
-		
-		if($catpdf_output->cachePdf('merging_stage/'.$file,$pdf)){
-			$mergeList[]=$file;				
-			$i++;
-		}
-		if(count($mergeList)>0){
-			$output_file = date("Now") . "--" . $id .'.pdf';
-			$catpdf_output->merge_pdfs($mergeList,$output_file);
-			$catpdf_output->sendPdf($output_file);
+        $single      = $posts[0];
+		//var_dump();die();
+        $filename    = preg_replace('/[^a-z0-9]/i', '_', $single->post_title)."-".md5( implode(',',$_params) ) . ".pdf";	
+        if(!$catpdf_output->is_cached($filename)){
+			$content     = $catpdf_output->construct_template('single');
+			//var_dump($content);die();
+			$dompdf = new DOMPDF();
+			$dompdf->set_paper('letter', 'portrait');
+			$dompdf->load_html($content);
+			if( isset($_dompdf_warnings) ){
+				var_dump( $_dompdf_warnings ); die();
+			}
+			$dompdf->render();
+			$pdf = $dompdf->output();//store it for output	
+			
+			if($catpdf_output->cachePdf('merging_stage/'.$filename,$pdf)){
+				$mergeList[]=$file;				
+				$i++;
+			}
+			if(count($mergeList)>0){
+				$catpdf_output->merge_pdfs($mergeList,$filename);
+				$catpdf_output->sendPdf($filename);
+			}else{
+				echo "failed";	
+			}
 		}else{
-			echo "failed";	
+			$catpdf_output->sendPdf($filename);	
 		}
     }
 

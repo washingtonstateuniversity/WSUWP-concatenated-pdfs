@@ -34,8 +34,9 @@ body{}
 
 
 /* DEFAULTS */
-html, body{ margin: 0; padding: 0; border: 0; font-family: sans-serif; text-align: justify;}
-table { border-collapse: collapse; border-spacing: 0; }
+html, body{ margin: 0; padding: 0; border: 0; font-family: sans-serif; text-align: justify;background-color:transparent;}
+table { border-collapse: collapse; border-spacing: 0; border: 1px solid #535353; background-color:transparent; }
+tr,td,th { border: 1px solid #535353; padding:2px 4px;}
 strong{ font-weight:bold;}
 h1{font-size:20pt;}
 h2{font-size:16pt;}
@@ -47,7 +48,9 @@ i.page-break {page-break-after: always;border: 0;}
 
 .content-wrapper {
 	padding: 20px;
-	background: #FFF;overflow:hidden;
+	/*background: #FFF;*/
+	background-color:transparent;
+	overflow:hidden;
 	/*border: 1px solid #c5c5c5;
 	margin: 15px;*/
 }
@@ -105,4 +108,13 @@ h1.CoverTitle {
 #site_info_tag{font-size:12px; font-style:italic;}
 #logo{float:left;height:50px;width:180px;}
 #site_tag{position:absolute; top:12.5px; right:12.5px;text-align: right;width:auto;font-size:12px;}
+
+.indexed_chapter {}
+.indexed_chapter td.chapter{width:15%; text-align:right;}
+.indexed_chapter td.text{width:25%; text-align:left;>}
+.indexed_chapter td.segment{text-align:right;}
+.indexed_chapter td.pagenumber{width:5%; text-align:left;}
+
+
+
 

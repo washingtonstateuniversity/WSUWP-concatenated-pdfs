@@ -3,6 +3,6 @@
 	<div class="meta">
 		<p>Posted on <strong>[date]</strong> by <strong>[author]</strong></p>
 	</div>
-	<p>[content]</p>
+	[content]
 	<div class="taxonomy">[category label="Posted in:"] | [tags label="Tagged:"] | With [comments_count] comments</div>
 </div>

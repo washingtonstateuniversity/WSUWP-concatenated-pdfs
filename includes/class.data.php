@@ -8,14 +8,8 @@ class catpdf_data {
 
 
 	public function get_options(){
-		$plugin_option = (array)json_decode(get_option('catpdf_options',null));	
-		if($plugin_option!=null){
-			
-			$plugin_option['concat']=(array)$plugin_option['concat'];
-			$plugin_option['single']=(array)$plugin_option['single'];
-			//var_dump($plugin_option);
-		}else{
-			$plugin_option=array(
+		
+		$plugin_option_defaults=array(
 				'concat' => array(
 								'enablecss' => 1,
 								'title' => 'Report %mm-%yyyy',
@@ -55,6 +49,16 @@ class catpdf_data {
 				'DEBUG_LAYOUT_INLINE'=>false,
 				'DEBUG_LAYOUT_PADDINGBOX'=>false
 			);
+		
+		$plugin_option = (array)json_decode(get_option('catpdf_options',null));	
+		if($plugin_option!=null){
+			
+			$plugin_option['concat']=(array)$plugin_option['concat'];
+			$plugin_option['single']=(array)$plugin_option['single'];
+			//var_dump($plugin_option);
+			$plugin_option=array_merge($plugin_option_defaults,$plugin_option);
+		}else{
+			$plugin_option=$plugin_option_defaults;
 		}
 		return $plugin_option;
 	}
