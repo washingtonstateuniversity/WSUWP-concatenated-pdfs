@@ -62,53 +62,9 @@ class catpdf_pages {
         add_menu_page(CATPDF_NAME, CATPDF_NAME, 'manage_options', CATPDF_BASE_NAME, array( $this, 'option_page' ), CATPDF_URL . 'images/nav-icon.png');
         // Register sub-menu
         add_submenu_page(CATPDF_BASE_NAME, _('Download PDF'), _('Download PDF'), 'manage_options', 'catpdf-download-pdf', array( $this, 'download_page' ));
-        add_submenu_page(CATPDF_BASE_NAME, _('Template Manager'), _('Template Manager'), 'manage_options', 'catpdf-template-manager', array( $this, 'template_manager_page' ));
-        add_submenu_page(CATPDF_BASE_NAME, _('Add Template'), _('Add Template'), 'manage_options', 'catpdf-add-template', array( $this, 'add_page' ));
-    }
-    /*
-     * Display "Add" page
-     */
-    public function add_page() { // short forward
-		global $catpdf_templates,$shortcode;
-        $data            = array();
-        $data['message'] = $this->get_message();
-		$body_templateShortCodes= $shortcode->get_template_shortcodes('body');
-		$data['body_templateShortCodes']=$body_templateShortCodes;
-		$loop_templateShortCodes= $shortcode->get_template_shortcodes('loop');
-		$data['loop_templateShortCodes']=$loop_templateShortCodes;
-        $this->view(CATPDF_PATH . '/includes/views/template.php', $data);
+
     }
 
-	
-    /*
-     * Display "Template Manager" page
-     */
-    public function template_manager_page() {
-		global $catpdf_templates,$shortcode;
-        // Include list class
-        include(CATPDF_PATH . '/includes/class.list.php');
-        $wp_list_table = new template_list();
-        $wp_list_table->prepare_items();
-		
-		$body_templateShortCodes= $shortcode->get_template_shortcodes('body');
-		$data['body_templateShortCodes']=$body_templateShortCodes;
-		$loop_templateShortCodes= $shortcode->get_template_shortcodes('loop');
-		$data['loop_templateShortCodes']=$loop_templateShortCodes;
-        // Check if edit action is performed
-        if (isset($_GET['catpdf_action']) && $_GET['catpdf_action'] == 'edit') {
-            $data['on_edit'] = $catpdf_templates->get_template($_GET['template']);
-            $data['message'] = $this->get_message();
-            // Display template form
-            $this->view(CATPDF_PATH . '/includes/views/template.php', $data);
-        } else {
-            ob_start();
-            $wp_list_table->display();
-            $data['table']   = ob_get_clean();
-            $data['message'] = $this->get_message();
-            // Display template list
-            $this->view(CATPDF_PATH . '/includes/views/template_manager.php', $data);
-        }
-    }
     /*
      * Display "Download" page
      */
