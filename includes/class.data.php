@@ -62,6 +62,21 @@ class catpdf_data {
 		}
 		return $plugin_option;
 	}
+	
+	
+	
+	/**
+	* orientation of paper
+	*
+	* @var array;
+	*/
+	public $paper_orientation = array(
+		'portrait',
+		'landscape'
+	);
+	
+	
+	
 	/**
 	* Dimensions of paper sizes in points
 	*

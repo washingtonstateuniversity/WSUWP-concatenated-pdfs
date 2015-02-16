@@ -140,9 +140,7 @@ class catpdf_pages {
         $data['select_author'] = $select_author;
 
         $data['select_sizes']  = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
-        $data['select_ors']    = array(
-            'portrait', 'landscape'
-        );
+        $data['select_ors']    = $catpdf_data->paper_orientation;
         $data['option_url']    = "";//$tool_url;
         $data['templates']     = $catpdf_templates->get_template();
         $data['message']       = $this->get_message();
