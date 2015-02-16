@@ -312,11 +312,12 @@ class catpdf_output {
 			foreach($mergeList as $file){
 				$PDFMerger->addPDF(CATPDF_CACHE_PATH.'merging_stage/'.$file, 'all');//'1, 3, 4'//'1-2'
 			}
-			$PDFMerger->merge('file', CATPDF_CACHE_PATH.trim(trim($output_file,'/')));
+			$PDFMerger->merge('file', CATPDF_CACHE_PATH.trim(trim($output_file),'/'));
 		}else{
-			$this->cachePdf($output_file,file_get_contents(CATPDF_CACHE_PATH.'merging_stage/'.$mergeList[0]))	;
+			if (!copy(CATPDF_CACHE_PATH.'merging_stage/'.$mergeList[0], CATPDF_CACHE_PATH.trim(trim($output_file),'/')) ) {
+				echo "failed to copy ".CATPDF_CACHE_PATH.'merging_stage/'.$mergeList[0]." to ". CATPDF_CACHE_PATH.'/'.$output_file."...\n";
+			}
 		}
-		
 	}
 
 

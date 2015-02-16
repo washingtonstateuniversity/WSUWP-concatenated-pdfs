@@ -304,16 +304,14 @@ class catpdf_pages {
 			}
 			$dompdf->render();
 			$pdf = $dompdf->output();//store it for output	
+			if($catpdf_output->cachePdf( 'merging_stage/'.$filename, $pdf )){
 			
-			if($catpdf_output->cachePdf('merging_stage/'.$filename,$pdf)){
-				$mergeList[]=$file;				
-				$i++;
-			}
-			if(count($mergeList)>0){
+				$mergeList[]=$filename;
+				
 				$catpdf_output->merge_pdfs($mergeList,$filename);
 				$catpdf_output->sendPdf($filename);
 			}else{
-				echo "failed";	
+				var_dump($pdf); die();	
 			}
 		}else{
 			$catpdf_output->sendPdf($filename);	

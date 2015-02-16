@@ -32,10 +32,10 @@ class catpdf_templates {
 
 	public function get_default_render_order(){
 		$sections = array(
-			'content'=>"",
 			'cover'=>"",
-			'appendix'=>"",
 			'index'=>"",
+			'content'=>"",
+			'appendix'=>"",
 		);
 		return $sections;
 	}

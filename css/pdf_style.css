@@ -85,13 +85,13 @@ h1.CoverTitle {
 
 #catpdf_index{padding:0px 75px;}
 
-#catpdf_index .indexed_chapter{width:100%;}
-#catpdf_index .indexed_chapter tr{}
-#catpdf_index .indexed_chapter td{}
+#catpdf_index .indexed_chapter{width:100%; border:none;}
+#catpdf_index .indexed_chapter tr{border:none;}
+#catpdf_index .indexed_chapter td{border:none;}
 
 #catpdf_index .indexed_chapter .chapter{width:5%; text-align:right;}
 #catpdf_index .indexed_chapter .text{}
-#catpdf_index .indexed_chapter .segment{border-bottom:1px dotted #494949;}
+#catpdf_index .indexed_chapter td.segment{border-bottom:1px dotted #494949;}
 #catpdf_index .indexed_chapter .pagenumber{width:3%; text-align:left;}
 
 #catpdf_index h2{font-size:20px !important;font-weight:bold !important; border-bottom:1px solid #585755;}
