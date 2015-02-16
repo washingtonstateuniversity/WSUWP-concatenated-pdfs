@@ -70,8 +70,8 @@ class catpdf_core {
 	/*----------------------
 	 NOTICE: this area needs to be redone
 	------------*/
-				/*
-				 * Initialize install
+				/**
+     			 * Initialize install
 				 */
 				public function install_init() {
 					// Add database table
@@ -79,8 +79,8 @@ class catpdf_core {
 					// Insert default datas
 					$this->_insert_defaults();
 				}
-				/*
-				 * Add template table
+				/**
+     			 * Add template table
 				 */
 				public function _add_table() {
 					global $wpdb,$catpdf_data;
@@ -118,8 +118,8 @@ class catpdf_core {
 					
 					
 				}
-				/*
-				 * Set option defaults
+				/**
+     			 * Set option defaults
 				 */
 				public function _insert_defaults() {
 					global $catpdf_templates;
@@ -141,8 +141,8 @@ class catpdf_core {
 					}
 				}
 				
-				/*
-				 * Check if entry already exist
+				/**
+     			 * Check if entry already exist
 				 * @column - string
 				 * @value - string
 				 */
@@ -159,6 +159,7 @@ class catpdf_core {
 		
 	/*-------------------------*/
 	/**
+     *
 	 * Add meta boxes used to capture pieces of information for the profile.
 	 *
 	 * @param string $post_type
@@ -180,6 +181,7 @@ class catpdf_core {
 	}
 
 	/**
+     *
 	 * Display a meta box of the captured html.  This is just displaying the post content, so it's 
 	 * not really the meta of the post, but it'll work for our needs
 	 *
@@ -218,14 +220,15 @@ class catpdf_core {
 		<?php
 	}
 	/**
+     *
 	 * Save the meta when the post is saved.
 	 *
 	 * @param int $post_id The ID of the post being saved.
 	 */
 	public function save( $post_id ) {
 		
-		/*
-		 * We need to verify this came from the our screen and with proper authorization,
+		/**
+     	 * We need to verify this came from the our screen and with proper authorization,
 		 * because save_post can be triggered at other times.
 		add this in later
 		
@@ -267,7 +270,7 @@ class catpdf_core {
 	}
 		
 				
-    /*
+    /**
      * Returns download button link
      */
     public function apply_post_download_button($content) {

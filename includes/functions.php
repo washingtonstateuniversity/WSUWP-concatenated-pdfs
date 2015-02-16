@@ -1,7 +1,6 @@
 <?php
-/*
-
-* Returns download button link
+/**
+     * Returns download button link
 
 */
 function catpdf_post_download() {
@@ -13,9 +12,8 @@ function catpdf_post_download() {
     }
     return $link;
 }
-/*
-
-* Display download button
+/**
+     * Display download button
 
 */
 function apply_posts_download($atts = array()) {

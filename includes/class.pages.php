@@ -104,8 +104,8 @@ class catpdf_pages {
 			$select_tags="<h5>Currently there are no taged posts.</h5>";
 		}
 		
-        $select_cats           = str_replace("name='cat' id=", "name='cat[]' multiple='multiple' id=", $select_cats);
-        $select_cats           = str_replace("<option", '<option ', $select_cats);
+        /*$select_cats           = str_replace("name='cat' id=", "name='cat[]' multiple='multiple' id=", $select_cats);
+        $select_cats           = str_replace("<option", '<option ', $select_cats);*/
 		
 		$args = array();
 		$cats = get_categories( $args );
@@ -118,14 +118,7 @@ class catpdf_pages {
 			$select_cats.='</select><input class="all-btn sept-mar" type="button" value="Select All" />';
 		}else{
 			$select_cats="<h5>Currently there are no categorized posts.</h5>";
-		}/* past, look to remove if no match needed       // Construct category dropdown
-        $select_cats           = wp_dropdown_categories(array(
-            'echo' => 0,
-            'hierarchical' => 1
-        ));*/		
-		
-		
-		
+		}
         // Construct user dropdown
         $select_author         = wp_dropdown_users(array(
             'id' => 'author',

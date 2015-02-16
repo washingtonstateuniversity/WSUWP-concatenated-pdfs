@@ -10,14 +10,14 @@ class template_list extends WP_List_Table {
             'ajax' => false
         ));
     }
-    /*
-    * Return no result copy
+    /**
+     * Return no result copy
     */
     function no_items() {
         _e('No template found.');
     }
-    /*
-    * Return column default
+    /**
+     * Return column default
     */
     function column_default($item, $column_name) {
         $user_info = get_userdata($item->create_by);
@@ -39,8 +39,8 @@ class template_list extends WP_List_Table {
                 return print_r($item, true);
         }
     }
-    /*
-    * Set table column
+    /**
+     * Set table column
     */
     function get_columns() {
         $columns = array(
@@ -52,8 +52,8 @@ class template_list extends WP_List_Table {
         );
         return $columns;
     }
-    /*
-    * Set sortable columns
+    /**
+     * Set sortable columns
     */
     public function get_sortable_columns() {
         return $sortable = array(
@@ -62,8 +62,8 @@ class template_list extends WP_List_Table {
             'create_date' => array( 'create_date', true )
         );
     }
-    /*
-    * Set template name column structure
+    /**
+     * Set template name column structure
     @item - object
     */
     function column_template_name($item) {
@@ -79,8 +79,8 @@ class template_list extends WP_List_Table {
         );
         return sprintf('<strong><a href="' . $editlink . '" title="Edit">%1$s</a></strong> %2$s', $item->template_name, $this->row_actions($actions));
     }
-    /*
-    * Set table bulk action
+    /**
+     * Set table bulk action
     */
     function get_bulk_actions() {
         $actions = array(
@@ -88,15 +88,15 @@ class template_list extends WP_List_Table {
         );
         return $actions;
     }
-    /*
-    * Set culumn checkbox
+    /**
+     * Set culumn checkbox
     * @item - object
     */
     function column_cb($item) {
         return sprintf('<input type="checkbox" name="template[]" value="%s" />', $item->template_id);
     }
-    /*
-    * Process action performed
+    /**
+     * Process action performed
 	* @todo post for _params
     */
     function process_bulk_action() {
@@ -109,8 +109,8 @@ class template_list extends WP_List_Table {
             }
         }
     }
-    /*
-    * Process action performed
+    /**
+     * Process action performed
     */
     function process_link_action() {
         global $catpdf_templates;
@@ -118,8 +118,8 @@ class template_list extends WP_List_Table {
             $catpdf_templates->delete_template($_GET['template']);
         }
     }
-    /*
-    * Prepage table items
+    /**
+     * Prepage table items
 	* @todo reduce sql
     */
     function prepare_items() {
