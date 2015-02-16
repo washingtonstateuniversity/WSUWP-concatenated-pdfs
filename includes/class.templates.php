@@ -143,7 +143,7 @@ class catpdf_templates {
 	 * 
 	 * @return array
      */
-    public function construct_default_template($type = 'all') {
+    public function construct_default_template($type = 'concat') {
         $temp         = array();
         $temp['name'] = 'Default';
 
