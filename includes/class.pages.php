@@ -69,7 +69,7 @@ class catpdf_pages {
      * Display "Download" page
      */
     public function download_page() {
-		global $catpdf_templates;
+		global $catpdf_templates,$catpdf_data;
         $data                  = array();
         $args                  = array(
             'orderby' => 'name',
@@ -138,9 +138,8 @@ class catpdf_pages {
 		$data['select_types']  = $select_types;
         $data['select_cats']   = $select_cats;
         $data['select_author'] = $select_author;
-        $data['select_sizes']  = array(
-            'letter', '4a0', '2a0', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6c6', 'c7', 'c8', 'c9', 'c10', 'ra0', 'ra1', 'ra2', 'ra3', 'ra4', 'sra0', 'sra1', 'sra2', 'sra3', 'sra4', 'legal', 'ledger', 'tabloid', 'executive', 'folio', 'commerical #10 envelope', 'catalog #10 1/2 envelope', '8.5x11', '8.5x14', '11x17'
-        );
+
+        $data['select_sizes']  = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
         $data['select_ors']    = array(
             'portrait', 'landscape'
         );

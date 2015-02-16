@@ -75,15 +75,19 @@
       </div>
       <div class="field-wrap">
         <div class="field">
-          <label><?php _e( "Paper size" ); ?></label>
-          <select id="papersize" name="papersize">
-            <?php foreach( $select_sizes as $select_size ) : ?>
-            <option value="<?php echo $select_size; ?>"><?php echo $select_size; ?></option>
-            <?php endforeach; ?>
-          </select>
+
+		<label><?=_e( "Paper size." )?> </label>
+		<select id="papersize" name="papersize">
+			<?php foreach($select_sizes as $name=>$spec): ?>
+			<option value="<?=$name?>"><?=( $name."   - <span>( ".implode(", ",$spec)." )</span>" )?></option>
+			<?php endforeach;?>
+		</select>
+		  
+		  
+		  
         </div>
         <div class="note"> <span>(
-          <?php _e("Select paper size."); ?>
+          <?php _e("Dimensions of paper sizes in points.  The format is top left point coordinate to bottom right point coordinate (TLy,TLx,BRy,BRx). North America standard is 'letter'; other countries generally 'a4'"); ?>
           )</span> </div>
       </div>
       <div class="field-wrap">
