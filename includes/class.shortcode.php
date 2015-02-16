@@ -21,9 +21,10 @@ class shortcode {
     }
 	
 	/**
-     * Return array
-	* @attr
-	*/
+     * All possible shortcodes for this plugin
+	 *
+	 * @return array
+	 */
 	public static function build_shortcodes(){ //this is a temp way
 		$shortcodes = array(
 			'loop'=> array('dis'=>__('Loop')),
@@ -106,7 +107,9 @@ class shortcode {
 				'index_row_chapter','index_row_text','index_row_segment','index_row_page',
 			),
 		);
-		if (isset( $registered_codes[$template] ) ) return $registered_codes[$template];
+		if (isset( $registered_codes[$template] ) ){
+			return $registered_codes[$template];
+		}
 		return array();
 	}
 
