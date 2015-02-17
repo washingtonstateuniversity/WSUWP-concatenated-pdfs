@@ -175,6 +175,27 @@ class shortcode {
 			'separator' => '{P#S}'
 		), $atts));
 		$block='<div id="page_numbers"><span id="pn_text">'.$label.'</span><span id="pn_number">{P#}'.$separator.'{PT#}</span></div>'."\n";
+
+		
+		/* the best corse maybe to dynamicly fill in the numbers
+		http://asserttrue.blogspot.com/2011/04/script-for-putting-page-numbers-on-pdf.html#
+		var inch = 72;
+		for (var p = 0; p < this.numPages; p++) { 
+		 // put a rectangle at .5 inch, .5 inch 
+		  var aRect = this.getPageBox( {nPage: p} ); 
+		  aRect[0] += .5*inch;// from upper left corner of page 
+		  aRect[2] = aRect[0]+.5*inch; // Make it .5 inch wide 
+		  aRect[1] -= .5*inch; 
+		  aRect[3] = aRect[1] - .5*inch; // and .5 inch high 
+		  var f = this.addField("p."+p, "text", p, aRect ); 
+		  f.textSize = 20;  // 20-pt type
+		  f.textColor = color.blue; // use whatever color you want
+		  f.strokeColor = color.white; 
+		  f.textFont = font.Helv; 
+		  f.value = String(p+1);  // page numbering is zero-based
+		  f.readonly = true; 
+		}
+		*/
         return $block;
     }	
 	
@@ -188,37 +209,6 @@ class shortcode {
      */
     public function index_func($atts) {
 		$block='[index_row]';
-	/*	
-						'index_loop'=>array('dis'=>__('The loop of the index items')),
-			'index_row'=>array('dis'=>__('An index item')),
-			'index_row_chapter'=>array('dis'=>__('chapter of an index item')),
-			'index_row_text'=>array('dis'=>__('text of an index item')),
-			'index_row_segment'=>array('dis'=>__('segment of an index item')),
-			'index_row_page'=>array('dis'=>__('page # of an index item')),		
-		
-<?php
-$index.= "";
-$c=1;
-foreach($posts as $post){
-?>
-<table class='indexed_chapter'>
-  <tbody>
-    <tr>
-      <td class='chapter' width='15%' align='right' cellspacing='0' cellpadding='0' >{chapter{$c}}</td>
-      <td class='text' width='25%' align='left' cellspacing='0' cellpadding='0' >{text{$c}}</td>
-      <td class='segment' align='right' cellspacing='0' cellpadding='0' ></td>
-      <td class='pagenumber' width='5%' align='left' cellspacing='0' cellpadding='0' >{page{$c}}</td>
-    </tr>
-  </tbody>
-</table>
-<?php
-	
-}
-?>
-		
-		*/
-		
-		
         return $block;
     }	
 	public function index_loop_func($atts) {

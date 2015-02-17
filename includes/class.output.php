@@ -53,7 +53,7 @@ class catpdf_output {
 
 
 
-    /*
+    /**
      * Return pdf content
      * @type - string
 	 * @TODO move out to template class
@@ -100,7 +100,7 @@ class catpdf_output {
 		
 	
 	
-    /*
+    /**
      * Return html structure
      */
     public function _html_structure() {
@@ -146,6 +146,10 @@ class catpdf_output {
             $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . get_stylesheet_uri() . "'/>\n";
         }
         $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . PDF_STYLE . "'/>\n";
+		
+		
+		
+		
         $head_html_closing_tag = "</head>\n";
 		
 		//calculated values needed for the pdf
@@ -168,7 +172,7 @@ class catpdf_output {
 		//set up the base style that make it easy to fomate it.
         $head_style = '<!-- built from the php and are important to try not to write over if possible -->
 	<style>
-		html,body { background-color:'.$bodycolor.'; position: relative; }
+		html,body { /*background-color:'.$bodycolor.';*/ position: relative; }
 		/*@page{}*/
 		#head_area{ left:'.$pageleftMargin.$unit.'; top:'.$topMargin.$unit.'; height:'.$headHeight.$unit.'; /*width:'.$textBoxingWidth.$unit.';*/ }
 		#head_area .wrap{ height:'.$headHeight.$unit.';}
@@ -226,7 +230,26 @@ class catpdf_output {
 	//page_script seems to need to be oneline?
 	$pdf->page_script(\'$indexpage=$GLOBALS["indexpage"]; if ($PAGE_NUM==$indexpage ) { $pdf->add_object($GLOBALS["backside"],"add"); $pdf->stop_object($GLOBALS["backside"]); }\');
 </script>'."\n";
-        $bodyCloseTag="</body>\n";
+
+$bodyCloseTag='<script type="text/javascript">
+app.beep(0);
+var inch = 92;
+		for (var p = 0; p < this.numPages; p++) { 
+		 // put a rectangle at .5 inch, .5 inch 
+		  var aRect = this.getPageBox( {nPage: p} ); 
+		  aRect[0] += .5*inch;// from upper left corner of page 
+		  aRect[2] = aRect[0]+.5*inch; // Make it .5 inch wide 
+		  aRect[1] -= .5*inch; 
+		  aRect[3] = aRect[1] - .5*inch; // and .5 inch high 
+		  var f = this.addField("p."+p, "text", p, aRect ); 
+		  f.textSize = 20;  // 20-pt type
+		  f.textColor = color.blue; // use whatever color you want
+		  f.strokeColor = color.white; 
+		  f.textFont = font.Helv; 
+		  f.value = String(p+1);  // page numbering is zero-based
+		  f.readonly = true; 
+		}</script>';
+        $bodyCloseTag.="</body>\n";
 		$htmlCloseTag="</html>\n";
 					
 		$bottomHtml = $indexer
@@ -234,7 +257,7 @@ class catpdf_output {
 					.$htmlCloseTag;		
         $this->foot = $bottomHtml;
     }
-    /*
+    /**
      * Return html with filtered shortcodes
      * @tmp_type - string
 	 * needs to be reworked

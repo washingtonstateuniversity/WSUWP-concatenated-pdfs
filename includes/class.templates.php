@@ -67,7 +67,7 @@ class catpdf_templates {
 		return $contentHtml;
 	}	
 	public function get_section_cover(){
-		$cover			= "<h1 class='CoverTitle'>Cover Letter</h1>\n";
+		$cover			= $this->resolve_template("cover.php");
 		$coverHtml 		= "<div id='catpdf_cover'>{$cover}</div>\n";	
 		return $coverHtml;
 	}
@@ -85,7 +85,7 @@ class catpdf_templates {
 		return $indexHtml;
 	}	
 	public function get_section_appendix(){	
-		$appendix			= "<h1 class='CoverTitle'>appendix</h1>";
+		$appendix			= $this->resolve_template("appendix.php");
 		$appendixHtml 		= "<div id='catpdf_appendix'>{$appendix}</div>";	
 		return $appendixHtml;
 	}
@@ -140,6 +140,8 @@ class catpdf_templates {
 
     /**
      * Return default template structure
+	 *
+	 * @param string $type
 	 * 
 	 * @return array
      */

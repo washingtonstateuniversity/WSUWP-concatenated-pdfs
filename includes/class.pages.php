@@ -33,7 +33,7 @@ class catpdf_pages {
             add_action('init', array( $this, 'download_posts' ));// Add download action hook
         }
     }
-    /*
+    /**
      * Initailize plugin admin part
      */
     public function admin_init() {
@@ -54,7 +54,7 @@ class catpdf_pages {
         wp_enqueue_script('catpdf-js', CATPDF_URL . 'js/catpdf.custom.js', array('jquery'), '', 'all');
         wp_enqueue_style('catpdfport-style', CATPDF_URL . 'css/style.css', false, '1.9.0', 'all');
     }
-    /*
+    /**
      * Add plugin menu
      */
     public function admin_menu() {
@@ -65,7 +65,7 @@ class catpdf_pages {
 
     }
 
-    /*
+    /**
      * Display "Download" page
      */
     public function download_page() {
@@ -135,7 +135,7 @@ class catpdf_pages {
         $data['select_sizes']  = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
         $data['select_ors']    = $catpdf_data->paper_orientation;
         $data['option_url']    = "";//$tool_url;
-        $data['templates']     = $catpdf_templates->get_template();
+        $data['templates']     = array();//$catpdf_templates->get_template();
         $data['message']       = $this->get_message();
         // Display export form
         $this->view(CATPDF_PATH . '/includes/views/export.php', $data);
@@ -144,7 +144,7 @@ class catpdf_pages {
     /*-------------------------------------------------------------------------*/
     /* -Option- 															   */
     /*-------------------------------------------------------------------------*/
-    /*
+    /**
      * Update plugin option
      */
     public function update_options() {
@@ -152,7 +152,7 @@ class catpdf_pages {
         $options = $_params;
         update_option('catpdf_options', json_encode($options));
     }
-    /*
+    /**
      * Display "Option" page
      */
     public function option_page() {
@@ -163,16 +163,16 @@ class catpdf_pages {
         $data['options']   = $options;
 		$data['dompdf_options'] = $catpdf_data->get_options();
 		$data['sizes']   = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
-		$data['media_types'] = array("screen","tty","tv","projection","handheld","print","braille","aural","speech","all");
+		$data['media_types'] = $catpdf_data->media_types;
         // Get templates
-        $data['templates'] = $catpdf_templates->get_template();
+        $data['templates'] = array();//$catpdf_templates->get_template();
         // Display option form
         $this->view(CATPDF_PATH . '/includes/views/options.php', $data);
     }
     /*-------------------------------------------------------------------------*/
     /* -Export- 															   */
     /*-------------------------------------------------------------------------*/
-    /*
+    /**
      * Perform export pdf
      */
     public function export() {
@@ -205,7 +205,7 @@ class catpdf_pages {
 			$catpdf_output->sendPdf($file);
 		}
     }
-    /*
+    /**
      * Download post pdf
      */
     public function download_posts() {
@@ -227,7 +227,7 @@ class catpdf_pages {
         $dompdf->render();
         $dompdf->stream(trim($catpdf_output->title) . ".pdf");
     }
-    /*
+    /**
      * Download single post pdf
      */
     public function download_post() {
@@ -273,7 +273,7 @@ class catpdf_pages {
     /*-------------------------------------------------------------------------*/
     /* -General- 															   */
     /*-------------------------------------------------------------------------*/
-    /*
+    /**
      * Return falsh message
      */
     public function get_message() {
@@ -285,7 +285,7 @@ class catpdf_pages {
             return $message;
         }
     }
-    /*
+    /**
      * Return query filter
      * @file - string
      * @data - array
