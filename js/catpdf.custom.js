@@ -34,7 +34,7 @@
 						var arr = ['loop','site_title','site_tagline','site_url','date_today','from_date','to_date','categories','post_count'];
 					}
 					// Insert shortcode to active tinyMCE field
-					if( jQuery.inArray(item, arr)!=-1 ) {
+					if( $.inArray(item, arr)!=-1 ) {
 						str = '[' + item + ']';
 						window.tinyMCE.execInstanceCommand(window.tinyMCE.activeEditor.id, 'mceInsertContent', false, str);
 					}
@@ -48,7 +48,7 @@
 					}	
 				}
 				// Select field select all event
-				jQuery.each($('.useful [type="checkbox"]'), function(){
+				$.each($('.useful [type="checkbox"]'), function(){
 					var tar = $(this);
 					tar.on("click",function(){
 						trigger_usage(tar);
@@ -61,9 +61,9 @@
 					var self = $(this);
 					var block = self.closest('.field-wrap').find('.note_block');
 					if(block.is(".active")){
-						block.slideUp(250,"easeOutQuint",function(){ block.removeClass("active"); });	
+						block.slideUp(250,"easeOutQuint",function(){ block.removeClass("active"); });
 					}else{
-						block.slideDown(500,"easeOutQuint",function(){ block.addClass("active"); });	
+						block.slideDown(500,"easeOutQuint",function(){ block.addClass("active"); });
 					}
 				});
 				
