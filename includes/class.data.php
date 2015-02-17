@@ -72,6 +72,26 @@ class catpdf_data {
 		'portrait',
 		'landscape'
 	);
+
+
+	/**
+	 * media types to put the pdf in
+	 *
+	 * @var array;
+	 */
+	public $media_types = array(
+		"screen",
+		"tty",
+		"tv",
+		"projection",
+		"handheld",
+		"print",
+		"braille",
+		"aural",
+		"speech",
+		"all"
+	);
+
 	
 	
 	
