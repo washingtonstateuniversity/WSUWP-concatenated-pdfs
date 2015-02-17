@@ -117,6 +117,7 @@
       <p class="submit">
         <input type="submit" id="catpdf-export" name="catpdf_export" class="button-primary" value="<?php echo _e('Download'); ?>"> | <input type="submit" id="catpdf-shortcode" name="catpdf_shortcode" class="button-secondary" value="<?php echo _e('Build Shortcode'); ?>">
       </p>
+	  <pre><code id="shortcode_box"></code></pre>
     </form>
   </div>
 </div>

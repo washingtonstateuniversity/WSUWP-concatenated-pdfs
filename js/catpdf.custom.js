@@ -108,6 +108,40 @@
 				});
 				
 				
+				$("#catpdf-shortcode").on('click',function(e){
+					e.preventDefault();
+					var tag = "";
+					$.each($("input,select","#catpdf_form"),function(){
+						var self = $(this);
+						var name = self.attr("name");
+						var type = self.attr("type");
+						if( typeof self.attr("name")!=="undefined" && name!="" && type!="submit"){
+							if(self.is('select')){
+								var selected = "";
+								$.each($('option:selected',self),function(){
+									selected+=(selected!=""?",":"")+($(this).val());
+								});
+								if(selected!=""){
+									tag += (tag!=""?" ":"")+(name.split("[]").join('')+"='"+selected+"'");
+								}
+							}else{
+								var val = self.val();
+								if(val!=""){
+									tag += (tag!=""?" ":"")+(name.split("[]").join('')+"='"+val+"'");
+								}
+							}
+						}
+					});
+					tag = "[catpdf"+(tag==""?"":" ")+tag+"]";
+					
+					$("#shortcode_box").text(tag);
+				});
+				
+				
+				
+				
+				
+				
 			});
 		},
 	};
