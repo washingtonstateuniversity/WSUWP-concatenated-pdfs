@@ -19,7 +19,19 @@
 			
 				// Select field select all event
 				$('.all-btn').on("click",function(){
-					$(this).siblings('select').find('option').attr("selected","selected");
+					var self = $(this);
+					var selectbox = self.siblings('select');
+					var options = selectbox.find('option');
+					if(self.is('.ALL_ON')){
+						self.removeClass("ALL_ON").addClass('ALL_OFF');
+						options.removeAttr("selected");
+						self.val("Select All");
+					}else{
+						self.addClass("ALL_ON").removeClass('ALL_OFF');
+						options.attr("selected","selected");
+						self.val("Deselect All");
+					}
+					
 				});
 			
 				// Shortcode insert event

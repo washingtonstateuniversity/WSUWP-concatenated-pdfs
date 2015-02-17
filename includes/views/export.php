@@ -43,14 +43,13 @@
             <input class="all-btn sept-mar" type="button" value="Select All">
           </div>
           <div class="wd200 fl">
-            <label class="marb5">
-              <?php _e( "Status" ); ?></label>
+            <label class="marb5"><?php _e( "Status" ); ?></label>
             <select id="status" name="status[]" multiple="multiple">
-				<option selected="selected" value="any"><?php _e( 'Any' );?></option>
 				<?php foreach(get_post_statuses() as $key=>$name):?>
 				<option value="<?=$key?>"><?=$name?></option>
 				<?php endforeach;?>
             </select>
+			<input class="all-btn sept-mar" type="button" value="Select All">
           </div>
           <div class="clr"></div>
         </div>
