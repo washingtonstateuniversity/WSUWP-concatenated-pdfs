@@ -222,11 +222,26 @@ class catpdf_pages {
         
 		$dompdf->set_paper((isset($_GET['paper_size'])) ? urldecode($_GET['paper_size']) : 'letter', (isset($_GET['paper_orientation'])) ? urldecode($_GET['paper_orientation']) : 'portrait');
 		$content     = $catpdf_output->construct_template();
-		var_dump($content);
+		//var_dump($content);
         $dompdf->load_html($content);
         
         $dompdf->render();
-        $dompdf->stream(trim($catpdf_output->title) . ".pdf");
+        $filename = trim($catpdf_output->buildFileName(null,null)) . ".pdf";
+		if(!$catpdf_output->is_cached($filename)){
+		
+			$pdf = $dompdf->output();//store it for output	
+			if($catpdf_output->cachePdf( 'merging_stage/'.$filename, $pdf )){
+			
+				$mergeList[]=$filename;
+				
+				$catpdf_output->merge_pdfs($mergeList,$filename);
+				$catpdf_output->sendPdf($filename);
+			}else{
+				var_dump($pdf); die();	
+			}
+		}else{
+			$catpdf_output->sendPdf($filename);	
+		}
     }
     /**
      * Download single post pdf
