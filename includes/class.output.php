@@ -137,7 +137,7 @@ class catpdf_output {
 		/* there should be a base html template? */
 		$head_html = "<!DOCTYPE html>\n";
         $head_html .= "<html>\n";
-        $head_html .= "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />\n";
+        $head_html .= "<meta charset='UTF-8' />\n";
         $head_html .= '<title>' . $this->title . "</title>\n";
 		
 		$head_html_style_sheets = "";
