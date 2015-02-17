@@ -10,7 +10,7 @@
     <form id="catpdf_form" method="post" action="<?php echo $option_url;?>">
       <div class="field-wrap">
         <div class="field">
-          <label><?php echo _e( "Span" ); ?></label>
+          <label><?php echo _e( "Time Span" ); ?></label>
           <span class="sept-mar"><?php echo _e( 'From' ); ?></span>
           <input type="text" class="datepicker" id="from" name="from" value="" >
           <span class="sept-mar"><?php echo _e( 'To' ); ?></span>
@@ -73,7 +73,7 @@
           <?php _e("Select parameters to download. Will download all if each set to blank."); ?>
           )</span> </div>
       </div>
-      <div class="field-wrap">
+      <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
         <div class="field">
 
 		<label><?=_e( "Paper size." )?> </label>
@@ -86,11 +86,23 @@
 		  
 		  
         </div>
-        <div class="note"> <span>(
-          <?php _e("Dimensions of paper sizes in points.  The format is top left point coordinate to bottom right point coordinate (TLy,TLx,BRy,BRx). North America standard is 'letter'; other countries generally 'a4'"); ?>
-          )</span> </div>
+		 <div class="note block"><div class="note_block"><?=_e("Dimensions of paper sizes in points.  The format is top left point coordinate to bottom right point coordinate (TLy,TLx,BRy,BRx). North America standard is 'letter'; other countries generally 'a4'")?></div></div>
+		  
       </div>
-      <div class="field-wrap">
+		<div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+			<div class="field">
+				<label><?=_e( "Media view rendered into pdf" )?> </label>
+				<select name="media_type" id="media_type" >
+					<?php foreach($media_types as $name): ?>
+					<option><?=$name?></option>
+					<?php endforeach;?>
+				</select>
+			</div>
+			<div class="note block"><div class="note_block"><?=_e("Note, even though the generated pdf file is intended for print output, the desired content might be different (e.g. screen or projection view of html file).  Therefore allow specification of content here.")?></div></div>
+		</div>
+	  
+	  
+      <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
         <div class="field">
           <label><?php _e( "Orientation" ); ?></label>
           <select id="orientation" name="orientation">
@@ -99,11 +111,9 @@
             <?php endforeach; ?>
           </select>
         </div>
-        <div class="note"> <span>(
-          <?php _e("Select paper orientation."); ?>
-          )</span> </div>
+		  <div class="note block"><div class="note_block"><?=_e("Select paper orientation.")?></div></div>
       </div>
-      <div class="field-wrap">
+      <!--<div class="field-wrap">
         <div class="field">
           <label><?php _e( "Template" ); ?></label>
           <select name="template">
@@ -118,9 +128,9 @@
         <div class="note"> <span>(
           <?php _e("Select paper orientation."); ?>
           )</span> </div>
-      </div>
+      </div>-->
       <p class="submit">
-        <input type="submit" id="catpdf-export" name="catpdf_export" class="button-primary" value="<?php echo _e('Download'); ?>">
+        <input type="submit" id="catpdf-export" name="catpdf_export" class="button-primary" value="<?php echo _e('Download'); ?>"> | <input type="submit" id="catpdf-shortcode" name="catpdf_shortcode" class="button-secondary" value="<?php echo _e('Build Shortcode'); ?>">
       </p>
     </form>
   </div>

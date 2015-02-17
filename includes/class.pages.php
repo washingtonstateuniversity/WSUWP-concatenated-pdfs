@@ -61,7 +61,7 @@ class catpdf_pages {
         // Register menu
         add_menu_page(CATPDF_NAME, CATPDF_NAME, 'manage_options', CATPDF_BASE_NAME, array( $this, 'option_page' ), CATPDF_URL . 'images/nav-icon.png');
         // Register sub-menu
-        add_submenu_page(CATPDF_BASE_NAME, _('Download PDF'), _('Download PDF'), 'manage_options', 'catpdf-download-pdf', array( $this, 'download_page' ));
+        add_submenu_page(CATPDF_BASE_NAME, _('Download PDF'), _('Download Builder'), 'manage_options', 'catpdf-download-pdf', array( $this, 'download_page' ));
 
     }
 
@@ -134,6 +134,7 @@ class catpdf_pages {
 
         $data['select_sizes']  = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
         $data['select_ors']    = $catpdf_data->paper_orientation;
+		$data['media_types']   = $catpdf_data->media_types;
         $data['option_url']    = "";//$tool_url;
         $data['templates']     = array();//$catpdf_templates->get_template();
         $data['message']       = $this->get_message();
