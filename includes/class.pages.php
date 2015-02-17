@@ -222,7 +222,7 @@ class catpdf_pages {
         
 		$dompdf->set_paper((isset($_GET['paper_size'])) ? urldecode($_GET['paper_size']) : 'letter', (isset($_GET['paper_orientation'])) ? urldecode($_GET['paper_orientation']) : 'portrait');
 		$content     = $catpdf_output->construct_template();
-		
+		var_dump($content);
         $dompdf->load_html($content);
         
         $dompdf->render();

@@ -59,11 +59,11 @@ class catpdf_output {
 	 * @TODO move out to template class
      */
     public function construct_template($type = NULL) {
-        global $catpdf_templates,$_params,$catpdf_data,$posts;
+        global $catpdf_templates,$_params,$catpdf_data,$posts,$post;
 		$id		= isset($_params['catpdf_dl'])?$_params['catpdf_dl']:NULL;
-
-		$posts 	= array(get_post($id));
-		//var_dump($posts);
+		
+		$posts 	= ($id>0) ? get_posts($post) : array(get_post($id));
+		var_dump($posts);
 		
         $this->template = $catpdf_templates->get_current_tempate($type);
 		//var_dump($this->template);
@@ -162,11 +162,11 @@ class catpdf_output {
 		$page_padding="{$pageHeadMargin}{$unit} {$pagerightMargin}{$unit} {$pageFootMargin}{$unit} {$pageleftMargin}{$unit}";
 		
 		$bodyOpenTag = "<body>\n";
-		$header_section = "<div id='head_area'>\n<div class='wrap'>${pageheader}</div>\n</div>\n";
-		$footer_section = "<div id='foot_area'>\n<div class='wrap'>${pagefooter}</div>\n</div>\n";
+		$header_section = "<div id='head_area'>\n<div class='wrap'>\n${pageheader}</div>\n</div>\n";
+		$footer_section = "<div id='foot_area'>\n<div class='wrap'>\n${pagefooter}</div>\n</div>\n";
 		
 		//sets up the globals for the rendered inline php 
-		$indexscriptglobals='<script type="text/php"> $GLOBALS["i"]=1; $GLOBALS["indexpage"]=0; $GLOBALS["chapters"] = array(); </script>';
+		$indexscriptglobals="\n".'<script type="text/php"> $GLOBALS["i"]=1; $GLOBALS["indexpage"]=0; $GLOBALS["chapters"] = array(); </script>'."\n";
 		$script="";
 		
 		//set up the base style that make it easy to fomate it.

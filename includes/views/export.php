@@ -8,6 +8,7 @@
   </p>
   <div id="form-wrap">
     <form id="catpdf_form" method="post" action="<?php echo $option_url;?>">
+	<h3>Querying attributes</h3>
       <div class="field-wrap">
         <div class="field">
           <label><?php echo _e( "Time Span" ); ?></label>
@@ -58,6 +59,8 @@
           <?php _e("Select parameters to download. Will download all if each set to blank."); ?>
           )</span> </div>
       </div>
+	  
+	  <h3>PDF attributes</h3>
       <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
         <div class="field">
 
@@ -114,10 +117,25 @@
           <?php _e("Select paper orientation."); ?>
           )</span> </div>
       </div>-->
+	  <h3>Download link attributes</h3>
+      <div class="field-wrap"><a href="#" class="help" title="View Help"><span class="dashicons dashicons-editor-help"></span></a>
+        <div class="field">
+          <label><?php _e( "Text" ); ?></label>
+          <input type="text" id="text" name="text" placeholder="Download"/>
+        </div>
+		  <div class="note block"><div class="note_block"><?=_e("The text is what is printed to the screen for the user to see.")?></div></div>
+      </div>
+	  
+	  <hr/>
+	  <div>
       <p class="submit">
         <input type="submit" id="catpdf-export" name="catpdf_export" class="button-primary" value="<?php echo _e('Download'); ?>"> | <input type="submit" id="catpdf-shortcode" name="catpdf_shortcode" class="button-secondary" value="<?php echo _e('Build Shortcode'); ?>">
       </p>
-	  <pre><code id="shortcode_box"></code></pre>
+	  <div id="shortcode_area" style="display:none;">
+		  <pre><code id="shortcode_box"></code></pre>
+		  <p>Since you are not defining a post id, this will be an "all" type of shorcode.</p>
+	  </div>
+	  </div>
     </form>
   </div>
 </div>

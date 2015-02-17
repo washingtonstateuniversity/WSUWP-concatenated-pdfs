@@ -133,8 +133,10 @@
 						}
 					});
 					tag = "[catpdf"+(tag==""?"":" ")+tag+"]";
-					
 					$("#shortcode_box").text(tag);
+					if( ! $("#shortcode_area").is(":visible") ){
+						$("#shortcode_area").fadeIn(500);
+					}
 				});
 				
 				

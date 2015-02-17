@@ -62,23 +62,23 @@ class catpdf_templates {
 		
 		$catpdf_output->_html_structure();
 		$content 		= $catpdf_output->filter_shortcodes('body');
-		$contentHtml	= "<div id='catpdf_content'>{$content}</div>\n";	
+		$contentHtml	= "\n<div id='catpdf_content'>\n{$content}\n</div>\n";	
 		//var_dump($contentHtml);die();
 		return $contentHtml;
 	}	
 	public function get_section_cover(){
 		$cover			= $this->resolve_template("cover.php");
-		$coverHtml 		= "<div id='catpdf_cover'>{$cover}</div>\n";	
+		$coverHtml 		= "\n<div id='catpdf_cover'>\n{$cover}\n</div>\n";	
 		return $coverHtml;
 	}
 	
 	public function get_section_index(){
 		global $posts,$catpdf_output;
-		$index='<script type="text/php">$GLOBALS["indexpage"]=$pdf->get_page_number(); $GLOBALS["backside"]=$pdf->open_object();</script>'."\n";
+		$index="\n".'<script type="text/php">$GLOBALS["indexpage"]=$pdf->get_page_number(); $GLOBALS["backside"]=$pdf->open_object();</script>'."\n";
 		$table = $this->resolve_template("index-table.php");
 		$index.=$catpdf_output->filter_shortcodes('index',$table);
-		$index.='<script type="text/php">$pdf->close_object(); </script>'."\n";
-		$indexHtml="<div id='catpdf_index'>{$index}</div>";
+		$index.="\n".'<script type="text/php">$pdf->close_object(); </script>'."\n";
+		$indexHtml="\n<div id='catpdf_index'>\n{$index}\n</div>\n";
 		
 		//var_dump($indexHtml);die();
 		
@@ -86,7 +86,7 @@ class catpdf_templates {
 	}	
 	public function get_section_appendix(){	
 		$appendix			= $this->resolve_template("appendix.php");
-		$appendixHtml 		= "<div id='catpdf_appendix'>{$appendix}</div>";	
+		$appendixHtml 		= "\n<div id='catpdf_appendix'>\n{$appendix}\n</div>\n";	
 		return $appendixHtml;
 	}
 	
