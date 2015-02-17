@@ -46,24 +46,10 @@
             <label class="marb5">
               <?php _e( "Status" ); ?></label>
             <select id="status" name="status[]" multiple="multiple">
-              <option selected="selected" value="any">
-              <?php _e( 'Any' );?>
-              </option>
-              <option value="publish">
-              <?php _e( 'Publish' );?>
-              </option>
-              <option value="pending">
-              <?php _e( 'Pending Review' );?>
-              </option>
-              <option value="draft">
-              <?php _e( 'Draft' );?>
-              </option>
-              <option value="future">
-              <?php _e( 'Future' );?>
-              </option>
-              <option value="private">
-              <?php _e( 'Private' );?>
-              </option>
+				<option selected="selected" value="any"><?php _e( 'Any' );?></option>
+				<?php foreach(get_post_statuses() as $key=>$name):?>
+				<option value="<?=$key?>"><?=$name?></option>
+				<?php endforeach;?>
             </select>
           </div>
           <div class="clr"></div>
