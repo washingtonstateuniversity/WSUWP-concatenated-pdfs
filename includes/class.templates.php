@@ -136,6 +136,19 @@ class catpdf_templates {
 		}
 		return $this->current_style;
 	}	
+	
+	public function get_style_css(){
+		$style = $this->current_style;
+		$style_url = "";
+		$path = get_stylesheet_directory() .'/concatenated-pdfs/';
+		if(file_exists($path.$style.'/style.css')){	
+			$style_url = get_stylesheet_directory_uri().'/concatenated-pdfs/' .$style .'/style.css';
+		}
+		return $style_url;
+	}		
+	
+	
+	
 	/**
      * set template object
 	 */

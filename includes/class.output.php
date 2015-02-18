@@ -104,7 +104,7 @@ class catpdf_output {
      * Return html structure
      */
     public function _html_structure() {
-		global $_params, $dompdf, $catpdf_data;
+		global $_params, $dompdf, $catpdf_data, $catpdf_templates;
 		
 		if (empty($this->template)) return false; 
 		
@@ -141,15 +141,15 @@ class catpdf_output {
         $head_html .= '<title>' . $this->title . "</title>\n";
 		
 		$head_html_style_sheets = "";
-		
+		$head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . PDF_STYLE . "'/>\n";
         if (isset($options['single']['enablecss']) && $options['single']['enablecss'] == 'on') {
-            $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . get_stylesheet_uri() . "'/>\n";
+            //$head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . get_stylesheet_uri() . "'/>\n";
         }
-        $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . PDF_STYLE . "'/>\n";
-		
-		
-		
-		
+        $get_style_css    = $catpdf_templates->get_style_css();
+		if ($get_style_css!="") {
+            $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . $get_style_css. "'/>\n";
+        }
+//var_dump( $head_html_style_sheets); die();
         $head_html_closing_tag = "</head>\n";
 		
 		//calculated values needed for the pdf
