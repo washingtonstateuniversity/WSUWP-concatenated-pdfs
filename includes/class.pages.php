@@ -227,7 +227,7 @@ class catpdf_pages {
 		$orientation = (isset($_params['orientation'])) ? urldecode($_params['orientation']) : 'portrait';
 		
 		$filename = trim($catpdf_output->buildFileName(null,null))."-".md5( implode(',',$_params) ) . ".pdf";
-		if(!$catpdf_output->is_cached($filename)){
+		if(!$catpdf_output->is_cached($filename) || $_params['dyno']){
 			$dompdf->set_paper($size,$orientation);
 			$content     = $catpdf_output->construct_template();
 			//var_dump($content);
@@ -259,7 +259,7 @@ class catpdf_pages {
         $single      = $posts[0];
 		//var_dump();die();
         $filename    = preg_replace('/[^a-z0-9]/i', '_', $single->post_title)."-".md5( implode(',',$_params) ) . ".pdf";	
-        if(!$catpdf_output->is_cached($filename)){
+        if(!$catpdf_output->is_cached($filename)|| $_params['dyno']){
 			$content     = $catpdf_output->construct_template('single');
 			//var_dump($content);die();
 			$dompdf = new DOMPDF();
