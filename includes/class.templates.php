@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class catpdf_templates {
     public $title = '';
 	public $current_template = NULL;
+	public $current_style = '';
     function __construct() {
 		global $_params;
         if (is_admin()) {
@@ -42,9 +43,9 @@ class catpdf_templates {
 	
 	public function get_default_template_sections(){
 		$sections = array(
+			'content'=>"",
 			'cover'=>"",
 			'index'=>"",
-			'content'=>"",
 			'appendix'=>"",
 		);
 		return $sections;
@@ -99,15 +100,54 @@ class catpdf_templates {
 		if($this->current_template==NULL)$this->set_current_tempate($type);
 		return $this->current_template;
 	}
+	
+	
+	public function get_styles(){
+		$path = get_stylesheet_directory() .'/concatenated-pdfs/';
+		$data = array();
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
+		foreach ($files as $file){
+			$file_name = array_pop ( explode("/",strval($file)) );
+			if ($file_name!="." && $file_name!=".."  && is_dir($file) === true){
+				$data[] = $file_name;
+			}
+		}
+		return $data;
+	}
+	
+	public function set_style($style=NULL){
+		global $_params,$catpdf_templates,$catpdf_data;
+		if($style==NULL){
+			$options   = $catpdf_data->get_options();
+			if( isset($options['style']) && $options['style']!="" ){
+				$this->current_style=$options['style'];
+			}
+		}else{
+			if( in_array( $style, $this->get_styles() ) ){
+				$this->current_style=$style;
+			}
+		}
+		
+	}
+	public function get_style($style=NULL){
+		global $_params,$catpdf_templates,$catpdf_data;
+		if($this->current_style==""){
+			$this->set_style( isset($_params['style'])?$_params['style']:null );
+		}
+		return $this->current_style;
+	}	
 	/**
      * set template object
 	 */
 	public function set_current_tempate($type=NULL){
 		global $_params,$catpdf_templates,$catpdf_data;
+		
+		
+		$this->get_style();
+		
 		$curr_temp = isset($_params['template'])?$_params['template']:null;
-		
 		$options   = $catpdf_data->get_options();
-		
+
 		if($curr_temp==null){
 			if ($type == 'single') {
 				$curr_temp = $options['single']['dltemplate'];
@@ -126,7 +166,9 @@ class catpdf_templates {
 
 	public function resolve_template($file){
 		$html = "";
-		if ( $overridden_template = locate_template( $file ) ) {
+		$style = $this->current_style;
+		$overridden_template = get_stylesheet_directory() .'/concatenated-pdfs/'.( $style!="" && $style !="default" ? "$style/" : "" ).$file;
+		if ( file_exists($overridden_template) ) {
 			// locate_template() returns path to file
 			// if either the child theme or the parent theme have overridden the template
 			$html = file_get_contents( $overridden_template );

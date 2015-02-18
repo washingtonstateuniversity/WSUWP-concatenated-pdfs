@@ -165,6 +165,7 @@ class catpdf_pages {
 		$data['dompdf_options'] = $catpdf_data->get_options();
 		$data['sizes']   = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
 		$data['media_types'] = $catpdf_data->media_types;
+		$data['styles'] = array('default' => "default") + $catpdf_templates->get_styles();
         // Get templates
         $data['templates'] = array();//$catpdf_templates->get_template();
         // Display option form
