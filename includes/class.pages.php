@@ -210,25 +210,27 @@ class catpdf_pages {
      * Download post pdf
      */
     public function download_posts() {
-        global $dompdf, $catpdf_output,$post;
+        global $dompdf,$_params,$catpdf_output,$post;
         $param_arr   = array(
-            'from' => (isset($_GET['from'])) ? urldecode($_GET['from']) : '',
-            'to' => (isset($_GET['to'])) ? urldecode($_GET['to']) : '',
-            'cat' => (isset($_GET['cat']) && $_GET['cat'] != '') ? explode(',', $_GET['cat']) : array(),
-            'user' => (isset($_GET['author']) && $_GET['author'] != '') ? explode(',', $_GET['author']) : array(),
-            'template' => (isset($_GET['template'])) ? urldecode($_GET['template']) : 'def'
+            'from' => (isset($_params['from'])) ? urldecode($_params['from']) : '',
+            'to' => (isset($_params['to'])) ? urldecode($_params['to']) : '',
+            'cat' => (isset($_params['cat']) && $_params['cat'] != '') ? explode(',', $_params['cat']) : array(),
+            'user' => (isset($_params['user']) && $_params['user'] != '') ? explode(',', $_params['user']) : array(),
+            'template' => (isset($_params['template'])) ? urldecode($_params['template']) : 'default',
+			'type' => (isset($_params['type'])) ? urldecode($_params['type']) : 'post',
+			'status' => (isset($_params['status'])) ? urldecode($_params['status']) : 'published'
         );
         $post  = $param_arr;
-        
-		$dompdf->set_paper((isset($_GET['paper_size'])) ? urldecode($_GET['paper_size']) : 'letter', (isset($_GET['paper_orientation'])) ? urldecode($_GET['paper_orientation']) : 'portrait');
-		$content     = $catpdf_output->construct_template();
-		//var_dump($content);
-        $dompdf->load_html($content);
-        
-        $dompdf->render();
-        $filename = trim($catpdf_output->buildFileName(null,null)) . ".pdf";
-		if(!$catpdf_output->is_cached($filename)){
+		$size = (isset($_params['papersize'])) ? urldecode($_params['papersize']) : 'letter';
+		$orientation = (isset($_params['orientation'])) ? urldecode($_params['orientation']) : 'portrait';
 		
+		$filename = trim($catpdf_output->buildFileName(null,null))."-".md5( implode(',',$_params) ) . ".pdf";
+		if(!$catpdf_output->is_cached($filename)){
+			$dompdf->set_paper($size,$orientation);
+			$content     = $catpdf_output->construct_template();
+			//var_dump($content);
+			$dompdf->load_html($content);
+			$dompdf->render();
 			$pdf = $dompdf->output();//store it for output	
 			if($catpdf_output->cachePdf( 'merging_stage/'.$filename, $pdf )){
 			
