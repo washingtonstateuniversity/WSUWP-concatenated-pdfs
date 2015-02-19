@@ -13,6 +13,7 @@ class catpdf_templates {
     public $title = '';
 	public $current_template = NULL;
 	public $current_style = '';
+	public $active_post = NULL;
     function __construct() {
 		global $_params;
         if (is_admin()) {
@@ -33,9 +34,9 @@ class catpdf_templates {
 
 	public function get_default_render_order(){
 		$sections = array(
+			'content'=>"",
 			'cover'=>"",
 			'index'=>"",
-			'content'=>"",
 			'appendix'=>"",
 		);
 		return $sections;
@@ -43,9 +44,9 @@ class catpdf_templates {
 	
 	public function get_default_template_sections(){
 		$sections = array(
-			'content'=>"",
 			'cover'=>"",
 			'index'=>"",
+			'content'=>"",
 			'appendix'=>"",
 		);
 		return $sections;
@@ -59,37 +60,59 @@ class catpdf_templates {
 	}
 	
 	public function get_section_content(){	
-		global $catpdf_output;
-		
-		$catpdf_output->_html_structure();
-		$content 		= $catpdf_output->filter_shortcodes('body');
-		$contentHtml	= "\n<div id='catpdf_content'>\n{$content}\n</div>\n";	
-		//var_dump($contentHtml);die();
-		return $contentHtml;
+		global $catpdf_output,$_params,$post,$posts;
+
+		$parts=array();
+		foreach($posts as $posting){
+			
+			setup_postdata($post = $posting);
+			//$active_post = $post;
+			
+			//needs to be if single once, else each pdf.
+			$catpdf_output->_html_structure();
+			$content 		= $catpdf_output->filter_shortcodes('body', $this->resolve_template('concat-body.php') );
+			$html	= "\n<div id='catpdf_content'>\n{$content}\n</div>\n";	
+			var_dump($html);
+			$part_name = $catpdf_output->create_section_pdf("content",$html,get_the_title());
+			$parts[]=$part_name;
+		}
+		return $parts;
 	}	
 	public function get_section_cover(){
-		$cover			= $this->resolve_template("cover.php");
-		$coverHtml 		= "\n<div id='catpdf_cover'>\n{$cover}\n</div>\n";	
-		return $coverHtml;
+		global $catpdf_output,$_params,$post,$posts;
+		$cover			= $catpdf_output->filter_shortcodes('body',$this->resolve_template("cover.php"));
+		$html 			= "\n<div id='catpdf_cover'>\n{$cover}\n</div>\n";	
+		$part_name = $catpdf_output->create_section_pdf("cover",$html);
+		return $part_name;
 	}
 	
 	public function get_section_index(){
-		global $posts,$catpdf_output;
+		global $catpdf_output,$_params,$post,$posts;
 		$index="\n".'<script type="text/php">$GLOBALS["indexpage"]=$pdf->get_page_number(); $GLOBALS["backside"]=$pdf->open_object();</script>'."\n";
 		$table = $this->resolve_template("index-table.php");
 		$index.=$catpdf_output->filter_shortcodes('index',$table);
 		$index.="\n".'<script type="text/php">$pdf->close_object(); </script>'."\n";
-		$indexHtml="\n<div id='catpdf_index'>\n{$index}\n</div>\n";
-		
-		//var_dump($indexHtml);die();
-		
-		return $indexHtml;
+		$html="\n<div id='catpdf_index'>\n{$index}\n</div>\n";
+		$part_name = $catpdf_output->create_section_pdf("index",$html);
+		return $part_name;
 	}	
 	public function get_section_appendix(){	
+		global $catpdf_output,$_params,$post,$posts;
 		$appendix			= $this->resolve_template("appendix.php");
-		$appendixHtml 		= "\n<div id='catpdf_appendix'>\n{$appendix}\n</div>\n";	
-		return $appendixHtml;
+		$html 		= "\n<div id='catpdf_appendix'>\n{$appendix}\n</div>\n";
+		$part_name = $catpdf_output->create_section_pdf("appendix",$html);
+		return $part_name;
 	}
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
      * return template object
