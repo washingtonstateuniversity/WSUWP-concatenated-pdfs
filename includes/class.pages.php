@@ -176,7 +176,7 @@ class catpdf_pages {
      * Download post pdf
      */
     public function download_posts() {
-        global $dompdf,$_params,$catpdf_output,$post,$post_query_arr,$catpdf_templates;
+        global $dompdf,$_params,$catpdf_output,$post,$post_query_arr,$catpdf_templates,$producing_pdf;
         $param_arr   = array(
             'from' => (isset($_params['from'])) ? urldecode($_params['from']) : '',
             'to' => (isset($_params['to'])) ? urldecode($_params['to']) : '',
@@ -204,7 +204,9 @@ class catpdf_pages {
 			$renderedList = array();
 			$template_sections = $catpdf_templates->get_default_render_order();
 			foreach($template_sections as $code=>$section){
+				$producing_pdf=true;
 				$part_name = call_user_func( array( $catpdf_templates, 'get_section_'.$code ) );
+				$producing_pdf=false;
 				$renderedList[$code]=$part_name;
 			}
 			

@@ -17,6 +17,7 @@ class shortcode {
             $this->register_template_shortcodes();
         } else {
             add_shortcode('catpdf', array( $this, 'apply_download_button' ));
+			add_shortcode('catpdf_skip', array( $this, 'catpdf_skip_func' ));
         }
     }
 	
@@ -27,6 +28,7 @@ class shortcode {
 	 */
 	public static function build_shortcodes(){ //this is a temp way
 		$shortcodes = array(
+			'catpdf_skip'=>array('dis'=>__('do not print to pdf the contents')),
 			'loop'=> array('dis'=>__('Loop')),
 			'site_title'=> array('dis'=>__('Site Title')),
 			'site_tagline'=>array('dis'=> __('Site Tagline')),
@@ -79,25 +81,34 @@ class shortcode {
 		}
     }
 	
+	
+	public function catpdf_skip_func( $atts, $content = null ) {
+		global $producing_pdf;
+		return $producing_pdf?"":do_shortcode($content);
+	}
+
+	
+	
+	
 	public static function get_template_section_shortcodes($template='body'){
 		//would be pulled from a reg
 		$registered_codes = array(
 			'body' => array(
-					'loop','site_title','site_tagline','site_url','date_today',
+					'catpdf_skip','loop','site_title','site_tagline','site_url','date_today',
 					'from_date','to_date','categories','post_count','page_numbers'
 				),
 			'loop' => array(
-					'title','excerpt','content','permalink',
+					'catpdf_skip','title','excerpt','content','permalink',
 					'date','author','author_photo','author_description',
 					'status','featured_image','category','tags','comments_count','version_count'
 				),
 			'pageheader' => array(
 				'site_title','site_tagline','site_url','date_today','title',
-				'from_date','to_date','categories','post_count','page_numbers'
+				'from_date','to_date','categories','post_count','page_numbers','catpdf_skip'
 			),
 			'pagefooter' => array(
 				'site_title','site_tagline','site_url','date_today','title',
-				'from_date','to_date','categories','post_count','page_numbers'
+				'from_date','to_date','categories','post_count','page_numbers','catpdf_skip'
 			),
 			'index' => array(
 				'index_loop',
@@ -419,7 +430,7 @@ class shortcode {
 		$in_catpdf_shortcode=true;
         $item = '';
         $title = $post->post_title;
-        $item = $this->get_indexer($title).$post->post_content;
+        $item = $this->get_indexer($title).do_shortcode($post->post_content);
 		$in_catpdf_shortcode=false;
         return $item;
     }
