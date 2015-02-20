@@ -44,14 +44,6 @@ class catpdf_output {
 
 
 
-	//temp remove asap
-	public function getTitle($post){
-		setup_postdata($post);
-		$item = get_the_title();
-		return $item;
-	}
-
-
 
 	public function prep_output_objects(){
 		global $catpdf_templates,$_params,$catpdf_data,$posts,$post_query_arr,$shortcode;
