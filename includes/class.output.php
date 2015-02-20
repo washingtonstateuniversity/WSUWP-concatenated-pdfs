@@ -39,7 +39,7 @@ class catpdf_output {
 
 
 	public function logHtmlOutput($html){
-		file_put_contents (CATPDF_PATH . '/pdfhtml.html',$html);
+		file_put_contents (CATPDF_LOG_PATH . '/pdfhtml-'.date('m-d-Y--H-i-s').'.html',$html);
 	}
 
 

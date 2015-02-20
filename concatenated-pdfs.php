@@ -18,6 +18,7 @@ define('CATPDF_STYLE', CATPDF_PATH . '/css/style.css');
 define('PDF_STYLE', CATPDF_URL . 'css/pdf_style.css');
 define('CATPDF_CACHE_PATH', CATPDF_PATH . 'cache/');
 define('CATPDF_CACHE_URL', CATPDF_URL . 'cache/');
+define('CATPDF_LOG_PATH', CATPDF_PATH . 'logs/');
 
 
 	/**
