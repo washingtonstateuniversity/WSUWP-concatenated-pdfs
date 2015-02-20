@@ -103,12 +103,12 @@ class shortcode {
 					'status','featured_image','category','tags','comments_count','version_count'
 				),
 			'pageheader' => array(
-				'site_title','site_tagline','site_url','date_today','title',
-				'from_date','to_date','categories','post_count','page_numbers','catpdf_skip'
+				'catpdf_skip','site_title','site_tagline','site_url','date_today','title',
+				'from_date','to_date','categories','post_count','page_numbers'
 			),
 			'pagefooter' => array(
-				'site_title','site_tagline','site_url','date_today','title',
-				'from_date','to_date','categories','post_count','page_numbers','catpdf_skip'
+				'catpdf_skip','site_title','site_tagline','site_url','date_today','title',
+				'from_date','to_date','categories','post_count','page_numbers'
 			),
 			'index' => array(
 				'index_loop',
