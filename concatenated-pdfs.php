@@ -39,6 +39,12 @@ define('CATPDF_CACHE_URL', CATPDF_URL . 'cache/');
 */
 if ( ! class_exists( 'concatenatedPDFsLoad' ) ) {
 	$catpdf_core = NULL;
+	$chapters = array();
+	$repeater = NULL;
+	$inner_pdf = NULL;
+	$section = NULL;
+	$interation = 1;
+	$pages=1;
 	class concatenatedPDFsLoad {
 		public function __construct() {
 			global $catpdf_core;

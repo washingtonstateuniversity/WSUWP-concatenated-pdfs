@@ -124,7 +124,43 @@ class shortcode {
 		}
 		return $returning;
 	}
-	
+    /**
+     * Return html with filtered shortcodes
+     * @tmp_type - string
+	 * needs to be reworked
+	 * also move to class.shortcuts
+     */
+    public function filter_shortcodes($tmp_type=NULL,$html=null) {
+		if($tmp_type==NULL){
+			return false;
+		}
+
+        $template      = $this->template;
+		//var_dump($template);
+        $pattern       = get_shortcode_regex();
+
+		$arr = array_keys(shortcode::get_template_shortcodes(!empty($tmp_type)?$tmp_type:'body')); //? was ? isset($items[$tmp_type])?$items[$tmp_type]:$items['body'] into get_template_shortcodes
+		if($html==null){
+			$tmp_sec = "template_{$tmp_type}";
+			$tmp = $template->$tmp_sec;
+		}else{
+			$tmp = $html;	
+		}
+		//var_dump($tmp_type);
+		//var_dump($arr);
+        preg_match_all('/' . $pattern . '/s', $tmp, $matches);
+        $html = $tmp;
+        foreach ($arr as $code) {
+            if (is_array($matches) && in_array($code, $matches[2])) {
+                foreach ($matches[0] as $match) {
+                    $html = str_replace($match, do_shortcode($match), $html);
+                }
+            }
+        }
+		//var_dump($html);
+		//if(!in_array($tmp_type,array('pageheader','pagefooter')))die();
+        return $html;
+    }	
 	
 /*******************
  * Functions
@@ -212,19 +248,20 @@ class shortcode {
         return $block;
     }	
 	public function index_loop_func($atts) {
-		global $posts,$catpdf_output,$catpdf_templates,$current_index_row;
+		global $posts,$catpdf_output,$catpdf_templates,$current_index_row,$chapters;
 		$c=1;
-		foreach($posts as $post){
+		foreach($chapters as $chapter){
 			$current_index_row=array(
 				"chapter"=>$c,
-				"text"=>$GLOBALS["chapters"][$c]["text"],
+				"text"=>$chapter["text"],
 				"segment"=>"",
-				"page"=>$GLOBALS["chapters"][$c]["page"],
+				"page"=>$chapter["page"],
 			);
-			$block.=$catpdf_output->filter_shortcodes("index_row",$catpdf_templates->resolve_template("index-table-row.php"));
+			$block.=$this->filter_shortcodes("index_row",$catpdf_templates->resolve_template("index-table-row.php"));
 			$c++;
 		}
-		//var_dump($block);
+		var_dump($chapters);
+		var_dump($block);
 		return $block;
 	}
 	
@@ -284,23 +321,22 @@ class shortcode {
 	 * @return string
      */
     public function content_func() {
-        global $post;
+        global $post,$catpdf_output;
         $item = '';
         //$post = $this->single;
         //setup_postdata($active_post);
-        $item = get_the_content();
-		$title = get_the_title();
+        $item = $post->post_content;
+		$title = $post->post_title;
 			$indexerscript='
-<script type="text/php"> 
-	if(isset($GLOBALS["i"])){
-		$GLOBALS["i"]=1;
-	}
-	$i=$GLOBALS["i"];
-	if(!isset($GLOBALS["chapters"][$i]) && $GLOBALS["section"]=="content"){
-		$GLOBALS["chapters"][$i]["page"] = $pdf->get_page_number();
-		$GLOBALS["chapters"][$i]["text"] = "'.$title.'";
-		$GLOBALS["i"]=$i+1;
-	}
+<script type="text/php">
+	'.$catpdf_output->get_pdf_php_globals().'
+	$parts=array(
+		"page"=>$pdf->get_page_number(),
+		"text"=>"'.$title.'"
+	);
+	$chapters[$interation]=$parts;
+	$interation++;
+	$repeater=$inner_pdf;
 </script>
 '."\n";
 			$indexedcontent=$indexerscript.$item;
@@ -314,11 +350,7 @@ class shortcode {
      */
     public function excerpt_func() {
         global $post;
-        $item = '';
-       	//$post = $this->single;
-        //setup_postdata($active_post);
-        $item = get_the_excerpt();
-        return $item;
+        return $post->post_excerpt;
     }
     /**
      * Return post tags list
@@ -375,7 +407,7 @@ class shortcode {
         $item = '';
         //$post = $this->single;
         //setup_postdata($active_post);
-        $cat_arr = (array) get_the_category(get_the_ID());
+        $cat_arr = (array) get_the_category($post->ID);
         if (count($cat_arr) > 0) {
             foreach ($cat_arr as $arr) {
                 $item .= ucwords($arr->name) . $delimiter;
@@ -400,7 +432,7 @@ class shortcode {
         ), $atts));
         $item = '';
         //setup_postdata($active_post);
-        $item = get_the_post_thumbnail(get_the_ID(), $size);
+        $item = get_the_post_thumbnail($post->ID, $size);
         return $item;
     }
     /**
@@ -410,10 +442,7 @@ class shortcode {
      */
     public function status_func() {
         global $post;
-        $post = $this->single;
-        //setup_postdata($post);
-        $item = get_post_status(get_the_ID());
-        return $item;
+        return $post->post_status;
     }
     /**
      * Return post author description
@@ -441,7 +470,7 @@ class shortcode {
         ), $atts));
         //$post = $this->single;
         //setup_postdata($active_post);
-        $item = get_avatar(get_the_author_ID(), $size);
+        $item = get_avatar($post->post_author, $size);
         return $item;
     }
     /**
@@ -451,10 +480,7 @@ class shortcode {
 	 */
     public function author_func() {
         global $post;
-        $post = $this->single;
-        //setup_postdata($post);
-        $item = get_the_author();
-        return $item;
+        return $post->post_author;
     }
     /**
      * Return post date
@@ -468,9 +494,9 @@ class shortcode {
         extract(shortcode_atts(array(
             'format' => 'F d,Y'
         ), $atts));
-       // $post = $this->single;
-        setup_postdata($active_post);
-        $item = date($format, strtotime(get_the_date()));
+       	//$post = $this->single;
+        //setup_postdata($active_post);
+        $item = date($format, strtotime($post->post_modified));
         return $item;
     }
     /**
@@ -481,7 +507,7 @@ class shortcode {
     public function permalink_func() {
 		global $post;
         //$post = $this->single;
-        $item = get_permalink(get_the_ID());
+        $item = get_permalink($post->ID);
         return $item;
     }
     /**
@@ -491,10 +517,7 @@ class shortcode {
      */
     public function title_func() {
         global $post;
-        //$post = $this->single;
-        
-        $item = get_the_title();
-        return $item;
+        return $post->post_title;
     }
     /**
      * Return comment count
@@ -514,16 +537,11 @@ class shortcode {
 	 * @return string
      */
     public function loop_func() {
-        global $catpdf_templates,$catpdf_output,$posts;
+        global $catpdf_templates,$catpdf_output,$post;
         $item = '';
-        if (count($posts) > 0) {
-            foreach ($posts as $post) {
-                $this->single = $post;
-				$postHtml = $catpdf_output->filter_shortcodes('loop',$catpdf_templates->resolve_template('concat-loop.php'));
-                $item .= $postHtml;
-            }
-        }
-        return $item;
+        $this->single = $post;
+		$postHtml = $this->filter_shortcodes('loop',$catpdf_templates->resolve_template('concat-loop.php'));
+        return $postHtml;
     }
     /**
      * Return found post count
