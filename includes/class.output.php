@@ -306,7 +306,7 @@ var inch = 92;
 		print('$interation');var_dump($interation);
 
 		$part_name = $code.'--'.$filename;
-		$this->cachePdf('merging_stage/'.$part_name, $pdf );
+		$this->cachePdf( $part_name, $pdf, true );
 		return $part_name;	
 	}
 
@@ -336,8 +336,8 @@ var inch = 92;
 			} //out put error message
 		} //out put error message
 	}
-	public function cachePdf($file,$contents){
-		$file = CATPDF_CACHE_PATH.trim(trim($file,'/'));
+	public function cachePdf($file,$contents,$fragment=false){
+		$file = ($fragment?CATPDF_MERGING_PATH:CATPDF_CACHE_PATH).trim(trim($file,'/'));
 		return file_put_contents($file, $contents);
 	}
 	public function is_cached($filename){
@@ -348,13 +348,13 @@ var inch = 92;
 		if(count($mergeList)>1){
 			$PDFMerger = new PDFMerger;
 			foreach($mergeList as $file){
-				$PDFMerger->addPDF(CATPDF_CACHE_PATH.'merging_stage/'.$file, 'all');//'1, 3, 4'//'1-2'
+				$PDFMerger->addPDF(CATPDF_MERGING_PATH.$file, 'all');//'1, 3, 4'//'1-2'
 			}
 			$PDFMerger->merge('file', CATPDF_CACHE_PATH.trim(trim($output_file),'/'));
 			return true;
 		}else{
-			if (!copy(CATPDF_CACHE_PATH.'merging_stage/'.$mergeList[0], CATPDF_CACHE_PATH.trim(trim($output_file),'/')) ) {
-				echo "failed to copy ".CATPDF_CACHE_PATH.'merging_stage/'.$mergeList[0]." to ". CATPDF_CACHE_PATH.'/'.$output_file."...\n";
+			if (!copy(CATPDF_MERGING_PATH.$mergeList[0], CATPDF_CACHE_PATH.trim(trim($output_file),'/')) ) {
+				echo "failed to copy ".CATPDF_MERGING_PATH.$mergeList[0]." to ". CATPDF_CACHE_PATH.'/'.$output_file."...\n";
 				return false;
 			}
 			return true;
