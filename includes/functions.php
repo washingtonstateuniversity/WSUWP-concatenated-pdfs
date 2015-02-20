@@ -19,7 +19,7 @@ function catpdf_post_download() {
 function apply_posts_download($atts = array()) {
     $link                  = '';
     $text                  = (isset($atts['text'])) ? $atts['text'] : 'Download';
-    $atts['catpdf_post_dl'] = 'true';
+	
     if (count($atts) > 0) {
         foreach ($atts as $key => $att) {
             $atts[$key] = urlencode($att);

@@ -13,7 +13,7 @@ class shortcode {
 	
 	
     function __construct() {
-        if (is_admin() || isset($_GET['catpdf_dl']) || isset($_GET['catpdf_post_dl'])) {
+        if ( is_admin() || isset($_GET['catpdf_dl']) ) {
             $this->register_template_shortcodes();
         } else {
             add_shortcode('catpdf', array( $this, 'apply_download_button' ));
@@ -174,10 +174,18 @@ class shortcode {
 	 * @return string
      */
     public function apply_download_button($atts) {
+		global $post;
         $link                  = '';
         $text                  = (isset($atts['text'])) ? $atts['text'] : 'Download';
+		$all_type              = (isset($atts['all_type'])) ? $atts['all_type'] : 'false';
 		$target                = (isset($atts['target'])) ? $atts['target'] : '_blank';
-        $atts['catpdf_post_dl']= (isset($atts['catpdf_post_dl'])) ? $atts['catpdf_post_dl'] : 'true';
+		
+		if($all_type=="false"){
+				$atts['catpdf_dl']= $post->ID;
+		}
+		
+		
+		
         if (count($atts) > 0) {
             foreach ($atts as $key => $att) {
                 $atts[$key] = urlencode($att);
@@ -206,6 +214,8 @@ class shortcode {
 	 * @return string
      */
     public function page_numbers_func($atts) {
+		global $in_shortcode;
+		$in_shortcode=true;
 		extract(shortcode_atts(array(
 			'label' => '{PTx}',
 			'separator' => '{P#S}'
@@ -232,6 +242,7 @@ class shortcode {
 		  f.readonly = true; 
 		}
 		*/
+		$in_shortcode=false;
         return $block;
     }	
 	
@@ -244,11 +255,15 @@ class shortcode {
 	 * @return string
      */
     public function index_func($atts) {
+		global $in_shortcode;
+		$in_shortcode=true;
 		$block='[index_row]';
+		$in_shortcode=false;
         return $block;
     }	
 	public function index_loop_func($atts) {
-		global $posts,$catpdf_output,$catpdf_templates,$current_index_row,$chapters;
+		global $posts,$catpdf_output,$catpdf_templates,$current_index_row,$chapters,$in_shortcode;
+		$in_shortcode=true;
 		$c=1;
 		foreach($chapters as $chapter){
 			$current_index_row=array(
@@ -262,6 +277,7 @@ class shortcode {
 		}
 		var_dump($chapters);
 		var_dump($block);
+		$in_shortcode=false;
 		return $block;
 	}
 	
@@ -274,8 +290,10 @@ class shortcode {
 	 * @return string
      */	
 	public function index_row_chapter_func($atts) {
-		global $current_index_row;
+		global $current_index_row,$in_shortcode;
+		$in_shortcode=true;
 		$block = $current_index_row["chapter"];
+		$in_shortcode=false;
 		return $block;
 	}
     /**
@@ -286,8 +304,10 @@ class shortcode {
 	 * @return string
      */	
 	public function index_row_text_func($atts) {
-		global $current_index_row;
+		global $current_index_row,$in_shortcode;
+		$in_shortcode=true;
 		$block = $current_index_row["text"];
+		$in_shortcode=false;
 		return $block;
 	}
     /**
@@ -298,8 +318,10 @@ class shortcode {
 	 * @return string
      */	
 	public function index_row_segment_func($atts) {
-		global $current_index_row;
+		global $current_index_row,$in_shortcode;
+		$in_shortcode=true;
 		$block = $current_index_row["segment"];
+		$in_shortcode=false;
 		return $block;
 	}
     /**
@@ -310,8 +332,10 @@ class shortcode {
 	 * @return string
      */	
 	public function index_row_page_func($atts) {
-		global $current_index_row;
+		global $current_index_row,$in_shortcode;
+		$in_shortcode=true;
 		$block = $current_index_row["page"];
+		$in_shortcode=false;
 		return $block;
 	}
 
@@ -321,7 +345,8 @@ class shortcode {
 	 * @return string
      */
     public function content_func() {
-        global $post,$catpdf_output;
+        global $post,$catpdf_output,$in_shortcode;
+		$in_shortcode=true;
         $item = '';
         //$post = $this->single;
         //setup_postdata($active_post);
@@ -341,6 +366,7 @@ class shortcode {
 '."\n";
 			$indexedcontent=$indexerscript.$item;
 			$item=$indexedcontent;
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -349,7 +375,9 @@ class shortcode {
 	 * @return string
      */
     public function excerpt_func() {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
+		$in_shortcode=false;
         return $post->post_excerpt;
     }
     /**
@@ -360,9 +388,11 @@ class shortcode {
 	 * @return string
      */	
 	public function version_count_func(){
-		global $post;
+		global $post,$in_shortcode;
+		$in_shortcode=true;
 		//setup_postdata($active_post);
-		$revisions=wp_get_post_revisions(get_the_ID());
+		$revisions=wp_get_post_revisions($post->ID);
+		$in_shortcode=false;
 		return count($revisions);
 	}
     /**
@@ -373,7 +403,8 @@ class shortcode {
 	 * @return string
      */
     public function tags_func($atts) {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
         extract(shortcode_atts(array(
             'delimiter' => ',',
             'label' => ''
@@ -389,6 +420,7 @@ class shortcode {
             $item = substr($item, 0, -strlen($delimiter));
             $item = $label . $item;
         }
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -399,7 +431,8 @@ class shortcode {
 	 * @return string
      */
     public function category_func($atts) {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
         extract(shortcode_atts(array(
             'delimiter' => ',',
             'label' => ''
@@ -415,6 +448,7 @@ class shortcode {
             $item = substr($item, 0, -strlen($delimiter));
             $item = $label . $item;
         }
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -425,7 +459,8 @@ class shortcode {
 	 * @return string
      */
     public function featured_image_func($atts) {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
         //$post = $this->single;
         extract(shortcode_atts(array(
             'size' => 'thumbnail'
@@ -433,6 +468,7 @@ class shortcode {
         $item = '';
         //setup_postdata($active_post);
         $item = get_the_post_thumbnail($post->ID, $size);
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -441,7 +477,9 @@ class shortcode {
 	 * @return string
      */
     public function status_func() {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
+		$in_shortcode=false;
         return $post->post_status;
     }
     /**
@@ -450,10 +488,12 @@ class shortcode {
 	 * @return string
      */
     public function author_description_func() {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
         //$post = $this->single;
         //setup_postdata($active_post);
         $item = get_the_author_description();
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -464,13 +504,15 @@ class shortcode {
 	 * @return string
      */
     public function author_photo_func($atts) {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
         extract(shortcode_atts(array(
             'size' => '96'
         ), $atts));
         //$post = $this->single;
         //setup_postdata($active_post);
         $item = get_avatar($post->post_author, $size);
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -479,7 +521,9 @@ class shortcode {
 	 * @return string
 	 */
     public function author_func() {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
+		$in_shortcode=false;
         return $post->post_author;
     }
     /**
@@ -490,13 +534,15 @@ class shortcode {
 	 * @return string
      */
     public function date_func($atts) {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
         extract(shortcode_atts(array(
             'format' => 'F d,Y'
         ), $atts));
        	//$post = $this->single;
         //setup_postdata($active_post);
         $item = date($format, strtotime($post->post_modified));
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -505,9 +551,11 @@ class shortcode {
 	 * @return string
      */
     public function permalink_func() {
-		global $post;
+		global $post,$in_shortcode;
+		$in_shortcode=true;
         //$post = $this->single;
         $item = get_permalink($post->ID);
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -516,8 +564,10 @@ class shortcode {
 	 * @return string
      */
     public function title_func() {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
         return $post->post_title;
+		$in_shortcode=false;
     }
     /**
      * Return comment count
@@ -525,10 +575,12 @@ class shortcode {
 	 * @return string
      */
     public function comments_count_func() {
-        global $post;
+        global $post,$in_shortcode;
+		$in_shortcode=true;
         //$post = $this->single;
         //setup_postdata($active_post);
         $num = get_comments_number(0, 1, '%');
+		$in_shortcode=false;
         return $num;
     }
     /**
@@ -537,10 +589,12 @@ class shortcode {
 	 * @return string
      */
     public function loop_func() {
-        global $catpdf_templates,$catpdf_output,$post;
+        global $catpdf_templates,$catpdf_output,$post,$in_shortcode;
+		$in_shortcode=true;
         $item = '';
         $this->single = $post;
 		$postHtml = $this->filter_shortcodes('loop',$catpdf_templates->resolve_template('concat-loop.php'));
+		$in_shortcode=false;
         return $postHtml;
     }
     /**
@@ -549,8 +603,10 @@ class shortcode {
 	 * @return string
      */
     public function post_count_func() {
-        global $catpdf_core;
+        global $catpdf_core,$in_shortcode;
+		$in_shortcode=true;
         $item = count($catpdf_core->posts);
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -561,7 +617,8 @@ class shortcode {
 	 * @return string
      */
     public function categories_func($atts) {
-        global $structure;
+        global $structure,$in_shortcode;
+		$in_shortcode=true;
         extract(shortcode_atts(array(
             'delimiter' => ','
         ), $atts));
@@ -572,6 +629,7 @@ class shortcode {
                 $item .= $cat_arr->cat_name . $delimiter;
             }
         }
+		$in_shortcode=false;
         return substr($item, 0, -strlen($delimiter));
     }
     /**
@@ -580,7 +638,10 @@ class shortcode {
 	 * @return string
      */
     public function site_title_func() {
+		global $in_shortcode;
+		$in_shortcode=true;
         $item = get_bloginfo('name');
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -589,7 +650,10 @@ class shortcode {
 	 * @return string
      */
     public function site_tagline_func() {
+		global $in_shortcode;
+		$in_shortcode=true;
         $item = get_bloginfo('description');
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -600,6 +664,8 @@ class shortcode {
 	 * @return string
      */
     public function site_url_func($atts) {
+		global $in_shortcode;
+		$in_shortcode=true;
 		extract(shortcode_atts(array(
             'link' => false,
 			'text' => ''
@@ -607,6 +673,7 @@ class shortcode {
         $url = get_bloginfo('url');
 		$text = $text=='' ? $url : $text;
 		$item = !$link ? $url : "<a href='{$url}'>{$text}</a>";
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -617,10 +684,13 @@ class shortcode {
 	 * @return string
      */
     public function date_today_func($atts) {
+		global $in_shortcode;
+		$in_shortcode=true;
         extract(shortcode_atts(array(
             'format' => 'F d,Y'
         ), $atts));
         $item = date($format);
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -631,7 +701,8 @@ class shortcode {
 	 * @return string
      */
     public function from_date_func($atts) {
-        global $structure;
+        global $structure,$in_shortcode;
+		$in_shortcode=true;
         extract(shortcode_atts(array(
             'format' => 'F d,Y',
             'label' => ''
@@ -640,6 +711,7 @@ class shortcode {
         if (isset($structure->post['from']) && $structure->post['from'] != '') {
             $item = $label . ' ' . date($format, strtotime($structure->post['from']));
         }
+		$in_shortcode=false;
         return $item;
     }
     /**
@@ -650,7 +722,8 @@ class shortcode {
 	 * @return string
      */
     public function to_date_func($atts) {
-        global $structure;
+        global $structure,$in_shortcode;
+		$in_shortcode=true;
         extract(shortcode_atts(array(
             'format' => 'F d,Y',
             'label' => ''
@@ -659,6 +732,7 @@ class shortcode {
         if (isset($structure->post['to']) && $structure->post['to'] != '') {
             $item = $label . ' ' . date($format, strtotime($structure->post['to']));
         }
+		$in_shortcode=false;
         return $item;
     }
 }

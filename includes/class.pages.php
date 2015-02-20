@@ -28,11 +28,7 @@ class catpdf_pages {
 			add_action('admin_init', array( $this, 'admin_init' ));
 			add_action('admin_menu', array( $this, 'admin_menu' ));
 		}
-		
-        if (isset($_params['catpdf_dl'])) {// Check if post download is performed
-            add_action('init', array( $this, 'download_post' ));// Add download action hook
-        }
-        if (isset($_params['catpdf_post_dl']) && $_params['catpdf_post_dl']=="true") {// Check if single post download is performed
+        if (isset($_params['catpdf_dl'])) {// Check if single post download is performed
             add_action('init', array( $this, 'download_posts' ));// Add download action hook
         }
     }

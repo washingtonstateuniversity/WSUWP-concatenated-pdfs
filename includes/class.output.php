@@ -56,13 +56,8 @@ class catpdf_output {
 	public function prep_output_objects(){
 		global $catpdf_templates,$_params,$catpdf_data,$posts,$post_query_arr,$shortcode;
 		$id		= isset($_params['catpdf_dl'])?$_params['catpdf_dl']:NULL;
-		
 		//var_dump($post);
 		$posts 	= ($id>0) ? array(get_post($id)) : get_posts($post_query_arr) ;
-		
-
-		
-
 	}
 
 	public function prep_pageheader(){
