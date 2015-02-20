@@ -68,13 +68,15 @@ class catpdf_core {
 		}
     }
 	/**
-	 * Initialize install
+	 * Initialize install.
+	 *
+	 * Basicly we are just going to make folders if needed
 	 */
 	public function install_init() {
-		if (!mkdir(CATPDF_LOG_PATH, 0777, true)) {
+		if (!file_exists (CATPDF_LOG_PATH) && !mkdir(CATPDF_LOG_PATH, 0777, true)) {
 			die('Failed to create folders...');
 		}
-		if (!mkdir(CATPDF_MERGING_PATH, 0777, true)) {
+		if (!file_exists (CATPDF_MERGING_PATH) && !mkdir(CATPDF_MERGING_PATH, 0777, true)) {
 			die('Failed to create folders...');
 		}
 	}
