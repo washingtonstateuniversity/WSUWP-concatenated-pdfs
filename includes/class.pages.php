@@ -171,40 +171,6 @@ class catpdf_pages {
         $this->view(CATPDF_PATH . '/includes/views/options.php', $data);
     }
 
-    /**
-     * Perform export pdf
-     */
-    public function export() {
-        global $dompdf, $catpdf_output, $_params,$inner_pdf;
-        
-		$file = date("Now") . ".pdf";//need to fix this
-		//would have saved recorde of publication to pull from
-		$cached=false;//add check
-        if(!$cached){
-			$dompdf->set_paper($_params['papersize'], $_params['orientation']);
-			$content     = $catpdf_output->construct_template();
-			
-			$dompdf->load_html($content);
-			if( isset($_dompdf_warnings) ){
-				var_dump( $_dompdf_warnings ); die();
-			}
-			$inner_pdf="before";
-			$dompdf->render();
-			$pdf = $dompdf->output();//store it for output
-			
-			//$dompdf->stream();
-			
-			$prettyname = trim($catpdf_output->title) . ".pdf";
-			
-			if( $catpdf_output->cachePdf($file,$pdf) ){
-				$catpdf_output->sendPdf($file,$prettyname);
-			}else{
-				//send off error message	
-			}
-		}else{
-			$catpdf_output->sendPdf($file);
-		}
-    }
 
     /**
      * Download post pdf
@@ -271,58 +237,6 @@ class catpdf_pages {
 			$catpdf_output->sendPdf($filename);	
 		}
     }
-
-
-
-
-
-
-    /**
-     * Download single post pdf
-     */
-    public function download_post() {
-        global $dompdf, $PDFMerger, $catpdf_output,$post,$catpdf_data,$_params;
-		//die('here');
-        $id          = $_GET['catpdf_dl'];
-       	$posts 	= array(get_post($id));
-
-        $single      = $posts[0];
-		//var_dump();die();
-        $filename    = preg_replace('/[^a-z0-9]/i', '_', $single->post_title)."-".md5( implode(',',$_params) ) . ".pdf";	
-        if(!$catpdf_output->is_cached($filename) || isset($_params['dyno'])){
-			$content     = $catpdf_output->construct_template('single');
-			//var_dump($content);die();
-			$dompdf = new DOMPDF();
-			$dompdf->set_paper('letter', 'portrait');
-			$dompdf->load_html($content);
-			
-			
-			if( isset($_dompdf_warnings) ){
-				var_dump( $_dompdf_warnings ); die();
-			}
-			$inner_pdf="before";
-			$dompdf->render();
-			var_dump($inner_pdf);die();
-			
-			
-			$pdf = $dompdf->output();//store it for output	
-			if($catpdf_output->cachePdf( 'merging_stage/'.$filename, $pdf )){
-			
-				$mergeList[]=$filename;
-				
-				$catpdf_output->merge_pdfs($mergeList,$filename);
-				$catpdf_output->sendPdf($filename);
-			}else{
-				var_dump($pdf); die();	
-			}
-		}else{
-			$catpdf_output->sendPdf($filename);	
-		}
-    }
-
-
-
-
 
 
 
