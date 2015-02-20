@@ -71,8 +71,12 @@ class catpdf_core {
 	 * Initialize install
 	 */
 	public function install_init() {
-		// Insert default datas
-		$this->_insert_defaults();
+		if (!mkdir(CATPDF_LOG_PATH, 0777, true)) {
+			die('Failed to create folders...');
+		}
+		if (!mkdir(CATPDF_MERGING_PATH, 0777, true)) {
+			die('Failed to create folders...');
+		}
 	}
 	/**
 	 * Add meta boxes used to capture pieces of information for the profile.
