@@ -391,9 +391,10 @@ class shortcode {
 			<script type="text/php">
 				'.$catpdf_output->get_pdf_php_globals().'
 				if($indexable){
+					$count = $PAGE_COUNT;
 					$parts=array(
 						"page_start"=>$pages+1,
-						"page_end"=>$pages+1+$PAGE_COUNT,
+						"page_end"=>$pages+1+$count,
 						"text"=>"'.$title.'",
 						"chapter"=>"'.$chapter.'",
 						"show_ch_num"=>"'.$show_num.'"
@@ -401,7 +402,7 @@ class shortcode {
 					$chapters[$interation]=$parts;
 					$interation++;
 				}
-				$repeater=$inner_pdf;
+				$repeater=$count;
 			</script>
 			'."\n";
 	}

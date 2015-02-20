@@ -207,11 +207,13 @@ class catpdf_output {
 						
 		$indexer = '<script type="text/php">
 	'.$this->get_pdf_php_globals().'
-	$repeater = $inner_pdf;
-	
+	//$repeater = $inner_pdf;
+	$startingPage = $pages;
+	$pages+=$PAGE_COUNT;
+	$chapters[$interation-1]["page_end"]=$pages;
 	$bs = $GLOBALS["backside"]; // work to remove
 	$pdf->page_script(\'$pages++;\');
-	$count=$pdf->get_page_number();
+	$count=$PAGE_COUNT;
 	//$chapters=$GLOBALS["chapters"];
 	$o=1;
 	$p=1;
@@ -235,7 +237,7 @@ class catpdf_output {
 		$o++;
 	}
 	
-	$repeater = $superContent;
+	//$repeater = $superContent;
 	
 	//page_script seems to need to be oneline?
 	$pdf->page_script(\'$indexpage=$GLOBALS["indexpage"]; if ($PAGE_NUM==$indexpage ) { $pdf->add_object($GLOBALS["backside"],"add"); $pdf->stop_object($GLOBALS["backside"]); }\');
@@ -243,8 +245,9 @@ class catpdf_output {
 		'.$this->get_pdf_php_globals().'
 		if($indexable){
 			$GLOBALS["indexpage"]=$pages;
-			$pages+=$PAGE_COUNT;
+			
 		}
+		//$repeater = $PAGE_COUNT;
 		</script>'."\n";
 
 		$endScript='<script type="text/javascript">
@@ -303,10 +306,11 @@ var inch = 92;
 		$dompdf->render();
 		$pdf = $dompdf->output();//store it for output
 
-		var_dump('$pages:'.$pages);
-		var_dump('$interation:'.$interation);
+		var_dump('$pages: '.$pages);
+		var_dump('$interation: '.$interation);
+		var_dump('$repeater: '.$repeater);
 		var_dump($chapters);
-		//print('$repeater');var_dump($repeater);
+		
 		
 
 		$part_name = $code.'--'.$filename;
