@@ -176,7 +176,7 @@ class catpdf_output {
 
 
 	public function get_pdf_php_globals(){
-		return 'global $_params,$catpdf_output,$inner_pdf,$section,$interation,$chapters,$repeater,$pages;';	
+		return 'global $_params,$catpdf_output,$inner_pdf,$section,$interation,$chapters,$repeater,$pages,$indexable;';	
 	}
 	
 	
@@ -194,11 +194,7 @@ class catpdf_output {
         $head_html .= '<title>' . $this->title . "</title>\n";
 
 		//sets up the globals for the rendered inline php 
-		$indexscriptglobals="\n".'<script type="text/php">'.
-										' '.$this->get_pdf_php_globals().' '.
-										' $GLOBALS["indexpage"]=$pages;'.
-										' $pages+=$PAGE_COUNT;'.
-								'</script>'."\n";
+		$indexscriptglobals="\n".''."\n";
 		$script="";
 
         $this->head  = $head_html
@@ -243,7 +239,13 @@ class catpdf_output {
 	
 	//page_script seems to need to be oneline?
 	$pdf->page_script(\'$indexpage=$GLOBALS["indexpage"]; if ($PAGE_NUM==$indexpage ) { $pdf->add_object($GLOBALS["backside"],"add"); $pdf->stop_object($GLOBALS["backside"]); }\');
-</script>'."\n";
+</script><script type="text/php">
+		'.$this->get_pdf_php_globals().'
+		if($indexable){
+			$GLOBALS["indexpage"]=$pages;
+			$pages+=$PAGE_COUNT;
+		}
+		</script>'."\n";
 
 		$endScript='<script type="text/javascript">
 app.beep(0);
@@ -271,7 +273,7 @@ var inch = 92;
 
 
 	public function create_section_pdf($code,$html,$sub_name=""){
-		global $_params,$catpdf_output,$inner_pdf,$section,$chapters,$repeater,$pages,$interation;
+		global $_params,$catpdf_output,$inner_pdf,$section,$chapters,$repeater,$pages,$interation,$indexable;
 		
 		$size = (isset($_params['papersize'])) ? urldecode($_params['papersize']) : 'letter';
 		$orientation = (isset($_params['orientation'])) ? urldecode($_params['orientation']) : 'portrait';
@@ -294,16 +296,18 @@ var inch = 92;
 		$repeater = NULL;
 		$inner_pdf=$code;
 		$section=$code;
-		
+		$indexable=($code!="cover"&&$code!="index");
+		$this->logHtmlOutput($html);
 		//start the render
 		$dompdf->load_html($html);
 		$dompdf->render();
 		$pdf = $dompdf->output();//store it for output
 
-		print('$pages');var_dump($pages);
-		print('$chapters');var_dump($chapters);
+		var_dump('$pages:'.$pages);
+		var_dump('$interation:'.$interation);
+		var_dump($chapters);
 		//print('$repeater');var_dump($repeater);
-		print('$interation');var_dump($interation);
+		
 
 		$part_name = $code.'--'.$filename;
 		$this->cachePdf( $part_name, $pdf, true );

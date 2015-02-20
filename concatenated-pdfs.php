@@ -46,8 +46,9 @@ if ( ! class_exists( 'concatenatedPDFsLoad' ) ) {
 	$inner_pdf = NULL;
 	$section = NULL;
 	$interation = 1;
-	$pages=1;
-	$in_shortcode=false;
+	$pages=0;
+	$in_catpdf_shortcode=false;
+	$indexable=true;
 	class concatenatedPDFsLoad {
 		public function __construct() {
 			global $catpdf_core;

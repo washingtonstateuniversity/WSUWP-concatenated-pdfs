@@ -13,7 +13,7 @@ class shortcode {
 	
 	
     function __construct() {
-        if ( is_admin() || isset($_GET['catpdf_dl']) ) {
+        if ( is_admin() || ( isset($_GET['catpdf']) && $_GET['catpdf']=="run" ) ) {
             $this->register_template_shortcodes();
         } else {
             add_shortcode('catpdf', array( $this, 'apply_download_button' ));
@@ -53,10 +53,12 @@ class shortcode {
 			'page_numbers'=> array('dis'=>__('Page Numbering block')),
 			'index_loop'=>array('dis'=>__('The loop of the index items')),
 			'index_row'=>array('dis'=>__('An index item')),
-			'index_row_chapter'=>array('dis'=>__('chapter of an index item')),
+			'index_row_chapter_text'=>array('dis'=>__('chapter text of an index item')),
+			'index_row_chapter_number'=>array('dis'=>__('chapter number of an index item')),
 			'index_row_text'=>array('dis'=>__('text of an index item')),
 			'index_row_segment'=>array('dis'=>__('segment of an index item')),
-			'index_row_page'=>array('dis'=>__('page # of an index item')),
+			'index_row_page_start'=>array('dis'=>__('starting page # of an index item')),
+			'index_row_page_end'=>array('dis'=>__('ending page # of an index item')),
 		);
 		return $shortcodes;
 	}
@@ -104,7 +106,7 @@ class shortcode {
 				'index_row',
 			),
 			'index_row' => array(
-				'index_row_chapter','index_row_text','index_row_segment','index_row_page',
+				'index_row_chapter_text','index_row_chapter_number','index_row_text','index_row_segment','index_row_page_start','index_row_page_end',
 			),
 		);
 		if (isset( $registered_codes[$template] ) ){
@@ -131,15 +133,18 @@ class shortcode {
 	 * also move to class.shortcuts
      */
     public function filter_shortcodes($tmp_type=NULL,$html=null) {
+		global $catpdf_templates;
 		if($tmp_type==NULL){
 			return false;
 		}
 
-        $template      = $this->template;
-		//var_dump($template);
+        $template      = $catpdf_templates->get_default_template();
+		
         $pattern       = get_shortcode_regex();
 
 		$arr = array_keys(shortcode::get_template_shortcodes(!empty($tmp_type)?$tmp_type:'body')); //? was ? isset($items[$tmp_type])?$items[$tmp_type]:$items['body'] into get_template_shortcodes
+		//var_dump($template);
+		//var_dump($tmp_type);
 		if($html==null){
 			$tmp_sec = "template_{$tmp_type}";
 			$tmp = $template->$tmp_sec;
@@ -177,15 +182,14 @@ class shortcode {
 		global $post;
         $link                  = '';
         $text                  = (isset($atts['text'])) ? $atts['text'] : 'Download';
-		$all_type              = (isset($atts['all_type'])) ? $atts['all_type'] : 'false';
 		$target                = (isset($atts['target'])) ? $atts['target'] : '_blank';
+		$atts['catpdf']="run";
 		
-		if($all_type=="false"){
-				$atts['catpdf_dl']= $post->ID;
+		if($atts['all_type']!="true"){
+			$atts['catpdf_dl']= $post->ID;
+			unset($atts['all_type']);
 		}
-		
-		
-		
+
         if (count($atts) > 0) {
             foreach ($atts as $key => $att) {
                 $atts[$key] = urlencode($att);
@@ -214,8 +218,8 @@ class shortcode {
 	 * @return string
      */
     public function page_numbers_func($atts) {
-		global $in_shortcode;
-		$in_shortcode=true;
+		global $in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
 		extract(shortcode_atts(array(
 			'label' => '{PTx}',
 			'separator' => '{P#S}'
@@ -242,7 +246,7 @@ class shortcode {
 		  f.readonly = true; 
 		}
 		*/
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $block;
     }	
 	
@@ -255,29 +259,32 @@ class shortcode {
 	 * @return string
      */
     public function index_func($atts) {
-		global $in_shortcode;
-		$in_shortcode=true;
+		global $in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
 		$block='[index_row]';
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $block;
     }	
 	public function index_loop_func($atts) {
-		global $posts,$catpdf_output,$catpdf_templates,$current_index_row,$chapters,$in_shortcode;
-		$in_shortcode=true;
+		global $posts,$catpdf_output,$catpdf_templates,$current_index_row,$chapters,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
 		$c=1;
 		foreach($chapters as $chapter){
 			$current_index_row=array(
-				"chapter"=>$c,
+				"chapter_text"=>( isset( $chapter["chapter"] ) && !empty( $chapter["chapter"] ) ) ? $chapter["chapter"] : "",
+				"chapter_number"=>$c,
 				"text"=>$chapter["text"],
 				"segment"=>"",
-				"page"=>$chapter["page"],
+				"page_start"=>$chapter["page_start"],
+				"page_end"=>$chapter["page_end"],
+				"show_ch_num"=>$chapter["show_ch_num"],
 			);
 			$block.=$this->filter_shortcodes("index_row",$catpdf_templates->resolve_template("index-table-row.php"));
 			$c++;
 		}
 		var_dump($chapters);
 		var_dump($block);
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
 		return $block;
 	}
 	
@@ -289,13 +296,32 @@ class shortcode {
 	 *
 	 * @return string
      */	
-	public function index_row_chapter_func($atts) {
-		global $current_index_row,$in_shortcode;
-		$in_shortcode=true;
-		$block = $current_index_row["chapter"];
-		$in_shortcode=false;
+	public function index_row_chapter_text_func($atts) {
+		global $current_index_row,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
+		extract(shortcode_atts(array(
+            'text' => ''
+        ), $atts));
+		$block = ( isset($current_index_row["chapter_text"]) && !empty($current_index_row["chapter_text"]) ) ? $current_index_row["chapter_text"] : $text;
+		$in_catpdf_shortcode=false;
 		return $block;
 	}
+	
+    /**
+     * Return chapter
+	 * 
+     * @param array $atts
+	 *
+	 * @return string
+     */	
+	public function index_row_chapter_number_func($atts) {
+		global $current_index_row,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
+		$block = $current_index_row["show_ch_num"]=="true"?$current_index_row["chapter_number"]:"";
+		$in_catpdf_shortcode=false;
+		return $block;
+	}
+
     /**
      * Return row text
 	 * 
@@ -304,12 +330,13 @@ class shortcode {
 	 * @return string
      */	
 	public function index_row_text_func($atts) {
-		global $current_index_row,$in_shortcode;
-		$in_shortcode=true;
+		global $current_index_row,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
 		$block = $current_index_row["text"];
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
 		return $block;
 	}
+	
     /**
      * Return row segment
 	 * 
@@ -318,12 +345,13 @@ class shortcode {
 	 * @return string
      */	
 	public function index_row_segment_func($atts) {
-		global $current_index_row,$in_shortcode;
-		$in_shortcode=true;
+		global $current_index_row,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
 		$block = $current_index_row["segment"];
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
 		return $block;
 	}
+	
     /**
      * Return row page number
 	 * 
@@ -331,13 +359,54 @@ class shortcode {
 	 *
 	 * @return string
      */	
-	public function index_row_page_func($atts) {
-		global $current_index_row,$in_shortcode;
-		$in_shortcode=true;
-		$block = $current_index_row["page"];
-		$in_shortcode=false;
+	public function index_row_page_start_func($atts) {
+		global $current_index_row,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
+		$block = $current_index_row["page_start"];
+		$in_catpdf_shortcode=false;
 		return $block;
 	}
+	
+    /**
+     * Return row page number
+	 * 
+     * @param array $atts
+	 *
+	 * @return string
+     */	
+	public function index_row_page_end_func($atts) {
+		global $current_index_row,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
+		$block = $current_index_row["page_end"];
+		$in_catpdf_shortcode=false;
+		return $block;
+	}
+
+
+
+
+	public function get_indexer($title,$chapter="",$show_num="true"){
+        global $catpdf_output;
+		return '
+			<script type="text/php">
+				'.$catpdf_output->get_pdf_php_globals().'
+				if($indexable){
+					$parts=array(
+						"page_start"=>$pages+1,
+						"page_end"=>$pages+1+$PAGE_COUNT,
+						"text"=>"'.$title.'",
+						"chapter"=>"'.$chapter.'",
+						"show_ch_num"=>"'.$show_num.'"
+					);
+					$chapters[$interation]=$parts;
+					$interation++;
+				}
+				$repeater=$inner_pdf;
+			</script>
+			'."\n";
+	}
+
+
 
     /**
      * Return post content
@@ -345,28 +414,12 @@ class shortcode {
 	 * @return string
      */
     public function content_func() {
-        global $post,$catpdf_output,$in_shortcode;
-		$in_shortcode=true;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         $item = '';
-        //$post = $this->single;
-        //setup_postdata($active_post);
-        $item = $post->post_content;
-		$title = $post->post_title;
-			$indexerscript='
-<script type="text/php">
-	'.$catpdf_output->get_pdf_php_globals().'
-	$parts=array(
-		"page"=>$pdf->get_page_number(),
-		"text"=>"'.$title.'"
-	);
-	$chapters[$interation]=$parts;
-	$interation++;
-	$repeater=$inner_pdf;
-</script>
-'."\n";
-			$indexedcontent=$indexerscript.$item;
-			$item=$indexedcontent;
-		$in_shortcode=false;
+        $title = $post->post_title;
+        $item = $this->get_indexer($title).$post->post_content;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -375,9 +428,9 @@ class shortcode {
 	 * @return string
      */
     public function excerpt_func() {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
-		$in_shortcode=false;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
+		$in_catpdf_shortcode=false;
         return $post->post_excerpt;
     }
     /**
@@ -388,11 +441,11 @@ class shortcode {
 	 * @return string
      */	
 	public function version_count_func(){
-		global $post,$in_shortcode;
-		$in_shortcode=true;
+		global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
 		//setup_postdata($active_post);
 		$revisions=wp_get_post_revisions($post->ID);
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
 		return count($revisions);
 	}
     /**
@@ -403,8 +456,8 @@ class shortcode {
 	 * @return string
      */
     public function tags_func($atts) {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         extract(shortcode_atts(array(
             'delimiter' => ',',
             'label' => ''
@@ -420,7 +473,7 @@ class shortcode {
             $item = substr($item, 0, -strlen($delimiter));
             $item = $label . $item;
         }
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -431,8 +484,8 @@ class shortcode {
 	 * @return string
      */
     public function category_func($atts) {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         extract(shortcode_atts(array(
             'delimiter' => ',',
             'label' => ''
@@ -448,7 +501,7 @@ class shortcode {
             $item = substr($item, 0, -strlen($delimiter));
             $item = $label . $item;
         }
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -459,8 +512,8 @@ class shortcode {
 	 * @return string
      */
     public function featured_image_func($atts) {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         //$post = $this->single;
         extract(shortcode_atts(array(
             'size' => 'thumbnail'
@@ -468,7 +521,7 @@ class shortcode {
         $item = '';
         //setup_postdata($active_post);
         $item = get_the_post_thumbnail($post->ID, $size);
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -477,9 +530,9 @@ class shortcode {
 	 * @return string
      */
     public function status_func() {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
-		$in_shortcode=false;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
+		$in_catpdf_shortcode=false;
         return $post->post_status;
     }
     /**
@@ -488,12 +541,12 @@ class shortcode {
 	 * @return string
      */
     public function author_description_func() {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         //$post = $this->single;
         //setup_postdata($active_post);
         $item = get_the_author_description();
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -504,15 +557,15 @@ class shortcode {
 	 * @return string
      */
     public function author_photo_func($atts) {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         extract(shortcode_atts(array(
             'size' => '96'
         ), $atts));
         //$post = $this->single;
         //setup_postdata($active_post);
         $item = get_avatar($post->post_author, $size);
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -521,9 +574,9 @@ class shortcode {
 	 * @return string
 	 */
     public function author_func() {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
-		$in_shortcode=false;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
+		$in_catpdf_shortcode=false;
         return $post->post_author;
     }
     /**
@@ -534,15 +587,15 @@ class shortcode {
 	 * @return string
      */
     public function date_func($atts) {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         extract(shortcode_atts(array(
             'format' => 'F d,Y'
         ), $atts));
        	//$post = $this->single;
         //setup_postdata($active_post);
         $item = date($format, strtotime($post->post_modified));
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -551,11 +604,11 @@ class shortcode {
 	 * @return string
      */
     public function permalink_func() {
-		global $post,$in_shortcode;
-		$in_shortcode=true;
+		global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         //$post = $this->single;
         $item = get_permalink($post->ID);
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -564,10 +617,10 @@ class shortcode {
 	 * @return string
      */
     public function title_func() {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         return $post->post_title;
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
     }
     /**
      * Return comment count
@@ -575,12 +628,12 @@ class shortcode {
 	 * @return string
      */
     public function comments_count_func() {
-        global $post,$in_shortcode;
-		$in_shortcode=true;
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         //$post = $this->single;
         //setup_postdata($active_post);
         $num = get_comments_number(0, 1, '%');
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $num;
     }
     /**
@@ -589,12 +642,12 @@ class shortcode {
 	 * @return string
      */
     public function loop_func() {
-        global $catpdf_templates,$catpdf_output,$post,$in_shortcode;
-		$in_shortcode=true;
+        global $catpdf_templates,$catpdf_output,$post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         $item = '';
-        $this->single = $post;
+        //$this->single = $post;
 		$postHtml = $this->filter_shortcodes('loop',$catpdf_templates->resolve_template('concat-loop.php'));
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $postHtml;
     }
     /**
@@ -603,10 +656,10 @@ class shortcode {
 	 * @return string
      */
     public function post_count_func() {
-        global $catpdf_core,$in_shortcode;
-		$in_shortcode=true;
+        global $catpdf_core,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         $item = count($catpdf_core->posts);
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -617,8 +670,8 @@ class shortcode {
 	 * @return string
      */
     public function categories_func($atts) {
-        global $structure,$in_shortcode;
-		$in_shortcode=true;
+        global $structure,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         extract(shortcode_atts(array(
             'delimiter' => ','
         ), $atts));
@@ -629,7 +682,7 @@ class shortcode {
                 $item .= $cat_arr->cat_name . $delimiter;
             }
         }
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return substr($item, 0, -strlen($delimiter));
     }
     /**
@@ -638,10 +691,10 @@ class shortcode {
 	 * @return string
      */
     public function site_title_func() {
-		global $in_shortcode;
-		$in_shortcode=true;
+		global $in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         $item = get_bloginfo('name');
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -650,10 +703,10 @@ class shortcode {
 	 * @return string
      */
     public function site_tagline_func() {
-		global $in_shortcode;
-		$in_shortcode=true;
+		global $in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         $item = get_bloginfo('description');
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -664,8 +717,8 @@ class shortcode {
 	 * @return string
      */
     public function site_url_func($atts) {
-		global $in_shortcode;
-		$in_shortcode=true;
+		global $in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
 		extract(shortcode_atts(array(
             'link' => false,
 			'text' => ''
@@ -673,7 +726,7 @@ class shortcode {
         $url = get_bloginfo('url');
 		$text = $text=='' ? $url : $text;
 		$item = !$link ? $url : "<a href='{$url}'>{$text}</a>";
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -684,13 +737,13 @@ class shortcode {
 	 * @return string
      */
     public function date_today_func($atts) {
-		global $in_shortcode;
-		$in_shortcode=true;
+		global $in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         extract(shortcode_atts(array(
             'format' => 'F d,Y'
         ), $atts));
         $item = date($format);
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -701,8 +754,8 @@ class shortcode {
 	 * @return string
      */
     public function from_date_func($atts) {
-        global $structure,$in_shortcode;
-		$in_shortcode=true;
+        global $structure,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         extract(shortcode_atts(array(
             'format' => 'F d,Y',
             'label' => ''
@@ -711,7 +764,7 @@ class shortcode {
         if (isset($structure->post['from']) && $structure->post['from'] != '') {
             $item = $label . ' ' . date($format, strtotime($structure->post['from']));
         }
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
     /**
@@ -722,8 +775,8 @@ class shortcode {
 	 * @return string
      */
     public function to_date_func($atts) {
-        global $structure,$in_shortcode;
-		$in_shortcode=true;
+        global $structure,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
         extract(shortcode_atts(array(
             'format' => 'F d,Y',
             'label' => ''
@@ -732,7 +785,7 @@ class shortcode {
         if (isset($structure->post['to']) && $structure->post['to'] != '') {
             $item = $label . ' ' . date($format, strtotime($structure->post['to']));
         }
-		$in_shortcode=false;
+		$in_catpdf_shortcode=false;
         return $item;
     }
 }

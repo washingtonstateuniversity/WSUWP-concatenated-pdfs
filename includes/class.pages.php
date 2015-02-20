@@ -28,7 +28,7 @@ class catpdf_pages {
 			add_action('admin_init', array( $this, 'admin_init' ));
 			add_action('admin_menu', array( $this, 'admin_menu' ));
 		}
-        if (isset($_params['catpdf_dl'])) {// Check if single post download is performed
+        if ( isset($_params['catpdf']) && $_params['catpdf'] == "run") {// Check if single post download is performed
             add_action('init', array( $this, 'download_posts' ));// Add download action hook
         }
     }
@@ -186,6 +186,7 @@ class catpdf_pages {
 			'post_type' => (isset($_params['type'])) ? urldecode($_params['type']) : 'post',
 			'post_status' => (isset($_params['status'])) ? urldecode($_params['status']) : 'published'
         );
+		
         $post_query_arr  = $param_arr;
 		$_params['papersize']= isset($_params['papersize']) && !empty($_params['papersize']) ? $_params['papersize'] : "letter";
 		$_params['orientation']= isset($_params['orientation']) && !empty($_params['orientation']) ? $_params['orientation'] : "portrait";

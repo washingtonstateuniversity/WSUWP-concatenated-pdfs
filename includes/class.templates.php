@@ -95,8 +95,8 @@ class catpdf_templates {
 		return $part_name;
 	}	
 	public function get_section_appendix(){	
-		global $catpdf_output,$_params,$post,$posts;
-		$appendix			= $this->resolve_template("appendix.php");
+		global $catpdf_output,$shortcode,$_params,$post,$posts;
+		$appendix			= $shortcode->get_indexer(__(""),__("Appendix "),"false").$this->resolve_template("appendix.php");
 		$html 		= "\n<div id='catpdf_appendix'>\n{$appendix}\n</div>\n";
 		$part_name = $catpdf_output->create_section_pdf("appendix",$html);
 		return $part_name;

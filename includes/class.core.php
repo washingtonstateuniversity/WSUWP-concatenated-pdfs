@@ -67,6 +67,7 @@ class catpdf_core {
 			}
 		}
     }
+	
 	/**
 	 * Initialize install.
 	 *
@@ -80,6 +81,7 @@ class catpdf_core {
 			die('Failed to create folders...');
 		}
 	}
+	
 	/**
 	 * Add meta boxes used to capture pieces of information for the profile.
 	 *
@@ -196,14 +198,13 @@ class catpdf_core {
 	 * @return string
      */
     public function apply_post_download_button($content) {
-        if ($GLOBALS['post']->post_type == 'post') {
+        /*if ($GLOBALS['post']->post_type == 'post') {
             $id   = $GLOBALS['post']->ID;
             $url  = add_query_arg('catpdf_dl', $id);
             $link = '<a href="' . $url . '"><img src="' . CATPDF_URL . 'images/download-icon.png"></a>';
             return $content . $link;
-        } else {
-            return $content;
-        }
+        }*/
+		return $content;
     }
 
 
