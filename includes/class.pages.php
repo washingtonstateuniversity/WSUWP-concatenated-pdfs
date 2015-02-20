@@ -187,6 +187,12 @@ class catpdf_pages {
 			'post_status' => (isset($_params['status'])) ? urldecode($_params['status']) : 'published'
         );
 		
+		$todo_list = array();
+		if(isset($_params['sections']) && !empty($_params['sections'])){
+			$todo_list = array_map('trim', explode(',', $_params['sections']));
+		}
+		
+		
         $post_query_arr  = $param_arr;
 		$_params['papersize']= isset($_params['papersize']) && !empty($_params['papersize']) ? $_params['papersize'] : "letter";
 		$_params['orientation']= isset($_params['orientation']) && !empty($_params['orientation']) ? $_params['orientation'] : "portrait";
@@ -204,6 +210,9 @@ class catpdf_pages {
 			$renderedList = array();
 			$template_sections = $catpdf_templates->get_default_render_order();
 			foreach($template_sections as $code=>$section){
+				if(!empty($todo_list) && !in_array($code,$todo_list)){
+					continue;	
+				}
 				$producing_pdf=true;
 				$part_name = call_user_func( array( $catpdf_templates, 'get_section_'.$code ) );
 				$producing_pdf=false;
