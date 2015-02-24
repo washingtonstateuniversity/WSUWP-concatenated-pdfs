@@ -200,7 +200,6 @@ class shortcode {
 			$atts['catpdf_dl']= $post->ID;
 			unset($atts['all_type']);
 		}
-
         if (count($atts) > 0) {
             foreach ($atts as $key => $att) {
                 $atts[$key] = urlencode($att);
@@ -212,9 +211,19 @@ class shortcode {
         if (isset($atts['target'])) {
             unset($atts['target']);
         }		
-
+		$classes = 'catpdf-download ';
+		if( isset($atts['all_type']) && $atts['all_type']=="true" ){
+			$classes .=' many_posts';
+		}else{
+			$classes .=' single_posts';
+		}
+		if( isset($atts['all_type']) ){
+			$classes .=' many_posts';
+		}
+		
+		
         $dllink = add_query_arg($atts);
-        $link   = sprintf('<a href="%1$s" target="%3$s" title="%2$s">%2$s</a>'."\n", $dllink, $text, $target);
+        $link   = sprintf('<a href="%1$s" title="%2$s" target="%3$s" class="%4$s">%2$s</a>'."\n", $dllink, $text, $target, $classes);
         return $link;
     }
 	
