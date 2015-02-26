@@ -1,9 +1,5 @@
 <?php
-
-
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class catpdf_core {
     public $dompdf = NULL;
 	public $PDFMerger = NULL;
@@ -18,6 +14,8 @@ class catpdf_core {
     public $title = '';
     public $posts;
 	public $_params;
+	
+	
     function __construct() {
 		global $dompdf,$shortcode,$catpdf_pages,$catpdf_templates,$catpdf_output,$catpdf_data,$_params;
 		$_params = $_REQUEST;
@@ -60,7 +58,7 @@ class catpdf_core {
 		if($options["postdl"] == 1){
 			if (!is_admin()) {
 				 // Initialize public functions
-				 add_filter('the_content', array( $this, 'apply_post_download_button' ));
+				 //add_filter('the_content', array( $this, 'apply_post_download_button' ));
 			}else{
 				add_action( 'add_meta_boxes', array( $this, 'add_pdf_meta_boxes' ) );	
 				add_action( 'save_post', array( $this, 'save' ) );

@@ -196,7 +196,7 @@ class shortcode {
 		$target                = (isset($atts['target'])) ? $atts['target'] : '_blank';
 		$atts['catpdf']="run";
 		
-		if($atts['all_type']!="true"){
+		if(!isset($atts['all_type']) || $atts['all_type']!="true"){
 			$atts['catpdf_dl']= $post->ID;
 			unset($atts['all_type']);
 		}
