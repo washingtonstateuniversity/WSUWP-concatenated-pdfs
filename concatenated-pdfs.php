@@ -35,20 +35,11 @@ define('PDF_STYLE', CATPDF_URL . 'css/pdf_style.css');
 	 */
 	define('CATPDF_KEY', 'wsuwp_catpdf');
 
-
 if ( ! class_exists( 'concatenatedPDFsLoad' ) ) {
-	$catpdf_core = NULL;
-	$chapters = array();
-	$repeater = NULL;
-	$inner_pdf = NULL;
-	$section = NULL;
-	$interation = 1;
-	$pages=0;
-	$in_catpdf_shortcode=false;
-	$indexable=true;
-	$producing_pdf=false;
-
 	class concatenatedPDFsLoad {
+
+		public $catpdf_core = NULL;
+		
 		/*
 		 * Initiate the plug-in.
 		 */			

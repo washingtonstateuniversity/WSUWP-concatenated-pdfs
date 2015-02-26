@@ -1,7 +1,13 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class catpdf_core {
-    public $dompdf = NULL;
+    public $message = array();
+	
+    public $post = array();
+	public $posts;
+	public $_params;
+	
+	public $dompdf = NULL;
 	public $PDFMerger = NULL;
 	public $shortcode = NULL;
 	public $catpdf_pages = NULL;
@@ -9,12 +15,18 @@ class catpdf_core {
 	public $catpdf_output = NULL;
 	public $catpdf_data = NULL;
 	
-    public $message = array();
-    public $post = array();
+
     public $title = '';
-    public $posts;
-	public $_params;
-	
+	public $chapters = array();
+	public $repeater = NULL;
+	public $inner_pdf = NULL;
+	public $section = NULL;
+	public $interation = 1;
+	public $pages=0;
+	public $in_catpdf_shortcode=false;
+	public $indexable=true;
+	public $producing_pdf=false;
+		
 	
     function __construct() {
 		global $dompdf,$shortcode,$catpdf_pages,$catpdf_templates,$catpdf_output,$catpdf_data,$_params;
@@ -38,9 +50,6 @@ class catpdf_core {
 		// Include shortcode class
 		include(CATPDF_PATH . '/includes/class.shortcode.php');
 		$shortcode = new shortcode();
-		
-		// Include functions
-		include(CATPDF_PATH . '/includes/functions.php');
 
 		// Include page
 		include(CATPDF_PATH . '/includes/class.pages.php');
@@ -188,24 +197,6 @@ class catpdf_core {
 		// Update the meta field.
 		update_post_meta( $post_id, CATPDF_KEY.'_post_pdf_config', json_encode($pdfConfig) );
 	}
-		
-				
-    /**
-     * Returns download button link
-	 *
-	 * @return string
-     */
-    public function apply_post_download_button($content) {
-        /*if ($GLOBALS['post']->post_type == 'post') {
-            $id   = $GLOBALS['post']->ID;
-            $url  = add_query_arg('catpdf_dl', $id);
-            $link = '<a href="' . $url . '"><img src="' . CATPDF_URL . 'images/download-icon.png"></a>';
-            return $content . $link;
-        }*/
-		return $content;
-    }
-
-
 
 }
 ?>
