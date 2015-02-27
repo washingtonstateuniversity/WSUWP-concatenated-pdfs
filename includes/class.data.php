@@ -212,33 +212,9 @@ class catpdf_data {
 		//var_dump(get_posts( array('include'=>array($id))));
 
 		$posts_array = get_posts( $args );
-		
-		
-		
-		
-        //$result = new WP_Query($args);
-		
-        return $posts_array;//$result->posts;
-    }
-    /**
-     * Return query filter
-     * @param string $where
-	 *
-	 * @return string
-     */
-    public function filter_where($where = '') {
-        global $_params;
-        if (isset($_params['from']) && $_params['from'] != '') {
-            $from = date('Y-m-d', strtotime($_params['from']));
-            $where .= ' AND DATE_FORMAT( post_date , "%Y-%m-%d" ) >= "' . $from . '"';
-        }
-        if (isset($_params['to']) && $_params['to'] != '') {
-            $to = date('Y-m-d', strtotime($_params['to']));
-            $where .= ' AND DATE_FORMAT( post_date , "%Y-%m-%d" ) <= "' . $to . '"';
-        }
-        return $where;
-    }
 
+        return $posts_array;
+    }
 
 }
 ?>

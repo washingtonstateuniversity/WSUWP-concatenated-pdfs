@@ -1,17 +1,11 @@
 <?php
-/*
-	Still needs a good refactor
-	noted inline
-*/
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class shortcode {
+	
     public $single;
 	public $current_index_row=array();
-	
-	
+
     function __construct() {
         if ( is_admin() || ( isset($_GET['catpdf']) && $_GET['catpdf']=="run" ) ) {
             $this->register_template_shortcodes();
@@ -69,8 +63,8 @@ class shortcode {
 
     /**
      * Register template shortcodes
-	* should be a little more robust here... 
-    */
+	 * should be a little more robust here... 
+     */
     public function register_template_shortcodes() {
         $shortcodes = shortcode::build_shortcodes();
 		foreach($shortcodes as $code=>$props){
@@ -139,11 +133,13 @@ class shortcode {
 	}
     /**
      * Return html with filtered shortcodes
-     * @tmp_type - string
-	 * needs to be reworked
-	 * also move to class.shortcuts
+	 * 
+     * @param string $tmp_type
+     * @param string $html
+	 *
+	 * @return string
      */
-    public function filter_shortcodes($tmp_type=NULL,$html=null) {
+    public function filter_shortcodes($tmp_type=NULL,$html=NULL) {
 		global $catpdf_templates;
 		if($tmp_type==NULL){
 			return false;
@@ -156,7 +152,7 @@ class shortcode {
 		$arr = array_keys(shortcode::get_template_shortcodes(!empty($tmp_type)?$tmp_type:'body')); //? was ? isset($items[$tmp_type])?$items[$tmp_type]:$items['body'] into get_template_shortcodes
 		//var_dump($template);
 		//var_dump($tmp_type);
-		if($html==null){
+		if($html==NULL){
 			$tmp_sec = "template_{$tmp_type}";
 			$tmp = $template->$tmp_sec;
 		}else{
@@ -269,10 +265,9 @@ class shortcode {
 		$in_catpdf_shortcode=false;
         return $block;
     }	
-	
-	
+
     /**
-     * Return page numbering block
+     * Return upper index block
 	 * 
      * @param array $atts
 	 *
@@ -284,9 +279,22 @@ class shortcode {
 		$block='[index_row]';
 		$in_catpdf_shortcode=false;
         return $block;
-    }	
+    }
+	
+    /**
+     * Return index loop block
+	 *   
+	 * @global class $catpdf_templates -template actions.
+	 * @global class $chapters -chapter object built out from pdf processing.
+	 * @global class $current_index_row -The current row for the index that is active.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
+	 * 
+     * @param array $atts
+	 *
+	 * @return string
+     */
 	public function index_loop_func($atts) {
-		global $posts,$catpdf_output,$catpdf_templates,$current_index_row,$chapters,$in_catpdf_shortcode;
+		global $catpdf_templates,$chapters,$current_index_row,$in_catpdf_shortcode;
 		$in_catpdf_shortcode=true;
 		$c=1;
 		foreach($chapters as $chapter){
@@ -302,15 +310,17 @@ class shortcode {
 			$block.=$this->filter_shortcodes("index_row",$catpdf_templates->resolve_template("index-table-row.php"));
 			$c++;
 		}
-		var_dump($chapters);
-		var_dump($block);
+		//var_dump($chapters);
+		//var_dump($block);
 		$in_catpdf_shortcode=false;
 		return $block;
 	}
-	
 
     /**
-     * Return chapter
+     * Return chapter text for the index row currently active
+	 *  
+	 * @global class $current_index_row -The current row for the index that is active.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -328,7 +338,10 @@ class shortcode {
 	}
 	
     /**
-     * Return chapter
+     * Return chapter number  for the index row currently active
+	 *  
+	 * @global class $current_index_row -The current row for the index that is active.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -343,7 +356,10 @@ class shortcode {
 	}
 
     /**
-     * Return row text
+     * Return text for the index row currently active
+	 *  
+	 * @global class $current_index_row -The current row for the index that is active.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -358,7 +374,10 @@ class shortcode {
 	}
 	
     /**
-     * Return row segment
+     * Return segment for the index row currently active
+	 *  
+	 * @global class $current_index_row -The current row for the index that is active.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -373,7 +392,10 @@ class shortcode {
 	}
 	
     /**
-     * Return row page number
+     * Return page number for the index row currently active
+	 *  
+	 * @global class $current_index_row -The current row for the index that is active.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -389,6 +411,9 @@ class shortcode {
 	
     /**
      * Return row page number
+	 *  
+	 * @global class $current_index_row -The current row for the index that is active.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -404,7 +429,17 @@ class shortcode {
 
 
 
-
+    /**
+     * Return the inline php block used to help create the index value object
+	 *  
+	 * @global class $catpdf_output -output methods.
+	 * 
+     * @param string $title
+	 * @param string $chapter
+	 * @param string $show_num
+	 *
+	 * @return string
+     */	
 	public function get_indexer($title,$chapter="",$show_num="true"){
         global $catpdf_output;
 		return '
@@ -431,6 +466,9 @@ class shortcode {
 
     /**
      * Return post content
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 *
 	 * @return string
      */
@@ -445,6 +483,9 @@ class shortcode {
     }
     /**
      * Return post excerpt
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 *
 	 * @return string
      */
@@ -456,6 +497,9 @@ class shortcode {
     }
     /**
      * Return post tags list
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -471,6 +515,9 @@ class shortcode {
 	}
     /**
      * Return post tags list
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -500,6 +547,9 @@ class shortcode {
     /**
      * Return post category list
 	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
+	 * 
      * @param array $atts
 	 *
 	 * @return string
@@ -528,6 +578,9 @@ class shortcode {
     /**
      * Return post featured image
 	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
+	 * 
      * @param array $atts
 	 *
 	 * @return string
@@ -547,6 +600,9 @@ class shortcode {
     }
     /**
      * Return post status
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 *
 	 * @return string
      */
@@ -558,6 +614,9 @@ class shortcode {
     }
     /**
      * Return post author description
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 *
 	 * @return string
      */
@@ -572,6 +631,9 @@ class shortcode {
     }
     /**
      * Return post author photo
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -591,6 +653,9 @@ class shortcode {
     }
     /**
      * Return post author
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 *
 	 * @return string
 	 */
@@ -602,6 +667,9 @@ class shortcode {
     }
     /**
      * Return post date
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 * 
      * @param array $atts
 	 *
@@ -621,6 +689,9 @@ class shortcode {
     }
     /**
      * Return post permalink
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 *
 	 * @return string
      */
@@ -634,6 +705,9 @@ class shortcode {
     }
     /**
      * Return post title
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 *
 	 * @return string
      */
@@ -645,6 +719,9 @@ class shortcode {
     }
     /**
      * Return comment count
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
 	 *
 	 * @return string
      */

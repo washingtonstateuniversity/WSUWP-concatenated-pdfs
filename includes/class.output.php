@@ -289,7 +289,7 @@ var inch = 92;
 				($code!="cover"?$this->footer_part:"").
 				$this->foot;
 
-		var_dump('--------'.$code.'--------');
+		//var_dump('--------'.$code.'--------');
 		//if($code=="index")var_dump($html);
 		
 		$dompdf = new DOMPDF();
@@ -306,10 +306,10 @@ var inch = 92;
 		$dompdf->render();
 		$pdf = $dompdf->output();//store it for output
 
-		var_dump('$pages: '.$pages);
-		var_dump('$interation: '.$interation);
-		var_dump('$repeater: '.$repeater);
-		var_dump($chapters);
+		//var_dump('$pages: '.$pages);
+		//var_dump('$interation: '.$interation);
+		//var_dump('$repeater: '.$repeater);
+		//var_dump($chapters);
 		
 		
 

@@ -237,12 +237,12 @@ class catpdf_pages {
 				}
 			}
 
-			var_dump($template_sections);
-			var_dump($renderedList);
-			var_dump($merge_list);
+			//var_dump($template_sections);
+			//var_dump($renderedList);
+			//var_dump($merge_list);
 
 			if($catpdf_output->merge_pdfs($merge_list,$filename)){
-				die("before send");
+				//die("before send");
 				$catpdf_output->sendPdf($filename);
 			}
 		}else{

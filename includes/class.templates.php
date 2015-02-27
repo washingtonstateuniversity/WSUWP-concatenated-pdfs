@@ -1,34 +1,13 @@
 <?php
 
-/*
-	Still needs a good refactor
-	- sections should be abstracted to subplugin style
-*/
-
-
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
-
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class catpdf_templates {
     public $title = '';
 	public $current_template = NULL;
 	public $current_style = '';
+	
     function __construct() {
 		global $_params;
-        if (is_admin()) {
-			if (isset($_params)) {
-				// Check if template save is performed
-				if (isset($_params['catpdf_save'])) {
-					if ($_params['templateid'] == '') {
-						// Add save template action hook
-						add_action('init', array($this, 'add_template' ));
-					} else {
-						// Add update template action hook
-						add_action('init', array( $this, 'update_template' ));
-					}
-				}
-			}
-		}  
     }
 
 	public function get_default_render_order(){
@@ -118,7 +97,9 @@ class catpdf_templates {
 	 * @return object
 	 */
 	public function get_current_tempate($type=NULL){
-		if($this->current_template==NULL)$this->set_current_tempate($type);
+		if($this->current_template==NULL){
+			$this->set_current_tempate($type);
+		}
 		return $this->current_template;
 	}
 	
