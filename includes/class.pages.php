@@ -164,6 +164,7 @@ class catpdf_pages {
 		$data['dompdf_options'] = $catpdf_data->get_options();
 		$data['sizes']   = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
 		$data['media_types'] = $catpdf_data->media_types;
+		$data['select_ors']    = $catpdf_data->paper_orientation;
 		$data['styles'] = array('default' => "default") + $catpdf_templates->get_styles();
         // Get templates
         $data['templates'] = array();//$catpdf_templates->get_template();
@@ -187,10 +188,7 @@ class catpdf_pages {
 			'post_status' => (isset($_params['status'])) ? urldecode($_params['status']) : 'published'
         );
 		
-		$todo_list = array();
-		if(isset($_params['sections']) && !empty($_params['sections'])){
-			$todo_list = array_map('trim', explode(',', $_params['sections']));
-		}
+
 		
 		
         $post_query_arr  = $param_arr;
@@ -198,56 +196,7 @@ class catpdf_pages {
 		$_params['orientation']= isset($_params['orientation']) && !empty($_params['orientation']) ? $_params['orientation'] : "portrait";
 
 		$filename = trim($catpdf_output->buildFileName(null,null))."-".md5( implode(',',$_params) ) . ".pdf";
-		
-		if(!$catpdf_output->is_cached($filename) || isset($_params['dyno'])){
-			$catpdf_templates->get_style();
-			$catpdf_output->prep_output_objects();
-			$catpdf_output->prep_pageheader();
-			$catpdf_output->prep_pagefooter();
-			$catpdf_output->_html_structure();
-			
-			//render all of the pdf's by section and then store the marker
-			$renderedList = array();
-			$template_sections = $catpdf_templates->get_default_render_order();
-			foreach($template_sections as $code=>$section){
-				if(!empty($todo_list) && !in_array($code,$todo_list)){
-					continue;	
-				}
-				$producing_pdf=true;
-				$part_name = call_user_func( array( $catpdf_templates, 'get_section_'.$code ) );
-				$producing_pdf=false;
-				$renderedList[$code]=$part_name;
-			}
-			
-			//take the rendered output and ordering in the way the book will be put together
-			$oupout_order = $catpdf_templates->get_default_template_sections();
-			$merge_list = array();
-			foreach($oupout_order as $code=>$section){
-				if( isset($renderedList[$code]) && !empty($renderedList[$code]) ){
-					if(is_array($renderedList[$code])){
-						$i=0;
-						foreach($renderedList[$code] as $item){
-							$key=$code.$i;
-							$merge_list[$key]=$item;	
-							$i++;
-						}
-					}else{
-						$merge_list[$code]=$renderedList[$code];
-					}
-				}
-			}
-
-			//var_dump($template_sections);
-			//var_dump($renderedList);
-			//var_dump($merge_list);
-
-			if($catpdf_output->merge_pdfs($merge_list,$filename)){
-				//die("before send");
-				$catpdf_output->sendPdf($filename);
-			}
-		}else{
-			$catpdf_output->sendPdf($filename);	
-		}
+		$catpdf_output->sendPdf($filename);
     }
 
 

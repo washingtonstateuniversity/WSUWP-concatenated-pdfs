@@ -237,10 +237,10 @@ class shortcode {
 		global $in_catpdf_shortcode;
 		$in_catpdf_shortcode=true;
 		extract(shortcode_atts(array(
-			'label' => '{PTx}',
-			'separator' => '{P#S}'
+			'label' => '{PL}',
+			'separator' => '{PS}'
 		), $atts));
-		$block='<div id="page_numbers"><span id="pn_text">'.$label.'</span><span id="pn_number">{P#}'.$separator.'{PT#}</span></div>'."\n";
+		$block='<div id="page_numbers"><span id="pn_text">'.$label.'</span><span id="pn_number">{P}'.$separator.'{PT}</span></div>'."\n";
 
 		
 		/* the best corse maybe to dynamicly fill in the numbers

@@ -28,6 +28,7 @@ class catpdf_data {
 				"DOMPDF_PDF_BACKEND"=>"CPDF",
 				"DOMPDF_DEFAULT_MEDIA_TYPE"=>"screen",
 				"DOMPDF_DEFAULT_PAPER_SIZE"=>"letter",
+				"DOMPDF_DEFAULT_ORIENTATION"=>'portrait',
 				"DOMPDF_DEFAULT_FONT"=>"serif",
 				"DOMPDF_DPI"=>96,
 				"DOMPDF_ENABLE_PHP"=>true,
@@ -215,6 +216,15 @@ class catpdf_data {
 
         return $posts_array;
     }
-
+	
+	
+	public function pixeltopointConvertion($px){
+		$point = $px * 72 / 96;
+		return $point;
+	}
+	public function pointtopixelConvertion($point){
+		$px = $point * 96 / 72;
+		return $px;
+	}
 }
 ?>

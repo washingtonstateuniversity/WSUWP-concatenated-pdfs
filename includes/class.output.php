@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class catpdf_output {
 
+	public $rendered_sections = array();
+
 	public $template = NULL;
     public $post = array();
     public $title = '';
@@ -17,9 +19,20 @@ class catpdf_output {
 	public $header_part = NULL;
 	public $footer_part = NULL;
 	
+	public $build_type='single';
+	
     function __construct() {
 		
     }
+
+	public function get_build_type(){
+		return $this->build_type;
+	}
+	public function set_build_type($build_type){
+		$this->build_type=$build_type;
+	}
+
+
 
 
 	//should also let you call from a template level one
@@ -105,15 +118,7 @@ class catpdf_output {
         return $html;
     }
 	
-	/* maybe there should be a utilities class? */
-	public function pixeltopointConvertion($px){
-		$point = $px * 72 / 96;
-		return $point;
-	}
-	public function pointtopixelConvertion($point){
-		$px = $point * 96 / 72;
-		return $px;
-	}
+
 		
 	public function get_pdf_inline_style(){
 		global $_params, $catpdf_data;
@@ -131,8 +136,8 @@ class catpdf_output {
 		$pagerightMargin="15";		//@@!!OPTION REPLACE
 		$pageleftMargin="15";		//@@!!OPTION REPLACE
 
-		$pagew=$this->pointtopixelConvertion(CPDF_Adapter::$PAPER_SIZES[$_params['papersize']][2]);
-		$pageh=$this->pointtopixelConvertion(CPDF_Adapter::$PAPER_SIZES[$_params['papersize']][3]);
+		$pagew=$catpdf_data->pointtopixelConvertion(CPDF_Adapter::$PAPER_SIZES[$_params['papersize']][2]);
+		$pageh=$catpdf_data->pointtopixelConvertion(CPDF_Adapter::$PAPER_SIZES[$_params['papersize']][3]);
         
 		//calculated values needed for the pdf
 		$footSkip=($footHeight+$footSep);//equal to bottom:{VAL}px
@@ -161,10 +166,13 @@ class catpdf_output {
 
 	public function build_stylesheets(){
 		global $_params, $dompdf, $catpdf_data, $catpdf_templates;
+		
+		$build_type = $this->get_build_type();
+		
 		$options   = $catpdf_data->get_options();
 		$head_html_style_sheets = "<link type='text/css' rel='stylesheet' href='" . PDF_STYLE . "'/>\n";
-        if (isset($options['single']['enablecss']) && $options['single']['enablecss'] == 'on') {
-            //$head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . get_stylesheet_uri() . "'/>\n";
+        if (isset($options[$build_type]['enablecss']) && $options[$build_type]['enablecss'] == 'true') {
+            $head_html_style_sheets .= "<link type='text/css' rel='stylesheet' href='" . get_stylesheet_uri() . "'/>\n";
         }
         $get_style_css    = $catpdf_templates->get_style_css();
 		if ($get_style_css!="") {
@@ -189,7 +197,7 @@ class catpdf_output {
 
 		/* there should be a base html template? */
 		$head_html = "<!DOCTYPE html>\n";
-        $head_html .= "<html>\n";
+        $head_html .= '<html dir="ltr" lang="en">'."\n";
         $head_html .= "<meta charset='UTF-8' />\n";
         $head_html .= '<title>' . $this->title . "</title>\n";
 
@@ -215,28 +223,6 @@ class catpdf_output {
 	$pdf->page_script(\'$pages++;\');
 	$count=$PAGE_COUNT;
 	//$chapters=$GLOBALS["chapters"];
-	$o=1;
-	$p=1;
-	foreach($pdf->get_cpdf()->objects as $obj){
-		if(isset($pdf->get_cpdf()->objects[$o]["c"])){
-			$content = $pdf->get_cpdf()->objects[$o]["c"];
-			// using short var names as the dompdf will understand the 
-			// plachole length which is a problem when trying to format
-			if(strpos($content,\'{P#}\') !== false){
-				$pn_text_str="PAGE";
-				$pn_sep_str="/";
-				if(strpos($content,\'{PTx}\') !== false){$content = str_replace( \'{PTx}\', $pn_text_str, $content );}
-				if(strpos($content,\'{P#}\') !== false){$content = str_replace( \'{P#}\', $p."", $content );}
-				if(strpos($content,\'{PT#}\') !== false){$content = str_replace( \'{PT#}\', $count."", $content );}
-				if(strpos($content,\'{P#S}\') !== false){$content = str_replace( \'{P#S}\', $pn_sep_str, $content );}
-				$p++;
-			}
-			$pdf->get_cpdf()->objects[$o]["c"]=$content;
-			$superContent.=$content;
-		}
-		$o++;
-	}
-	
 	//$repeater = $superContent;
 	
 	//page_script seems to need to be oneline?
@@ -269,18 +255,102 @@ var inch = 92;
 		  f.readonly = true; 
 		}</script>';
         $this->foot = $indexer
-					.$endScript
+					//.$endScript
 					."</body>\n"
 					."</html>\n";		
     }
 
+	public function set_section($code,$object,$segment){
+		global $rendered_sections;
+		if($segment!=""){
+			if(!is_array($rendered_sections[$code])){
+				$rendered_sections[$code]=array();	
+			}
+			$rendered_sections[$code][$segment]=$object;
+		}else{
+			$rendered_sections[$code]=$object;
+		}
+	}
 
-	public function create_section_pdf($code,$html,$sub_name=""){
-		global $_params,$catpdf_output,$inner_pdf,$section,$chapters,$repeater,$pages,$interation,$indexable;
+	public function get_section($code,$segment=""){
+		global $rendered_sections;
+		if($segment!=""){
+			return $rendered_sections[$code][$segment];
+		}else{
+			return $rendered_sections[$code];
+		}
+	}
+
+
+
+
+	public function create_sections($todo_list){		
+		global $_params,$catpdf_templates,$catpdf_output,$catpdf_data,$inner_pdf,$section,$chapters,$repeater,$pages,$interation,$indexable,$rendered_sections;
 		
-		$size = (isset($_params['papersize'])) ? urldecode($_params['papersize']) : 'letter';
-		$orientation = (isset($_params['orientation'])) ? urldecode($_params['orientation']) : 'portrait';
-		$_name=preg_replace('/[^a-z0-9]/i', '_', $sub_name);
+		$catpdf_templates->get_style();
+		$catpdf_output->prep_output_objects();
+		$catpdf_output->prep_pageheader();
+		$catpdf_output->prep_pagefooter();
+		$catpdf_output->_html_structure();
+
+
+		$template_sections = $catpdf_templates->get_default_render_order();
+		foreach($template_sections as $code=>$section){
+			if(!empty($todo_list) && !in_array($code,$todo_list)){
+				continue;	
+			}
+			$producing_pdf=true;
+			call_user_func( array( $catpdf_templates, 'get_section_'.$code ) );
+			$producing_pdf=false;
+		}
+		
+		//var_dump('$pages: '.$pages);
+		var_dump('$interation: '.$interation);
+		//var_dump('$repeater: '.$repeater);
+		var_dump($chapters);
+	}
+
+
+
+	public function order_sections(){
+		global $rendered_sections,$catpdf_templates;
+		
+		$renderedList = $rendered_sections;
+		
+		//take the rendered output and ordering in the way the book will be put together
+		$oupout_order = $catpdf_templates->get_default_template_sections();
+		$merge_list = array();
+		foreach($oupout_order as $code=>$section){
+			if( isset($renderedList[$code]) && !empty($renderedList[$code]) ){
+				if(is_array($renderedList[$code])){
+					$i=0;
+					foreach($renderedList[$code] as $item){
+						$key=$code.$i;
+						$merge_list[$key]=$item;	
+						$i++;
+					}
+				}else{
+					$merge_list[$code]=$renderedList[$code];
+				}
+			}
+		}
+		$rendered_sections = $merge_list;
+	}
+
+
+
+
+
+	public function create_section_pdf($code,$html,$segment=""){
+		global $_params,$catpdf_output,$catpdf_data,$inner_pdf,$section,$chapters,$repeater,$pages,$interation,$indexable,$rendered_sections;
+		
+		$build_type = $this->get_build_type();
+		$options   = $catpdf_data->get_options();
+
+		$size = (isset($_params['papersize'])) ? urldecode($_params['papersize']) : $options['DOMPDF_DEFAULT_PAPER_SIZE'];
+		$orientation = (isset($_params['orientation'])) ? urldecode($_params['orientation']) : $options['DOMPDF_DEFAULT_ORIENTATION'];
+		
+		$_name=preg_replace('/[^a-z0-9]/i', '_', $segment);
 		$filename = trim($catpdf_output->buildFileName(null,null))."-".($_name!=""?"-$_name-":"").md5( implode(',',$_params) ) . ".pdf";
 
 		$html=$this->head.
@@ -304,23 +374,165 @@ var inch = 92;
 		//start the render
 		$dompdf->load_html($html);
 		$dompdf->render();
-		$pdf = $dompdf->output();//store it for output
-
-		//var_dump('$pages: '.$pages);
-		//var_dump('$interation: '.$interation);
-		//var_dump('$repeater: '.$repeater);
-		//var_dump($chapters);
+		
+		if ( $_dompdf_show_warnings ) {
+			global $_dompdf_warnings;
+			foreach ($_dompdf_warnings as $msg){
+				echo $msg . "\n";
+			}
+			echo $dompdf->get_canvas()->get_cpdf()->messages;
+			flush();
+		}
 		
 		
+		$pdf = $dompdf->output( array("compress" => 0) );//store it for output
 
-		$part_name = $code.'--'.$filename;
-		$this->cachePdf( $part_name, $pdf, true );
-		return $part_name;	
+		$part_key = $code.'--'.$filename;
+		$this->set_section($code, (object)array(
+			"content"=>$pdf,
+			"filename"=>$part_key,
+			"data"=>array()
+		),$segment);
+	}
+	
+	
+	
+	public function leadingChr($str, $zerocount=0, $chr="0"){
+		$base =  "";
+		$count = $zerocount>0?$zerocount:strlen($str);
+		for($i = 0; $i < $count; $i++) { 
+			$base .= $chr;
+		}
+		$charLength=(strlen($base) - strlen($str));
+		return substr( $base , 0, $charLength ).$str;
+	}
+
+	public function filter_sections(){
+		global $rendered_sections;
+
+
+		$pn_text_str="PAGE";
+		$pn_sep_str="/";
+		// do the page numbering
+		static $idx = 1;
+		foreach($rendered_sections as $key=>$section){
+			if(is_array($section)){
+				foreach($section as $subkey=>$area){
+					$rendered_sections[$key][$subkey]->data['firstpage']=$idx;
+					$rendered_sections[$key][$subkey]->content = preg_replace_callback("/\{P\}/", function ($matches) use (&$idx) {
+						$replacement = '';
+						foreach ($matches as $match) {
+							$replacement = $this->leadingChr($idx,  strlen('{P}'),chr(0x200B));
+							$idx++;
+						}
+						return $replacement;
+					}, $rendered_sections[$key][$subkey]->content);
+					$rendered_sections[$key][$subkey]->data['lastpage']=$idx-1;
+				}
+
+			}else{
+				$rendered_sections[$key]->data['firstpage']=$idx;
+				$rendered_sections[$key]->content = preg_replace_callback("/\{P\}/", function ($matches) use (&$idx) {
+					$replacement = '';
+					foreach ($matches as $match) {
+						$replacement = $this->leadingChr($idx,  strlen('{P}'),chr(0x200B));
+						$idx++;
+					}
+					return $replacement;
+				}, $rendered_sections[$key]->content);
+				$rendered_sections[$key]->data['lastpage']=$idx-1;	
+			}
+		}
+		foreach($rendered_sections as $key=>$section){
+			if(is_array($section)){
+				foreach($section as $subkey=>$area){
+					$rendered_section[$key][$subkey]->content = str_replace( '{PT}', $this->leadingChr($idx,  strlen('{PT}'),chr(0x200B)), $rendered_section[$key][$subkey]->content );
+				}
+			}else{
+				$rendered_section[$key]->content = str_replace( '{PT}', $this->leadingChr($idx,  strlen('{PT}'),chr(0x200B)), $rendered_section[$key]->content );
+			}
+		}
+		//var_dump($rendered_sections);
+	}
+
+
+	public function section_to_pdf($code,$segment=""){
+		$object = $this->get_section($code,$segment);
+		$this->cachePdf( $object->filename, $object->content, true );
 	}
 
 
 
+	public function cachePdf($file,$contents,$fragment=false){
+		$file = ($fragment?CATPDF_MERGING_PATH:CATPDF_CACHE_PATH).trim(trim($file,'/'));
+		return file_put_contents($file, $contents);
+	}
+	
+	public function is_cached($filename){
+		$file = CATPDF_CACHE_PATH.trim(trim($filename,'/'));
+		return file_exists($file);
+	}
+	
+	public function build_pdf_sections(){
+		global $rendered_sections;
+		foreach($rendered_sections as $item){
+			if(is_array($item)){
+				foreach($item as $subitem){
+					$this->cachePdf($subitem->filename,$subitem->content,true);
+				}
+			}else{
+				$this->cachePdf($item->filename,$item->content,true);
+			}
+		}
+	}
+	
+	public function merge_pdfs($output_file){
+		global $rendered_sections;
+		$mergeList = array();
+		foreach($rendered_sections as $item){
+			if(is_array($item)){
+				foreach($item as $subitem){
+					$mergeList[]=$subitem->filename;
+				}
+			}else{
+				$mergeList[]=$item->filename;
+			}
+		}
+		var_dump($mergeList);
+		if(count($mergeList)>1){
+			$PDFMerger = new PDFMerger;
+			foreach($mergeList as $file){
+				var_dump("--".CATPDF_MERGING_PATH.$file);
+				$PDFMerger->addPDF(CATPDF_MERGING_PATH.$file, 'all');//'1, 3, 4'//'1-2'
+			}
+			var_dump(CATPDF_CACHE_PATH.trim(trim($output_file),'/'));
+			$PDFMerger->merge('file', CATPDF_CACHE_PATH.trim(trim($output_file),'/'));
+			die();
+			return true;
+		}else{
+			if (!copy(CATPDF_MERGING_PATH.$mergeList[0], CATPDF_CACHE_PATH.trim(trim($output_file),'/')) ) {
+				echo "failed to copy ".CATPDF_MERGING_PATH.$mergeList[0]." to ". CATPDF_CACHE_PATH.'/'.$output_file."...\n";
+				return false;
+			}
+			return true;
+		}
+	}
+
+
 	public function sendPdf($file,$prettyname=NULL){
+		global $_params;
+		if(!$this->is_cached($file) || isset($_params['dyno'])){
+			$todo_list = array();
+			if(isset($_params['sections']) && !empty($_params['sections'])){
+				$todo_list = array_map('trim', explode(',', $_params['sections']));
+			}
+			$this->create_sections($todo_list);
+			$this->order_sections();
+			$this->filter_sections();
+			$this->build_pdf_sections();
+			$this->merge_pdfs($file);
+		}
+
 		$name = $prettyname==NULL?$file:$prettyname;
 		$file=CATPDF_CACHE_PATH.$file;
 		if (file_exists($file)){
@@ -344,33 +556,6 @@ var inch = 92;
 			} //out put error message
 		} //out put error message
 	}
-	public function cachePdf($file,$contents,$fragment=false){
-		$file = ($fragment?CATPDF_MERGING_PATH:CATPDF_CACHE_PATH).trim(trim($file,'/'));
-		return file_put_contents($file, $contents);
-	}
-	public function is_cached($filename){
-		$file = CATPDF_CACHE_PATH.trim(trim($filename,'/'));
-		return file_exists($file);
-	}
-	public function merge_pdfs($mergeList,$output_file){
-		if(count($mergeList)>1){
-			$PDFMerger = new PDFMerger;
-			foreach($mergeList as $file){
-				$PDFMerger->addPDF(CATPDF_MERGING_PATH.$file, 'all');//'1, 3, 4'//'1-2'
-			}
-			$PDFMerger->merge('file', CATPDF_CACHE_PATH.trim(trim($output_file),'/'));
-			return true;
-		}else{
-			if (!copy(CATPDF_MERGING_PATH.$mergeList[0], CATPDF_CACHE_PATH.trim(trim($output_file),'/')) ) {
-				echo "failed to copy ".CATPDF_MERGING_PATH.$mergeList[0]." to ". CATPDF_CACHE_PATH.'/'.$output_file."...\n";
-				return false;
-			}
-			return true;
-		}
-	}
-
-
-
 
 
 }
