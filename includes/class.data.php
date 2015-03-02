@@ -7,6 +7,12 @@ class catpdf_data {
     function __construct() { }
 
 
+	public $page_num_placeholder = '{P}';
+	public $page_total_placeholder = '{PT}';
+	public $page_label_placeholder = '{PL}';
+	public $page_separator_placeholder = '{PS}';
+
+
 	public function get_options(){
 		$plugin_option_defaults=array(
 				'concat' => array(

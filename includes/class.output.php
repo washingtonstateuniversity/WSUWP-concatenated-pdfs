@@ -408,21 +408,23 @@ var inch = 92;
 	}
 
 	public function filter_sections(){
-		global $rendered_sections;
-
+		global $rendered_sections,$catpdf_data;
+		//chr(0x200B) is used as it's a no width space, and well that is what we want
 
 		$pn_text_str="PAGE";
 		$pn_sep_str="/";
+		$page_num = $catpdf_data->$page_num_placeholder;
+		$page_total = $catpdf_data->$page_total_placeholder;
 		// do the page numbering
 		static $idx = 1;
 		foreach($rendered_sections as $key=>$section){
 			if(is_array($section)){
 				foreach($section as $subkey=>$area){
 					$rendered_sections[$key][$subkey]->data['firstpage']=$idx;
-					$rendered_sections[$key][$subkey]->content = preg_replace_callback("/\{P\}/", function ($matches) use (&$idx) {
+					$rendered_sections[$key][$subkey]->content = preg_replace_callback("/".preg_quote($page_num)."/", function ($matches) use (&$idx) {
 						$replacement = '';
 						foreach ($matches as $match) {
-							$replacement = $this->leadingChr($idx,  strlen('{P}'),chr(0x200B));
+							$replacement = $this->leadingChr($idx,  strlen($page_num),chr(0x200B));
 							$idx++;
 						}
 						return $replacement;
@@ -432,10 +434,10 @@ var inch = 92;
 
 			}else{
 				$rendered_sections[$key]->data['firstpage']=$idx;
-				$rendered_sections[$key]->content = preg_replace_callback("/\{P\}/", function ($matches) use (&$idx) {
+				$rendered_sections[$key]->content = preg_replace_callback("/".preg_quote($page_num)."/", function ($matches) use (&$idx) {
 					$replacement = '';
 					foreach ($matches as $match) {
-						$replacement = $this->leadingChr($idx,  strlen('{P}'),chr(0x200B));
+						$replacement = $this->leadingChr($idx,  strlen($page_num),chr(0x200B));
 						$idx++;
 					}
 					return $replacement;
@@ -446,13 +448,13 @@ var inch = 92;
 		foreach($rendered_sections as $key=>$section){
 			if(is_array($section)){
 				foreach($section as $subkey=>$area){
-					$rendered_section[$key][$subkey]->content = str_replace( '{PT}', $this->leadingChr($idx,  strlen('{PT}'),chr(0x200B)), $rendered_section[$key][$subkey]->content );
+					$rendered_section[$key][$subkey]->content = str_replace( $page_total, $this->leadingChr($idx,strlen($page_total),chr(0x200B)), $rendered_section[$key][$subkey]->content );
 				}
 			}else{
-				$rendered_section[$key]->content = str_replace( '{PT}', $this->leadingChr($idx,  strlen('{PT}'),chr(0x200B)), $rendered_section[$key]->content );
+				$rendered_section[$key]->content = str_replace( $page_total, $this->leadingChr($idx,strlen($page_total),chr(0x200B)), $rendered_section[$key]->content );
 			}
 		}
-		//var_dump($rendered_sections);
+		var_dump($rendered_sections);
 	}
 
 

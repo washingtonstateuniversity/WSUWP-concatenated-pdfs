@@ -234,13 +234,18 @@ class shortcode {
 	 * @return string
      */
     public function page_numbers_func($atts) {
-		global $in_catpdf_shortcode;
+		global $in_catpdf_shortcode,$catpdf_data;
+		$page_num = $catpdf_data->$page_num_placeholder;
+		$page_total = $catpdf_data->$page_total_placeholder;
+		$page_label = $catpdf_data->$page_label_placeholder;
+		$page_separator = $catpdf_data->$page_separator_placeholder;		
+		
 		$in_catpdf_shortcode=true;
 		extract(shortcode_atts(array(
-			'label' => '{PL}',
-			'separator' => '{PS}'
+			'label' => $page_label,
+			'separator' => $page_separator
 		), $atts));
-		$block='<div id="page_numbers"><span id="pn_text">'.$label.'</span><span id="pn_number">{P}'.$separator.'{PT}</span></div>'."\n";
+		$block='<div id="page_numbers"><span id="pn_text">'.$label.'</span><span id="pn_number">'.$page_num.''.$separator.''.$page_total.'</span></div>'."\n";
 
 		
 		/* the best corse maybe to dynamicly fill in the numbers
