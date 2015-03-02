@@ -413,8 +413,8 @@ var inch = 92;
 
 		$pn_text_str="PAGE";
 		$pn_sep_str="/";
-		$page_num = $catpdf_data->$page_num_placeholder;
-		$page_total = $catpdf_data->$page_total_placeholder;
+		$page_num = $catpdf_data->page_num_placeholder;
+		$page_total = $catpdf_data->page_total_placeholder;
 		// do the page numbering
 		static $idx = 1;
 		foreach($rendered_sections as $key=>$section){

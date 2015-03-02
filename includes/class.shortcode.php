@@ -235,10 +235,10 @@ class shortcode {
      */
     public function page_numbers_func($atts) {
 		global $in_catpdf_shortcode,$catpdf_data;
-		$page_num = $catpdf_data->$page_num_placeholder;
-		$page_total = $catpdf_data->$page_total_placeholder;
-		$page_label = $catpdf_data->$page_label_placeholder;
-		$page_separator = $catpdf_data->$page_separator_placeholder;		
+		$page_num = $catpdf_data->page_num_placeholder;
+		$page_total = $catpdf_data->page_total_placeholder;
+		$page_label = $catpdf_data->page_label_placeholder;
+		$page_separator = $catpdf_data->page_separator_placeholder;		
 		
 		$in_catpdf_shortcode=true;
 		extract(shortcode_atts(array(
