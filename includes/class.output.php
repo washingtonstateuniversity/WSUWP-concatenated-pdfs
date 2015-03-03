@@ -397,10 +397,9 @@ var inch = 92;
 	
 	
 	
-	public function leadingChr($str, $zerocount=0, $chr="0"){
+	public function leadingChr($str, $spaces, $chr="0"){
 		$base =  "";
-		$count = $zerocount>0?$zerocount:strlen($str);
-		for($i = 0; $i < $count; $i++) { 
+		for($i = 0; $i < $spaces; $i++) { 
 			$base .= $chr;
 		}
 		$charLength=(strlen($base) - strlen($str));
@@ -414,30 +413,33 @@ var inch = 92;
 		$pn_text_str="PAGE";
 		$pn_sep_str="/";
 		$page_num = $catpdf_data->page_num_placeholder;
+
 		$page_total = $catpdf_data->page_total_placeholder;
+		$pn_space_count = strlen($page_num);
+		$pt_space_count = strlen($page_total);
+
 		// do the page numbering
 		static $idx = 1;
 		foreach($rendered_sections as $key=>$section){
 			if(is_array($section)){
 				foreach($section as $subkey=>$area){
 					$rendered_sections[$key][$subkey]->data['firstpage']=$idx;
-					$rendered_sections[$key][$subkey]->content = preg_replace_callback("/".preg_quote($page_num)."/", function ($matches) use (&$idx) {
+					$rendered_sections[$key][$subkey]->content = preg_replace_callback("/".preg_quote($page_num)."/", function ($matches) use (&$idx, $pn_space_count) {
 						$replacement = '';
 						foreach ($matches as $match) {
-							$replacement = $this->leadingChr($idx,  strlen($page_num),chr(0x200B));
+							$replacement = $this->leadingChr($idx,$pn_space_count,chr(0x200B));
 							$idx++;
 						}
 						return $replacement;
 					}, $rendered_sections[$key][$subkey]->content);
 					$rendered_sections[$key][$subkey]->data['lastpage']=$idx-1;
 				}
-
 			}else{
 				$rendered_sections[$key]->data['firstpage']=$idx;
-				$rendered_sections[$key]->content = preg_replace_callback("/".preg_quote($page_num)."/", function ($matches) use (&$idx) {
+				$rendered_sections[$key]->content = preg_replace_callback("/".preg_quote($page_num)."/", function ($matches) use (&$idx, $pn_space_count) {
 					$replacement = '';
 					foreach ($matches as $match) {
-						$replacement = $this->leadingChr($idx,  strlen($page_num),chr(0x200B));
+						$replacement = $this->leadingChr($idx,$pn_space_count,chr(0x200B));
 						$idx++;
 					}
 					return $replacement;
@@ -448,13 +450,12 @@ var inch = 92;
 		foreach($rendered_sections as $key=>$section){
 			if(is_array($section)){
 				foreach($section as $subkey=>$area){
-					$rendered_section[$key][$subkey]->content = str_replace( $page_total, $this->leadingChr($idx,strlen($page_total),chr(0x200B)), $rendered_section[$key][$subkey]->content );
+					$rendered_section[$key][$subkey]->content = str_replace( $page_total, $this->leadingChr($idx,$pt_space_count,chr(0x200B)), $rendered_section[$key][$subkey]->content );
 				}
 			}else{
-				$rendered_section[$key]->content = str_replace( $page_total, $this->leadingChr($idx,strlen($page_total),chr(0x200B)), $rendered_section[$key]->content );
+				$rendered_section[$key]->content = str_replace( $page_total, $this->leadingChr($idx,$pt_space_count,chr(0x200B)), $rendered_section[$key]->content );
 			}
 		}
-		var_dump($rendered_sections);
 	}
 
 
