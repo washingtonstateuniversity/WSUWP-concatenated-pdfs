@@ -482,7 +482,7 @@ class shortcode {
 		$in_catpdf_shortcode=true;
         $item = '';
         $title = $post->post_title;
-        $item = $this->get_indexer($title).do_shortcode($post->post_content);
+        $item = do_shortcode($post->post_content);
 		$in_catpdf_shortcode=false;
         return $item;
     }

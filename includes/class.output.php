@@ -192,7 +192,7 @@ class catpdf_output {
      * Return html structure
      */
     public function _html_structure() {
-		global $dompdf;
+		global $dompdf,$catpdf_output;
 		$this->title = $this->buildFileName(NULL,$options);
 
 		/* there should be a base html template? */
@@ -217,8 +217,14 @@ class catpdf_output {
 	'.$this->get_pdf_php_globals().'
 	//$repeater = $inner_pdf;
 	$startingPage = $pages;
+	if($interation == ""){
+		$interation=1;	
+	}
 	$pages+=$PAGE_COUNT;
-	$chapters[$interation-1]["page_end"]=$pages;
+	/*if($indexable){
+		$page_end=$pages;
+		$chapters[$interation-1]["page_end"]=$pages;
+	}*/
 	$bs = $GLOBALS["backside"]; // work to remove
 	$pdf->page_script(\'$pages++;\');
 	$count=$PAGE_COUNT;
@@ -234,6 +240,7 @@ class catpdf_output {
 			
 		}
 		//$repeater = $PAGE_COUNT;
+		
 		</script>'."\n";
 
 		$endScript='<script type="text/javascript">
@@ -292,22 +299,22 @@ var inch = 92;
 		$catpdf_output->prep_pageheader();
 		$catpdf_output->prep_pagefooter();
 		$catpdf_output->_html_structure();
-
-
+		
+		if($interation==""){$interation=1;}//idk atm why this is needed other then it was "" at this point
 		$template_sections = $catpdf_templates->get_default_render_order();
 		foreach($template_sections as $code=>$section){
 			if(!empty($todo_list) && !in_array($code,$todo_list)){
 				continue;	
 			}
-			$producing_pdf=true;
+			
 			call_user_func( array( $catpdf_templates, 'get_section_'.$code ) );
-			$producing_pdf=false;
+			
 		}
 		
 		//var_dump('$pages: '.$pages);
-		var_dump('$interation: '.$interation);
+		//var_dump('ending $interation: '.$interation);
 		//var_dump('$repeater: '.$repeater);
-		var_dump($chapters);
+		//var_dump($chapters);
 	}
 
 
@@ -342,7 +349,7 @@ var inch = 92;
 
 
 	public function create_section_pdf($code,$html,$segment=""){
-		global $_params,$catpdf_output,$catpdf_data,$inner_pdf,$section,$chapters,$repeater,$pages,$interation,$indexable,$rendered_sections;
+		global $_params,$shortcode,$catpdf_output,$catpdf_data,$inner_pdf,$section,$chapters,$repeater,$pages,$interation,$indexable,$rendered_sections;
 		
 		$build_type = $this->get_build_type();
 		$options   = $catpdf_data->get_options();
@@ -355,8 +362,9 @@ var inch = 92;
 
 		$html=$this->head.
 				$this->header_part.
+				( ($code!="cover" && $code!="index") ?$this->footer_part:"").
 				$html.
-				($code!="cover"?$this->footer_part:"").
+				($segment!=""?$shortcode->get_indexer($segment):"").
 				$this->foot;
 
 		//var_dump('--------'.$code.'--------');
@@ -369,11 +377,13 @@ var inch = 92;
 		$repeater = NULL;
 		$inner_pdf=$code;
 		$section=$code;
-		$indexable=($code!="cover"&&$code!="index");
+		$indexable=($code!="cover" && $code!="index");
+		//var_dump('pre render '.$code.' $interation: '.$interation);
 		$this->logHtmlOutput($html);
 		//start the render
 		$dompdf->load_html($html);
 		$dompdf->render();
+		//var_dump('post render '.$code.' $interation: '.$interation);
 		
 		if ( $_dompdf_show_warnings ) {
 			global $_dompdf_warnings;
@@ -447,13 +457,14 @@ var inch = 92;
 				$rendered_sections[$key]->data['lastpage']=$idx-1;	
 			}
 		}
+		$last_index = $idx-1;
 		foreach($rendered_sections as $key=>$section){
 			if(is_array($section)){
 				foreach($section as $subkey=>$area){
-					$rendered_section[$key][$subkey]->content = str_replace( $page_total, $this->leadingChr($idx,$pt_space_count,chr(0x200B)), $rendered_section[$key][$subkey]->content );
+					$rendered_sections[$key][$subkey]->content = str_replace( $page_total, $this->leadingChr($last_index,$pt_space_count,chr(0x200B)), $rendered_sections[$key][$subkey]->content );
 				}
 			}else{
-				$rendered_section[$key]->content = str_replace( $page_total, $this->leadingChr($idx,$pt_space_count,chr(0x200B)), $rendered_section[$key]->content );
+				$rendered_sections[$key]->content = str_replace( $page_total, $this->leadingChr($last_index,$pt_space_count,chr(0x200B)), $rendered_sections[$key]->content );
 			}
 		}
 	}
@@ -501,16 +512,15 @@ var inch = 92;
 				$mergeList[]=$item->filename;
 			}
 		}
-		var_dump($mergeList);
+		//var_dump($mergeList);
 		if(count($mergeList)>1){
 			$PDFMerger = new PDFMerger;
 			foreach($mergeList as $file){
-				var_dump("--".CATPDF_MERGING_PATH.$file);
+				//var_dump("--".CATPDF_MERGING_PATH.$file);
 				$PDFMerger->addPDF(CATPDF_MERGING_PATH.$file, 'all');//'1, 3, 4'//'1-2'
 			}
-			var_dump(CATPDF_CACHE_PATH.trim(trim($output_file),'/'));
+			//var_dump(CATPDF_CACHE_PATH.trim(trim($output_file),'/'));
 			$PDFMerger->merge('file', CATPDF_CACHE_PATH.trim(trim($output_file),'/'));
-			die();
 			return true;
 		}else{
 			if (!copy(CATPDF_MERGING_PATH.$mergeList[0], CATPDF_CACHE_PATH.trim(trim($output_file),'/')) ) {

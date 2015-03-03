@@ -189,14 +189,14 @@ class catpdf_pages {
         );
 		
 
-		
+		$prettyname= isset($_params['filename']) && !empty($_params['filename']) ? $_params['filename']. ".pdf" : "";
 		
         $post_query_arr  = $param_arr;
 		$_params['papersize']= isset($_params['papersize']) && !empty($_params['papersize']) ? $_params['papersize'] : "letter";
 		$_params['orientation']= isset($_params['orientation']) && !empty($_params['orientation']) ? $_params['orientation'] : "portrait";
 
 		$filename = trim($catpdf_output->buildFileName(null,null))."-".md5( implode(',',$_params) ) . ".pdf";
-		$catpdf_output->sendPdf($filename);
+		$catpdf_output->sendPdf($filename,$prettyname);
     }
 
 

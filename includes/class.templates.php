@@ -38,12 +38,14 @@ class catpdf_templates {
 	}
 	
 	public function get_section_content(){	
-		global $catpdf_output,$shortcode,$_params,$post,$posts;
+		global $catpdf_output,$shortcode,$_params,$post,$posts,$producing_pdf;
 		foreach($posts as $posting){
+			$producing_pdf=true;
 			$post     = $posting;
 			$content  = $shortcode->filter_shortcodes('loop', $this->resolve_template('concat-loop.php') );
 			$html     = "\n<div id='catpdf_content'>\n{$content}\n</div>\n";
 			$catpdf_output->create_section_pdf("content",$html,$posting->post_title);
+			$producing_pdf=false;
 		}
 	}	
 	public function get_section_cover(){
