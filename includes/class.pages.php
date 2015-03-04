@@ -132,6 +132,23 @@ class catpdf_pages {
         $data['select_cats']   = $select_cats;
         $data['select_author'] = $select_author;
 
+		$data['orderby'] = array('none',
+								'ID',
+								'author',
+								'title',
+								'date',
+								'modified',
+								'parent',
+								'rand',
+								'comment_count',
+								'menu_order',
+								'meta_value',
+								'meta_value_num',
+								'post__in',
+								);
+		
+
+
 		$data['styles'] = array('default' => "default") + $catpdf_templates->get_styles();
         $data['select_sizes']  = array('letter' => $catpdf_data->paper_sizes['letter']) + $catpdf_data->paper_sizes;
         $data['select_ors']    = $catpdf_data->paper_orientation;
@@ -166,6 +183,23 @@ class catpdf_pages {
 		$data['media_types'] = $catpdf_data->media_types;
 		$data['select_ors']    = $catpdf_data->paper_orientation;
 		$data['styles'] = array('default' => "default") + $catpdf_templates->get_styles();
+		
+		$data['orderby'] = array('none',
+								'ID',
+								'author',
+								'title',
+								'date',
+								'modified',
+								'parent',
+								'rand',
+								'comment_count',
+								'menu_order',
+								'meta_value',
+								'meta_value_num',
+								'post__in',
+								);
+		
+		
         // Get templates
         $data['templates'] = array();//$catpdf_templates->get_template();
         // Display option form
@@ -185,10 +219,15 @@ class catpdf_pages {
             'user' => (isset($_params['user']) && $_params['user'] != '') ? explode(',', $_params['user']) : array(),
             'template' => (isset($_params['template'])) ? urldecode($_params['template']) : 'default',
 			'post_type' => (isset($_params['type'])) ? urldecode($_params['type']) : 'post',
-			'post_status' => (isset($_params['status'])) ? urldecode($_params['status']) : 'published'
+			'post_status' => (isset($_params['status'])) ? urldecode($_params['status']) : 'published',
+			'orderby' => (isset($_params['orderby'])) ? urldecode($_params['orderby']) : 'date', 
         );
-		
-
+		if(isset($_params['meta_key']) && !empty($_params['meta_key'])){
+			$param_arr['meta_key'] = $_params['meta_key'];
+		}
+		if(isset($_params['meta_value']) && !empty($_params['meta_value'])){
+			$param_arr['meta_value'] = $_params['meta_value'];
+		}
 		$prettyname= isset($_params['filename']) && !empty($_params['filename']) ? $_params['filename']. ".pdf" : "";
 		
         $post_query_arr  = $param_arr;
