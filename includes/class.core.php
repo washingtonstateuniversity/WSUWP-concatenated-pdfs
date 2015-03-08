@@ -37,7 +37,7 @@ class catpdf_core {
 		$catpdf_data = new catpdf_data();
 		$options = $catpdf_data->get_options();
 		
-		if($options["postdl"] == 1){
+		if($options["postdl"] == 1 && isset($_params['catpdf']) && $_params['catpdf'] == "run") {
 			// Include dompdf //make sure to get back to pulling this in to the settings
 			include(CATPDF_PATH . '/includes/dompdf_config.php');
 			$dompdf = new DOMPDF();
@@ -192,10 +192,11 @@ class catpdf_core {
 		/* OK, its safe for us to save the data now. */
 
 		// Sanitize the user input.
-		$pdfConfig = $_POST[CATPDF_KEY.'_pdf_config'];
-
-		// Update the meta field.
-		update_post_meta( $post_id, CATPDF_KEY.'_post_pdf_config', json_encode($pdfConfig) );
+		if(isset($_POST[CATPDF_KEY.'_pdf_config'])){
+			$pdfConfig = $_POST[CATPDF_KEY.'_pdf_config'];
+			// Update the meta field.
+			update_post_meta( $post_id, CATPDF_KEY.'_post_pdf_config', json_encode($pdfConfig) );
+		}
 	}
 
 }
