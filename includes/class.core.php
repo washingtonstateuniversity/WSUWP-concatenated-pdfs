@@ -71,6 +71,7 @@ class catpdf_core {
 			}else{
 				add_action( 'add_meta_boxes', array( $this, 'add_pdf_meta_boxes' ) );	
 				add_action( 'save_post', array( $this, 'save' ) );
+				add_filter('page_row_actions', array( $this, '_post_action_row' ), 10, 2);
 			}
 		}
     }
@@ -110,6 +111,21 @@ class catpdf_core {
 		}	
 	}
 
+
+	public function _post_action_row($actions, $post){
+		global $shortcode;
+		//check for your post type
+		$post_types      = get_post_types( array( 'public'   => true  ), 'names', 'and' );
+		
+		//$post_types = array('post', 'page');     //limit meta box to certain post types
+		if ( in_array( $post->post_type, $post_types )) {
+			$actions['make_post_pdf'] = $shortcode->apply_download_button( array( 'text'=>'Preview Download Link', 'catpdf_dl'=>$post->ID,'target'=>'_blank', 'sections'=>'content' ) );
+		}	
+		return $actions;
+	}
+
+
+
 	/**
      *
 	 * Display a meta box of the captured html.  This is just displaying the post content, so it's 
@@ -146,7 +162,7 @@ class catpdf_core {
 		<hr/>
 		<p> Pre view the PDF</p>
 		<p class="description"><b>NOTE:</b> The preview is for this page only, meaning that there will be no cover, index, or anything of that nature.  Only the content as if it was in the middle of the docment.</p>
-		<?=$shortcode->apply_download_button(array('text'=>'Preview Download Link','catpdf_dl'=>$post->ID,'target'=>'_blank' ))?>
+		<?=$shortcode->apply_download_button( array( 'text'=>'Preview Download Link', 'catpdf_dl'=>$post->ID, 'target'=>'_blank', 'sections'=>'content' ) )?>
 		<?php
 	}
 	/**
