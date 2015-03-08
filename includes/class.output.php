@@ -55,6 +55,20 @@ class catpdf_output {
 		file_put_contents (CATPDF_LOG_PATH . '/pdfhtml-'.date('m-d-Y--H-i-s').'.html',$html);
 	}
 
+	public function get_posts_children($parent_id,$post_query_arr){
+		
+		// grab the posts children
+		$posts = get_posts( array_merge($post_query_arr,array('order' => 'ASC','numberposts' => -1,'post_parent' => $parent_id, 'suppress_filters' => false )));
+		$layered= array();
+		// now grab the grand children
+		foreach( $posts as $post ){
+			$children = $this->get_posts_children($post->ID,$post_query_arr);
+			$layered = array_merge($layered,array_merge(array($post), $children));
+		}
+		// merge in the direct descendants we found earlier
+		//$layered = array_merge($layered,$posts);
+		return $layered;
+	}
 
 
 
@@ -62,7 +76,7 @@ class catpdf_output {
 		global $catpdf_templates,$_params,$catpdf_data,$posts,$post_query_arr,$shortcode;
 		$id		= isset($_params['catpdf_dl'])?$_params['catpdf_dl']:NULL;
 		//var_dump($post);
-		$posts 	= ($id>0) ? array(get_post($id)) : get_posts($post_query_arr) ;
+		$posts 	= ($id>0) ? array(get_post($id)) : $this->get_posts_children('',$post_query_arr) ;
 	}
 
 	public function prep_pageheader(){
@@ -349,53 +363,59 @@ var inch = 92;
 
 
 	public function create_section_pdf($code,$html,$segment=""){
-		global $_params,$shortcode,$catpdf_output,$catpdf_data,$inner_pdf,$section,$chapters,$repeater,$pages,$interation,$indexable,$rendered_sections;
+		global $_params,$post,$shortcode,$catpdf_output,$catpdf_data,$inner_pdf,$section,$chapters,$repeater,$pages,$interation,$indexable,$rendered_sections;
 		
-		$build_type = $this->get_build_type();
-		$options   = $catpdf_data->get_options();
-
-		$size = (isset($_params['papersize'])) ? urldecode($_params['papersize']) : $options['DOMPDF_DEFAULT_PAPER_SIZE'];
-		$orientation = (isset($_params['orientation'])) ? urldecode($_params['orientation']) : $options['DOMPDF_DEFAULT_ORIENTATION'];
-		
+		$fragment_key = $code.md5( implode(',',$_params) ).( $segment!="" ? md5( $post->post_modified ) : "" );
 		$_name=preg_replace('/[^a-z0-9]/i', '_', $segment);
-		$filename = trim($catpdf_output->buildFileName(null,null))."-".($_name!=""?"-$_name-":"").md5( implode(',',$_params) ) . ".pdf";
+		$filename = trim($catpdf_output->buildFileName(null,null))."-".($_name!=""?"-$_name-":"").$fragment_key. ".pdf";
 
-		$html=$this->head.
-				$this->header_part.
-				( ($code!="cover" && $code!="index") ?$this->footer_part:"").
-				$html.
-				($segment!=""?$shortcode->get_indexer($segment):"").
-				$this->foot;
+		if(!$this->is_cached($fragment_key,true)){
+			$build_type = $this->get_build_type();
+			$options   = $catpdf_data->get_options();
+	
+			$size = (isset($_params['papersize'])) ? urldecode($_params['papersize']) : $options['DOMPDF_DEFAULT_PAPER_SIZE'];
+			$orientation = (isset($_params['orientation'])) ? urldecode($_params['orientation']) : $options['DOMPDF_DEFAULT_ORIENTATION'];
+			
 
-		//var_dump('--------'.$code.'--------');
-		//if($code=="index")var_dump($html);
-		
-		$dompdf = new DOMPDF();
-		$dompdf->set_paper($size,$orientation);
-		
-		//prime any globals that will be used in the dompdf render phase
-		$repeater = NULL;
-		$inner_pdf=$code;
-		$section=$code;
-		$indexable=($code!="cover" && $code!="index");
-		//var_dump('pre render '.$code.' $interation: '.$interation);
-		$this->logHtmlOutput($html);
-		//start the render
-		$dompdf->load_html($html);
-		$dompdf->render();
-		//var_dump('post render '.$code.' $interation: '.$interation);
-		
-		if ( $_dompdf_show_warnings ) {
-			global $_dompdf_warnings;
-			foreach ($_dompdf_warnings as $msg){
-				echo $msg . "\n";
+			$html=$this->head.
+					$this->header_part.
+					( ($code!="cover" && $code!="index") ?$this->footer_part:"").
+					$html.
+					($segment!=""?$shortcode->get_indexer($segment):"").
+					$this->foot;
+	
+			//var_dump('--------'.$code.'--------');
+			//if($code=="index")var_dump($html);
+			//var_dump($html);die();
+			$dompdf = new DOMPDF();
+			$dompdf->set_paper($size,$orientation);
+			
+			//prime any globals that will be used in the dompdf render phase
+			$repeater = NULL;
+			$inner_pdf=$code;
+			$section=$code;
+			$indexable=($code!="cover" && $code!="index");
+			//var_dump('pre render '.$code.' $interation: '.$interation);
+			$this->logHtmlOutput($html);
+			//start the render
+			$dompdf->load_html($html);
+			$dompdf->render();
+			//var_dump('post render '.$code.' $interation: '.$interation);
+			
+			if ( $_dompdf_show_warnings ) {
+				global $_dompdf_warnings;
+				foreach ($_dompdf_warnings as $msg){
+					echo $msg . "\n";
+				}
+				echo $dompdf->get_canvas()->get_cpdf()->messages;
+				flush();
 			}
-			echo $dompdf->get_canvas()->get_cpdf()->messages;
-			flush();
+			$pdf = $dompdf->output( array("compress" => 0) );//store it for output
+			//var_dump($pdf);die();
+			$this->cacheFragment($fragment_key,$pdf);
+		}else{
+			$pdf = $this->getFragment($fragment_key);
 		}
-		
-		
-		$pdf = $dompdf->output( array("compress" => 0) );//store it for output
 
 		$part_key = $code.'--'.$filename;
 		$this->set_section($code, (object)array(
@@ -476,14 +496,20 @@ var inch = 92;
 	}
 
 
-
+	public function getFragment($file){
+		$file = CATPDF_MERGING_PATH.trim(trim($file,'/'));
+		return file_get_contents($file);
+	}	
+	public function cacheFragment($file,$contents){
+		return $this->cachePdf($file,$contents,true);
+	}	
 	public function cachePdf($file,$contents,$fragment=false){
 		$file = ($fragment?CATPDF_MERGING_PATH:CATPDF_CACHE_PATH).trim(trim($file,'/'));
 		return file_put_contents($file, $contents);
 	}
-	
-	public function is_cached($filename){
-		$file = CATPDF_CACHE_PATH.trim(trim($filename,'/'));
+
+	public function is_cached($filename,$fragment=false){
+		$file = ($fragment?CATPDF_MERGING_PATH:CATPDF_CACHE_PATH).trim(trim($filename,'/'));
 		return file_exists($file);
 	}
 	

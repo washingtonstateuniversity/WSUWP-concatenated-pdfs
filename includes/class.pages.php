@@ -212,16 +212,19 @@ class catpdf_pages {
      */
     public function download_posts() {
         global $dompdf,$_params,$catpdf_output,$post,$post_query_arr,$catpdf_templates,$producing_pdf;
+		$_params['dyno']='yes';
         $param_arr   = array(
             'from' => (isset($_params['from'])) ? urldecode($_params['from']) : '',
             'to' => (isset($_params['to'])) ? urldecode($_params['to']) : '',
-            'category' => (isset($_params['cat']) && $_params['cat'] != '') ? explode(',', $_params['cat']) : array(),
             'user' => (isset($_params['user']) && $_params['user'] != '') ? explode(',', $_params['user']) : array(),
-            'template' => (isset($_params['template'])) ? urldecode($_params['template']) : 'default',
-			'post_type' => (isset($_params['type'])) ? urldecode($_params['type']) : 'post',
-			'post_status' => (isset($_params['status'])) ? urldecode($_params['status']) : 'published',
-			'orderby' => (isset($_params['orderby'])) ? urldecode($_params['orderby']) : 'date', 
+            'template' => (isset($_params['template']) && !empty($_params['template'])) ? urldecode($_params['template']) : 'default',
+			'post_type' => (isset($_params['type']) && !empty($_params['type'])) ? urldecode($_params['type']) : 'post',
+			'post_status' => (isset($_params['status']) && !empty($_params['status'])) ? urldecode($_params['status']) : 'published',
+			'orderby' => (isset($_params['orderby']) && !empty($_params['orderby'])) ? urldecode($_params['orderby']) : 'date', 
         );
+		if(isset($_params['cat']) && !empty($_params['cat'])){
+			$param_arr['category'] = explode(',', $_params['cat']);
+		}
 		if(isset($_params['meta_key']) && !empty($_params['meta_key'])){
 			$param_arr['meta_key'] = $_params['meta_key'];
 		}
