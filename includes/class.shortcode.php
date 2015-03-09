@@ -47,6 +47,7 @@ class shortcode {
 			'comments_count'=> array('dis'=>__('Comments Count')),
 			'version_count'=> array('dis'=>__('Number of versions')),
 			'revision_count'=> array('dis'=>__('Number of revision')),
+			'revision_last_date'=> array('dis'=>__('Last Revision Date')),
 			'meta'=> array('dis'=>__('Meta data by key')),
 			'page_numbers'=> array('dis'=>__('Page Numbering block')),
 			'index_loop'=>array('dis'=>__('The loop of the index items')),
@@ -97,7 +98,7 @@ class shortcode {
 					'catpdf_skip','title','excerpt','content','permalink',
 					'date','author','author_photo','author_description',
 					'status','featured_image','category','tags','comments_count',
-					'version_count','revision_count','meta'
+					'version_count','revision_count','meta','revision_last_date'
 				),
 			'pageheader' => array(
 				'catpdf_skip','site_title','site_tagline','site_url','date_today','title',
@@ -503,6 +504,7 @@ class shortcode {
 		$in_catpdf_shortcode=false;
         return $post->post_excerpt;
     }
+	
     /**
      * Return post tags list
 	 * 
@@ -513,14 +515,43 @@ class shortcode {
 	 *
 	 * @return string
      */	
-	public function version_count_func(){
+	public function revision_count_func(){
 		global $post,$in_catpdf_shortcode;
 		$in_catpdf_shortcode=true;
 		//setup_postdata($active_post);
-		$revisions=wp_get_post_revisions($post->ID);
+		$revisions = get_posts(array(
+			'post_parent' => $post->ID, // id
+			'post_type' => 'revision',
+			'post_status' => 'inherit'
+		));
 		$in_catpdf_shortcode=false;
 		return count($revisions);
 	}
+
+
+    /**
+     * Return post tags list
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
+	 * 
+     * @param array $atts
+	 *
+	 * @return string
+     */	
+	public function revision_last_date_func($atts){
+		global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
+ 		extract(shortcode_atts(array(
+            'format' => 'm.d.y'
+		), $atts));
+		$latest_revision = array_unshift( wp_get_post_revisions($post->ID) );
+		$last_revision_date = $latest_revision->post_modified;
+		$in_catpdf_shortcode=false;
+		return date($format,$last_revision_date);
+	}
+
+
 	
     /**
      * Return meta value
