@@ -46,6 +46,8 @@ class shortcode {
 			'tags'=> array('dis'=>__('Tags')),
 			'comments_count'=> array('dis'=>__('Comments Count')),
 			'version_count'=> array('dis'=>__('Number of versions')),
+			'revision_count'=> array('dis'=>__('Number of revision')),
+			'meta'=> array('dis'=>__('Meta data by key')),
 			'page_numbers'=> array('dis'=>__('Page Numbering block')),
 			'index_loop'=>array('dis'=>__('The loop of the index items')),
 			'index_row'=>array('dis'=>__('An index item')),
@@ -94,7 +96,8 @@ class shortcode {
 			'loop' => array(
 					'catpdf_skip','title','excerpt','content','permalink',
 					'date','author','author_photo','author_description',
-					'status','featured_image','category','tags','comments_count','version_count'
+					'status','featured_image','category','tags','comments_count',
+					'version_count','revision_count','meta'
 				),
 			'pageheader' => array(
 				'catpdf_skip','site_title','site_tagline','site_url','date_today','title',
@@ -518,6 +521,31 @@ class shortcode {
 		$in_catpdf_shortcode=false;
 		return count($revisions);
 	}
+	
+    /**
+     * Return meta value
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
+	 * 
+     * @param array $atts
+	 *
+	 * @return string
+     */	
+	public function meta_func($atts) {
+        global $post,$in_catpdf_shortcode;
+		$in_catpdf_shortcode=true;
+        extract(shortcode_atts(array(
+            'key' => ','
+		), $atts));
+		//setup_postdata($active_post);
+		$meta_data = get_post_meta( $post->ID, $key, true );
+		$in_catpdf_shortcode=false;
+		return $meta_data;
+	}	
+
+	
+	
     /**
      * Return post tags list
 	 * 
