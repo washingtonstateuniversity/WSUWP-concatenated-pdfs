@@ -37,7 +37,7 @@ class catpdf_core {
 		$catpdf_data = new catpdf_data();
 		$options = $catpdf_data->get_options();
 		
-		if($options["postdl"] == 1 && isset($_params['catpdf']) && $_params['catpdf'] == "run") {
+		if( isset($options["postdl"]) && $options["postdl"] == 1 && isset($_params['catpdf']) && $_params['catpdf'] == "run") {
 			// Include dompdf //make sure to get back to pulling this in to the settings
 			include(CATPDF_PATH . '/includes/dompdf_config.php');
 			$dompdf = new DOMPDF();
