@@ -64,7 +64,7 @@ class catpdf_core {
 		$catpdf_output = new catpdf_output();
 
 		
-		if($options["postdl"] == 1){
+		if( isset($options["postdl"]) && $options["postdl"] == 1){
 			if (!is_admin()) {
 				 // Initialize public functions
 				 //add_filter('the_content', array( $this, 'apply_post_download_button' ));
