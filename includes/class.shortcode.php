@@ -38,6 +38,7 @@ class shortcode {
 			'permalink'=> array('dis'=>__('Permalink')),
 			'date'=> array('dis'=>__('Date')),
 			'author'=> array('dis'=>__('Author')),
+			'author_contact'=> array('dis'=>__('Author Contact')),
 			'author_photo'=> array('dis'=>__('Author Photo')),
 			'author_description'=> array('dis'=>__('Author Description')),
 			'status'=> array('dis'=>__('Status')),
@@ -96,14 +97,14 @@ class shortcode {
 				),
 			'loop' => array(
 					'catpdf_skip','title','excerpt','content','permalink',
-					'date','author','author_photo','author_description',
+					'date','author','author_contact','author_photo','author_description',
 					'status','featured_image','category','tags','comments_count',
 					'version_count','revision_count','meta','revision_last_date'
 				),
 			'pageheader' => array(
 				'catpdf_skip','site_title','site_tagline','site_url','date_today','title',
 				'from_date','to_date','categories','post_count','page_numbers','excerpt','content','permalink',
-				'date','author','status','category','tags','comments_count',
+				'date','author','author_contact','status','category','tags','comments_count',
 				'version_count','revision_count','meta','revision_last_date'
 			),
 			'pagefooter' => array(
@@ -299,6 +300,10 @@ class shortcode {
      */
     public function page_numbers_func($atts) {
 		global $in_catpdf_shortcode,$catpdf_data;
+		$default_atts = array(
+			'show_totals' => true,
+		);
+		$atts = wp_parse_args( $atts, $default_atts );
 		$atts = $this->universal_shortcode_atts( $atts );
 		$page_num = $catpdf_data->page_num_placeholder;
 		$page_total = $catpdf_data->page_total_placeholder;
@@ -306,11 +311,14 @@ class shortcode {
 		$page_separator = $catpdf_data->page_separator_placeholder;		
 		
 		$in_catpdf_shortcode=true;
-		extract(shortcode_atts(array(
+		extract(shortcode_atts(array(			
 			'label' => $page_label,
 			'separator' => $page_separator
 		), $atts));
-		$block='<div id="page_numbers"><span id="pn_text">'.$label.'</span><span id="pn_number">'.$page_num.''.$separator.''.$page_total.'</span></div>'."\n";
+		
+		$page_label = $label != "" ? '<span id="pn_text">'.$label.'</span>' : '';
+		$totals = $show_totals == true ? ( ($separator!=""?$separator:"/") .''.$page_total ) : '';
+		$block='<div id="page_numbers">'.$page_label.'<span id="pn_number">'.$page_num.''.$totals.'</span></div>'."\n";
 
 		
 		/* the best corse maybe to dynamicly fill in the numbers
@@ -845,6 +853,28 @@ class shortcode {
 		$in_catpdf_shortcode=false;
         return $item;
     }
+    /**
+     * Return post author_contact
+	 * 
+	 * @global class $post -WP_POST object.
+	 * @global class $in_catpdf_shortcode -current action is in a shortcode or not.
+	 * 
+     * @param array $atts
+	 *
+	 * @return string
+	 */
+    public function author_contact_func($atts) {
+        global $post,$in_catpdf_shortcode;
+		$atts = $this->universal_shortcode_atts( $atts );
+		$in_catpdf_shortcode=true;
+		$item = $post->post_author;
+		$item = $this->apply_shortcode_container( $item , $atts );
+		$in_catpdf_shortcode=false;
+        return $item;
+    }	
+	
+	
+	
     /**
      * Return post date
 	 * 
