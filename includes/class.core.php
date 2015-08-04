@@ -31,7 +31,7 @@ class catpdf_core {
     function __construct() {
 		global $dompdf,$shortcode,$catpdf_pages,$catpdf_templates,$catpdf_output,$catpdf_data,$_params;
 		$_params = $_REQUEST;
-
+		$this->install_init();
 		// Include data
 		include(CATPDF_PATH . '/includes/class.data.php');
 		$catpdf_data = new catpdf_data();
