@@ -147,9 +147,12 @@ class shortcode {
 	 */
 	public function universal_shortcode_atts( $atts ) {
 		$default_atts = array(
+			'empty_container' => false,
 			'container' => '',
 			'container_class' => '',
 			'container_id' => '',
+			'container_raw_open' => '',
+			'container_raw_close' => '',
 		);
 		$atts = wp_parse_args( $atts, $default_atts );
 		return $atts;
@@ -164,20 +167,28 @@ class shortcode {
 	 * @return string
 	 */
 	public function apply_shortcode_container( $content , $atts ) {
-		if ( in_array( $atts['container'], array( 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'section', 'article', 'header' ) ) ) {
-			$container_open = '<' . $atts['container'];
-
-			if ( '' !== sanitize_key( $atts['container_class'] ) ) {
-				$container_open .= ' class="' . $atts['container_class'] . '"';
+		if( $content == "" && $atts['container_raw_open'] == false ){
+			return $content;
+		}
+		if( $atts['container_raw_open'] !="" && $atts['container_raw_close'] !="" ){
+			$content = $atts['container_raw_open'] .  $content . $atts['container_raw_close'];
+		} else {
+		
+			if ( in_array( $atts['container'], array( 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'section', 'article', 'header' ) ) ) {
+				$container_open = '<' . $atts['container'];
+	
+				if ( '' !== sanitize_key( $atts['container_class'] ) ) {
+					$container_open .= ' class="' . $atts['container_class'] . '"';
+				}
+	
+				if ( '' !== sanitize_key( $atts['container_id'] ) ) {
+					$container_open .= ' id="' . $atts['container_id'] . '"';
+				}
+	
+				$container_open .= '>';
+	
+				$content = $container_open .  $content . '</' . $atts['container'] . '>';
 			}
-
-			if ( '' !== sanitize_key( $atts['container_id'] ) ) {
-				$container_open .= ' id="' . $atts['container_id'] . '"';
-			}
-
-			$container_open .= '>';
-
-			$content = $container_open .  $content . '</' . $atts['container'] . '>';
 		}
 		return $content;
 	}
